@@ -26,6 +26,7 @@ import { Brand } from "./index";
 import { StateSchema, initialState, fit, money, makeTasks, safeUrl } from "@/lib/demo-data";
 import type { Company, DemoState, Task } from "@/lib/demo-data";
 import "../fundmatch.css";
+import { ProfileIntelligence } from "@/components/intelligence/profile-intelligence";
 const VIEWS = [
   "discover",
   "pipeline",
@@ -34,6 +35,7 @@ const VIEWS = [
   "profile",
   "readiness",
   "materials",
+  "intelligence",
   "interest",
   "company",
 ] as const;
@@ -148,6 +150,7 @@ export function Demo() {
           ["profile", "Company profile", Users],
           ["readiness", "Readiness", ShieldCheck],
           ["materials", "Materials", FolderOpen],
+          ["intelligence", "Build from deck", Sparkles],
           ["integrations", "Integrations", Link2],
         ] as const);
   const headings: Record<View, [string, string]> = {
@@ -166,6 +169,10 @@ export function Demo() {
         ? ["Your thesis. Your lens.", "Change your preferences and see matching respond."]
         : ["Tell your company’s story.", "Bring the details that matter into focus."],
     readiness: ["Ready for the room.", "Know what’s ready, what’s missing and who’s on it."],
+    intelligence: [
+      "From evidence to understanding.",
+      "Build a sourced profile you can stand behind.",
+    ],
     materials: ["Your story, supported.", "Organize links to the materials behind your profile."],
     interest: ["Your next chapter.", "Your company, your preparation and the path ahead."],
     company: [company.name, company.tagline],
@@ -913,6 +920,23 @@ export function Demo() {
                   </div>
                 </>
               )}
+              {view === "intelligence" && (
+                <ProfileIntelligence
+                  key={company.id}
+                  profileId={company.id}
+                  preferences={{
+                    sectors: state.thesis.sectors,
+                    stages: state.thesis.stages,
+                    geographies: state.thesis.geographies,
+                    businessModels: state.thesis.models,
+                    exclusions: state.thesis.exclusions,
+                    checkMin: state.thesis.min,
+                    checkMax: state.thesis.max,
+                    currency: "USD",
+                    minGrowth: state.thesis.growth,
+                  }}
+                />
+              )}
               {view === "readiness" && (
                 <>
                   <div className="demo-toolbar">
@@ -1220,8 +1244,9 @@ export function Demo() {
           </DialogDescription>
           <p className="text-sm leading-relaxed">
             A future connection will require an authorized account, explicit data permissions and
-            any applicable API license. This demo does not ask for credentials or import data.
-            Profile enrichment and document analysis are not connected yet.
+            any applicable API license. This connector does not ask for credentials or import data.
+            AI enrichment is not connected yet. Local deck extraction is available under Build from
+            deck.
           </p>
         </DialogContent>
       </Dialog>

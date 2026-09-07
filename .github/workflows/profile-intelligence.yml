@@ -1,0 +1,21 @@
+name: Profile intelligence checks
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/profile-intelligence]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun test
+      - run: bun run build
+      - run: bun run build:pages

@@ -1,0 +1,8 @@
+Company: Soapbox Caddie
+Description: Laundry pickup and delivery for apartment communities.
+Team: Sam Lee, founder; Alex Chen, operations.
+Business model: Subscription
+Sector: Consumer
+Stage: Seed
+Geography: North America
+Funding ask: Not disclosed

@@ -1,0 +1,266 @@
+.intelligence {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.intel-upload {
+  text-align: center;
+  padding: 40px !important;
+}
+.intel-icon {
+  background: #c5eddb;
+  border-radius: 20px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 20px;
+}
+.intelligence button,
+.intel-file {
+  border: 1px solid #d9dcd7;
+  border-radius: 999px;
+  padding: 10px 18px;
+  margin: 12px 8px 0 0;
+  background: #f8f9f6;
+  color: #282c2b;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.intelligence button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.intelligence .intel-primary {
+  background: #292e2b;
+  color: white;
+}
+.intel-file {
+  position: relative;
+  overflow: hidden;
+  background: #c5eddb;
+}
+.intel-file input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  cursor: pointer;
+}
+.intel-file:focus-within {
+  outline: 3px solid #889bed;
+  outline-offset: 3px;
+}
+.intel-error,
+.intel-notice,
+.intel-warning {
+  padding: 16px;
+  border-radius: 16px;
+  background: #edf0fe;
+}
+.intel-error {
+  background: #ffebe5;
+  color: #862f1c;
+}
+.intel-claims {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 20px 0;
+}
+.intel-claim {
+  border: 1px solid #dce0da;
+  border-radius: 18px;
+  padding: 20px;
+  min-width: 0;
+}
+.intel-claim legend {
+  text-transform: capitalize;
+  font-weight: 600;
+  padding: 0 6px;
+}
+.intel-claim label {
+  display: block;
+  font-size: 13px;
+  margin: 12px 0;
+}
+.intel-claim input:not([type="radio"]) {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid #cdd3cd;
+  border-radius: 8px;
+  background: white;
+}
+.intel-claim input[type="radio"] {
+  margin-right: 8px;
+}
+.intel-claim blockquote {
+  border-left: 3px solid #b8c4f5;
+  padding-left: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.intelligence small {
+  display: block;
+  font-size: 12px;
+  color: #535e58;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+.intel-claim pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 13px;
+}
+.intel-claim summary {
+  cursor: pointer;
+  margin-top: 12px;
+}
+.intel-profile {
+  display: grid;
+  gap: 18px;
+}
+.intel-profile dt {
+  text-transform: capitalize;
+  font-weight: 600;
+}
+.intel-profile dd {
+  margin: 4px 0 0;
+}
+.intel-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.intel-score {
+  font-size: 48px !important;
+  font-weight: 600;
+  letter-spacing: -2px;
+  margin: 16px 0 !important;
+}
+.intel-suggestion {
+  border-top: 1px solid #dde2dc;
+  margin-top: 20px;
+  padding-top: 16px;
+}
+.intelligence p,
+.intelligence li,
+.intelligence dd {
+  overflow-wrap: anywhere;
+}
+.intelligence ul {
+  padding-left: 20px;
+}
+.intelligence li {
+  margin: 10px 0;
+}
+@media (max-width: 760px) {
+  .intel-claims,
+  .intel-columns {
+    grid-template-columns: 1fr;
+  }
+  .intel-upload {
+    padding: 24px !important;
+  }
+}
+/* Pitch-deck direction: quiet surfaces, soft icon tiles, confident type. */
+.intel-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  padding: 0;
+  margin: 0;
+}
+.intel-steps li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e9ece7;
+  border-radius: 24px;
+  box-shadow: 0 8px 28px #263d2710;
+  margin: 0;
+}
+.intel-step-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #dcf6ec;
+  color: #166850;
+}
+.intel-steps li:nth-child(2) .intel-step-icon {
+  background: #e7ecff;
+  color: #4c64b4;
+}
+.intel-steps li:nth-child(3) .intel-step-icon {
+  background: #ebe8fb;
+  color: #64518e;
+}
+.intel-steps small {
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin: 0 0 3px;
+}
+.intel-steps strong {
+  display: block;
+  letter-spacing: -0.3px;
+}
+.intel-steps p {
+  font-size: 12px !important;
+  margin: 3px 0 0 !important;
+}
+.intel-upload h2 {
+  font-size: clamp(28px, 4vw, 44px) !important;
+  letter-spacing: -1.5px !important;
+  line-height: 1.08;
+}
+.intel-upload {
+  background:
+    radial-gradient(ellipse at 95% 5%, #edf0ff 0, transparent 45%),
+    radial-gradient(ellipse at 5% 95%, #edf9f2 0, transparent 45%), #fff !important;
+  border-radius: 28px !important;
+}
+.intel-upload > p {
+  max-width: 680px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+@media (max-width: 1000px) {
+  .intel-steps li {
+    padding: 16px;
+    gap: 10px;
+  }
+  .intel-step-icon {
+    width: 36px;
+    height: 36px;
+  }
+}
+@media (max-width: 640px) {
+  .intel-steps {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .intel-steps li {
+    padding: 14px 18px;
+  }
+  .intel-steps p {
+    display: none;
+  }
+  .intel-steps small {
+    display: inline-block;
+    margin-right: 8px;
+  }
+  .intel-steps strong {
+    display: inline;
+  }
+}
