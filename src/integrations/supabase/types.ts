@@ -1,3 +1,5 @@
+// Supabase types, extended by hand for migration 0002 (see docs/BACKEND.md).
+// Regenerate with the Supabase CLI (`supabase gen types typescript`) after future schema changes.
 export type Json =
   | string
   | number
@@ -23,6 +25,7 @@ export type Database = {
           investor_id: string | null
           kind: string
           startup_id: string | null
+          org_id: string | null
         }
         Insert: {
           actor_id?: string | null
@@ -32,6 +35,7 @@ export type Database = {
           investor_id?: string | null
           kind: string
           startup_id?: string | null
+          org_id?: string | null
         }
         Update: {
           actor_id?: string | null
@@ -41,6 +45,7 @@ export type Database = {
           investor_id?: string | null
           kind?: string
           startup_id?: string | null
+          org_id?: string | null
         }
         Relationships: [
           {
@@ -146,6 +151,8 @@ export type Database = {
           title: string
           updated_at: string
           url: string | null
+          document_id: string | null
+          created_by: string | null
         }
         Insert: {
           id?: string
@@ -156,6 +163,8 @@ export type Database = {
           title: string
           updated_at?: string
           url?: string | null
+          document_id?: string | null
+          created_by?: string | null
         }
         Update: {
           id?: string
@@ -166,6 +175,8 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string | null
+          document_id?: string | null
+          created_by?: string | null
         }
         Relationships: [
           {
@@ -434,6 +445,7 @@ export type Database = {
           org_id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
+          member_role: Database["public"]["Enums"]["member_role"]
         }
         Insert: {
           created_at?: string
@@ -441,6 +453,7 @@ export type Database = {
           org_id: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id: string
+          member_role?: Database["public"]["Enums"]["member_role"]
         }
         Update: {
           created_at?: string
@@ -448,6 +461,7 @@ export type Database = {
           org_id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+          member_role?: Database["public"]["Enums"]["member_role"]
         }
         Relationships: [
           {
@@ -469,6 +483,8 @@ export type Database = {
           name: string
           type: Database["public"]["Enums"]["org_type"]
           website: string | null
+          created_by: string | null
+          updated_at: string
         }
         Insert: {
           created_at?: string
@@ -479,6 +495,8 @@ export type Database = {
           name: string
           type: Database["public"]["Enums"]["org_type"]
           website?: string | null
+          created_by?: string | null
+          updated_at?: string
         }
         Update: {
           created_at?: string
@@ -489,6 +507,8 @@ export type Database = {
           name?: string
           type?: Database["public"]["Enums"]["org_type"]
           website?: string | null
+          created_by?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -502,6 +522,7 @@ export type Database = {
           startup_id: string
           status: Database["public"]["Enums"]["pipeline_status"]
           updated_at: string
+          org_id: string | null
         }
         Insert: {
           created_at?: string
@@ -512,6 +533,7 @@ export type Database = {
           startup_id: string
           status?: Database["public"]["Enums"]["pipeline_status"]
           updated_at?: string
+          org_id?: string | null
         }
         Update: {
           created_at?: string
@@ -522,6 +544,7 @@ export type Database = {
           startup_id?: string
           status?: Database["public"]["Enums"]["pipeline_status"]
           updated_at?: string
+          org_id?: string | null
         }
         Relationships: [
           {
@@ -549,6 +572,7 @@ export type Database = {
           full_name: string | null
           id: string
           persona: string | null
+          updated_at: string
         }
         Insert: {
           active_org_id?: string | null
@@ -558,6 +582,7 @@ export type Database = {
           full_name?: string | null
           id: string
           persona?: string | null
+          updated_at?: string
         }
         Update: {
           active_org_id?: string | null
@@ -567,6 +592,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           persona?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -775,6 +801,8 @@ export type Database = {
           investor_id: string | null
           likes: number
           startup_id: string
+          org_id: string | null
+          updated_at: string
         }
         Insert: {
           author_id?: string | null
@@ -785,6 +813,8 @@ export type Database = {
           investor_id?: string | null
           likes?: number
           startup_id: string
+          org_id?: string | null
+          updated_at?: string
         }
         Update: {
           author_id?: string | null
@@ -795,6 +825,8 @@ export type Database = {
           investor_id?: string | null
           likes?: number
           startup_id?: string
+          org_id?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -813,11 +845,310 @@ export type Database = {
           },
         ]
       }
+      documents: {
+        Row: {
+          bucket: string
+          created_at: string
+          extraction: Json | null
+          file_name: string
+          id: string
+          kind: string
+          mime_type: string
+          org_id: string
+          processed_at: string | null
+          processing_error: string | null
+          size_bytes: number
+          startup_id: string | null
+          status: Database["public"]["Enums"]["document_status"]
+          storage_path: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          bucket?: string
+          created_at?: string
+          extraction?: Json | null
+          file_name: string
+          id?: string
+          kind?: string
+          mime_type: string
+          org_id: string
+          processed_at?: string | null
+          processing_error?: string | null
+          size_bytes: number
+          startup_id?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          storage_path: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          bucket?: string
+          created_at?: string
+          extraction?: Json | null
+          file_name?: string
+          id?: string
+          kind?: string
+          mime_type?: string
+          org_id?: string
+          processed_at?: string | null
+          processing_error?: string | null
+          size_bytes?: number
+          startup_id?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          member_role: Database["public"]["Enums"]["member_role"]
+          org_id: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          member_role?: Database["public"]["Enums"]["member_role"]
+          org_id: string
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          member_role?: Database["public"]["Enums"]["member_role"]
+          org_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_suggestions: {
+        Row: {
+          confidence: number
+          created_at: string
+          current_value: string | null
+          document_id: string | null
+          field_key: string
+          id: string
+          label: string
+          rationale: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          source_key: string
+          startup_id: string
+          status: Database["public"]["Enums"]["suggestion_status"]
+          suggested_value: string
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          current_value?: string | null
+          document_id?: string | null
+          field_key: string
+          id?: string
+          label: string
+          rationale?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source_key?: string
+          startup_id: string
+          status?: Database["public"]["Enums"]["suggestion_status"]
+          suggested_value: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          current_value?: string | null
+          document_id?: string | null
+          field_key?: string
+          id?: string
+          label?: string
+          rationale?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source_key?: string
+          startup_id?: string
+          status?: Database["public"]["Enums"]["suggestion_status"]
+          suggested_value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_suggestions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_suggestions_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      readiness_items: {
+        Row: {
+          category: string
+          created_at: string
+          due_date: string | null
+          evidence_url: string
+          id: string
+          item_key: string
+          notes: string
+          org_id: string
+          owner: string
+          startup_id: string
+          status: Database["public"]["Enums"]["readiness_status"]
+          suggested_by: string | null
+          template: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          due_date?: string | null
+          evidence_url?: string
+          id?: string
+          item_key: string
+          notes?: string
+          org_id: string
+          owner?: string
+          startup_id: string
+          status?: Database["public"]["Enums"]["readiness_status"]
+          suggested_by?: string | null
+          template: string
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          due_date?: string | null
+          evidence_url?: string
+          id?: string
+          item_key?: string
+          notes?: string
+          org_id?: string
+          owner?: string
+          startup_id?: string
+          status?: Database["public"]["Enums"]["readiness_status"]
+          suggested_by?: string | null
+          template?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "readiness_items_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "readiness_items_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      accept_invitation: {
+        Args: { _token: string }
+        Returns: string
+      }
+      create_organization: {
+        Args: {
+          _name: string
+          _type: Database["public"]["Enums"]["org_type"]
+          _website?: string | null
+          _description?: string | null
+        }
+        Returns: string
+      }
+      ensure_readiness_items: {
+        Args: { _startup_id: string; _template: string }
+        Returns: number
+      }
+      invite_member: {
+        Args: {
+          _org_id: string
+          _email: string
+          _member_role?: Database["public"]["Enums"]["member_role"]
+        }
+        Returns: string
+      }
+      mark_document_uploaded: {
+        Args: { _document_id: string }
+        Returns: Database["public"]["Enums"]["document_status"]
+      }
+      resolve_profile_suggestion: {
+        Args: { _suggestion_id: string; _accept: boolean }
+        Returns: undefined
+      }
+      set_document_processing: {
+        Args: {
+          _document_id: string
+          _status: Database["public"]["Enums"]["document_status"]
+          _error?: string | null
+          _extraction?: Json | null
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -828,8 +1159,12 @@ export type Database = {
     }
     Enums: {
       app_role: "founder" | "investor" | "admin"
+      document_status: "pending" | "uploaded" | "processing" | "processed" | "failed"
+      member_role: "owner" | "admin" | "member"
       org_type: "startup" | "investment_firm"
       pipeline_status: "new" | "reviewing" | "meeting" | "passed"
+      readiness_status: "Missing" | "In progress" | "Complete" | "Needs update"
+      suggestion_status: "pending" | "accepted" | "rejected"
       swipe_decision: "pass" | "save" | "interested"
     }
     CompositeTypes: {
@@ -959,7 +1294,11 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["founder", "investor", "admin"],
+      document_status: ["pending", "uploaded", "processing", "processed", "failed"],
+      member_role: ["owner", "admin", "member"],
       org_type: ["startup", "investment_firm"],
+      readiness_status: ["Missing", "In progress", "Complete", "Needs update"],
+      suggestion_status: ["pending", "accepted", "rejected"],
       pipeline_status: ["new", "reviewing", "meeting", "passed"],
       swipe_decision: ["pass", "save", "interested"],
     },

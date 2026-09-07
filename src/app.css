@@ -1,0 +1,124 @@
+/* Authenticated application: small additions on top of fundmatch.css. */
+.app-auth-main {
+  min-height: calc(100vh - 70px);
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+}
+.app-auth-card {
+  width: min(520px, 100%);
+}
+.app-auth-card h1 {
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  margin: 10px 0 8px;
+}
+.app-auth-card > p {
+  color: #5f666c;
+  line-height: 1.55;
+}
+.app-auth-footer {
+  margin-top: 18px;
+  text-align: center;
+}
+.app-auth-footer a,
+.app-auth-footer .demo-link {
+  color: inherit;
+  text-decoration: underline;
+}
+.app-form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fbe9e6;
+  color: #8d2b1f;
+  font-size: 13px;
+}
+.app-form-ok {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #e5f5ec;
+  color: #1e5f3b;
+  font-size: 13px;
+}
+.app-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.app-choice-card {
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  border: 1.5px solid transparent;
+}
+.app-choice-card.active {
+  border-color: #23272b;
+}
+.app-choice-card span {
+  color: #6b7178;
+  font-size: 13px;
+}
+.app-org-switch {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.app-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.app-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b9c0c7;
+}
+.app-status.uploaded::before,
+.app-status.processing::before {
+  background: #8ea7ff;
+}
+.app-status.processed::before {
+  background: #4fbf85;
+}
+.app-status.failed::before {
+  background: #d9534f;
+}
+.app-inline-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.app-skeleton {
+  display: grid;
+  gap: 10px;
+}
+.app-skeleton > span {
+  display: block;
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, #ecebe6, #f5f4f0, #ecebe6);
+  background-size: 200% 100%;
+  animation: app-shimmer 1.4s infinite;
+}
+@keyframes app-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-skeleton > span {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  .app-choice {
+    grid-template-columns: 1fr;
+  }
+}
