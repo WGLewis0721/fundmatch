@@ -1,1 +1,10 @@
-Lovable API error: 499 request_cancelled: Request was cancelled
+node_modules/
+.output/
+.wrangler/
+.nitro/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
