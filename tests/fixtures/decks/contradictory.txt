@@ -1,0 +1,12 @@
+Company: Dippi
+Description: Local beverage delivery.
+Team: Jordan, founder.
+Business model: Marketplace
+Sector: Consumer
+Stage: Seed
+Geography: North America
+Revenue: USD 120000 ARR
+Growth: 25% YoY
+Funding ask: USD 2000000
+Use of funds: Hire operations staff and expand delivery zones.Revenue: USD 240000 ARR
+Funding ask: USD 3000000
