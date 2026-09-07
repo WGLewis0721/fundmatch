@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { AuthCard, FormError, RedirectIfSignedIn } from "@/components/fundmatch/app-shell";
@@ -9,13 +9,12 @@ export const Route = createFileRoute("/app/signup")({ component: Signup });
 
 function Signup() {
   const { signUp } = useAuth();
-  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState<string | null>(null);
   if (confirm) {
     return (
-      <RedirectIfSignedIn>
+      <RedirectIfSignedIn to="/app/onboarding">
         <AuthCard
           kicker="ONE MORE STEP"
           title="Check your inbox."
@@ -28,7 +27,7 @@ function Signup() {
     );
   }
   return (
-    <RedirectIfSignedIn>
+    <RedirectIfSignedIn to="/app/onboarding">
       <AuthCard
         kicker="GET STARTED"
         title="Create your FundMatch account."
@@ -58,8 +57,9 @@ function Signup() {
                 password,
                 fullName: String(f.get("name")).trim(),
               });
+              // With confirmation disabled a session exists now and
+              // RedirectIfSignedIn moves on to onboarding.
               if (result.needsConfirmation) setConfirm(email);
-              else void navigate({ to: "/app/onboarding", replace: true });
             } catch (err) {
               setError(describeError(err));
             } finally {

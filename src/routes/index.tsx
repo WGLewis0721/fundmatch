@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { backendConfigured } from "@/lib/backend";
 import "../fundmatch.css";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -50,13 +51,20 @@ export function Home() {
           <a href="#for-founders">For founders</a>
           <a href="#for-investors">For investors</a>
         </nav>
-        <Link
-          to="/demo"
-          search={{ persona: "investor", view: "discover", company: "dippi" }}
-          className="fm-button compact"
-        >
-          Explore the demo <ArrowUpRight size={15} />
-        </Link>
+        <div className="fm-nav-actions">
+          {backendConfigured && (
+            <a href="/app/login" className="fm-text-button">
+              Sign in
+            </a>
+          )}
+          <Link
+            to="/demo"
+            search={{ persona: "investor", view: "discover", company: "dippi" }}
+            className="fm-button compact"
+          >
+            Explore the demo <ArrowUpRight size={15} />
+          </Link>
+        </div>
       </header>
       <main>
         <section className="fm-hero">

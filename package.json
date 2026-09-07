@@ -12,7 +12,10 @@
     "format": "prettier --write .",
     "build:pages": "vite build --config vite.pages.config.ts && node scripts/finalize-pages.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "bun test"
+    "test": "bun test",
+    "db:migrate": "drizzle-kit migrate",
+    "db:apply:local": "FUNDMATCH_DB_SHIM=1 sh scripts/db/apply-migrations.sh",
+    "test:db": "bun test tests/db"
   },
   "overrides": {
     "rolldown": "1.2.1"

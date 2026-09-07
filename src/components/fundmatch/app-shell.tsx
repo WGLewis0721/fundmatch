@@ -86,12 +86,18 @@ export function RequireSession({ children }: { children: ReactNode }) {
 }
 
 /** Redirects signed-in users away from auth screens. */
-export function RedirectIfSignedIn({ children }: { children: ReactNode }) {
+export function RedirectIfSignedIn({
+  children,
+  to = "/app",
+}: {
+  children: ReactNode;
+  to?: "/app" | "/app/onboarding";
+}) {
   const { status } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    if (status === "signed_in") void navigate({ to: "/app", replace: true });
-  }, [status, navigate]);
+    if (status === "signed_in") void navigate({ to, replace: true });
+  }, [status, navigate, to]);
   if (!backendConfigured) return <NotConfigured />;
   if (status === "loading") return <LoadingCard text="Checking your session…" />;
   return <>{children}</>;
