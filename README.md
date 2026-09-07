@@ -4,6 +4,14 @@
 
 FundMatch is a founder/investor product demo with a refined off-white, charcoal, mint and periwinkle visual system. The homepage includes an original **24-second H.264 product film with music**, a poster, captions, playback controls and reduced-motion support.
 
+## Two products in one repository
+
+- **Public demo** (`/` and `/demo`): no signup, browser storage only, deployed
+  to GitHub Pages. Unchanged by the accounts work.
+- **Authenticated app** (`/app`): real accounts, organizations, server-side
+  persistence and private document storage on Supabase. Deployed separately.
+  See [docs/BACKEND.md](docs/BACKEND.md).
+
 ## What works today
 
 - Home page and full-screen film player.
@@ -17,7 +25,7 @@ FundMatch is a founder/investor product demo with a refined off-white, charcoal,
 - Local persistence with schema validation, graceful storage failure and confirmed reset.
 - Responsive layouts, keyboard focus, accessible dialogs and empty states.
 
-**This is a working browser demo, not a production fundraising platform.** Changes are stored on the current browser/device only. The original Supabase/Drizzle schema, query layer and AI abstraction remain in the repository but are not connected to the demo. No accounts, emails, introductions, investments, document review or external integrations are executed. Do not put confidential documents, financial data or credentials into the demo.
+**The `/demo` workspace is a browser demo, not a production fundraising platform.** Its changes are stored on the current browser/device only, its records are fictional, and it never contacts a backend. Do not put confidential documents, financial data or credentials into the demo. Introductions, emails to investors, live AI and external integrations are still unimplemented in both the demo and the authenticated app.
 
 ## Run locally
 
@@ -28,12 +36,14 @@ bun install --frozen-lockfile
 bun run dev
 ```
 
-No environment variables or paid services are required for the homepage or local demo.
+No environment variables or paid services are required for the homepage or
+local demo. The authenticated app at `/app` needs the Supabase variables in
+`.env.example`; without them it shows a "backend not configured" screen.
 
 ```sh
-bun run build       # Existing TanStack Start / Cloudflare build
+bun run build       # Existing TanStack Start / Cloudflare build (includes /app)
 bun run typecheck
-bun test
+bun test            # demo tests; database policy tests when FUNDMATCH_TEST_DATABASE_URL is set
 bun run build:pages # Same interface, static GitHub Pages build in dist/
 ```
 
@@ -47,7 +57,7 @@ The workflow `.github/workflows/pages.yml` builds and checks the app, then deplo
 2. Run **Actions → Build and publish FundMatch → Run workflow**, or push a commit to `main`.
 3. Use the URL from the successful deployment. The expected repository URL is `https://wglewis0721.github.io/fundmatch/`; it is not live until Pages is enabled and deployment succeeds.
 
-The build handles the `/fundmatch/` base path and emits a real `/demo/index.html` so direct links and refreshes work on Pages. No secret or backend credential is required. See [GitHub’s Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+The build handles the `/fundmatch/` base path and emits a real `/demo/index.html` so direct links and refreshes work on Pages. No secret or backend credential is required, and the Pages bundle contains no Supabase client code: the authenticated app is deployed separately, as described in [docs/BACKEND.md](docs/BACKEND.md). See [GitHub’s Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 ## Product film
 
@@ -64,9 +74,42 @@ The existing MatchEngine scores sector, stage, geography, funding ask/check-rang
 
 The demo uses explicit fictional source labels. Adding a material or evidence link stores only its URL/title; it does not fetch or analyze the document, verify authenticity, upload a file, or change its access permissions.
 
-## Before production
+## Accounts, persistence and private documents
 
-Implement authenticated organization membership and firm isolation, then connect server-side persisted workflows and private document handling. **Audit and replace permissive policies in the original migrations before real data:** several initial policies allow authenticated users broad table access. The browser demo does not use these policies or grant anonymous access. Live AI, SSO, source licensing, CRM imports, secure data rooms and production authorization remain unfinished.
+The authenticated application lives at `/app` and needs a Supabase project.
+
+- Signup, login, logout and password recovery.
+- Organization creation, membership roles (owner, admin, member) and
+  email-bound invitations. A user cannot grant themselves access to an
+  organization they were not invited to.
+- Server-side persistence for company profiles, metrics, investment theses,
+  discovery decisions, pipeline stages, team notes, material records and
+  readiness checklists, scoped to the authorized organization.
+- Private document uploads with validation, authorized downloads and
+  deletion. The storage bucket is private; no public URLs are issued and the
+  service role key never reaches the browser.
+
+`drizzle/migrations/0002_fundmatch_accounts_persistence.sql` **drops the
+permissive policies from the original migration** (several allowed any
+authenticated user broad table access) and replaces them with
+organization-scoped policies, then adds the new tables, RPCs and storage
+rules.
+
+```sh
+cp .env.example .env.local   # add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY
+bun run db:migrate           # with LOVABLE_DB_MIGRATION_URL set
+bun run dev                  # http://localhost:8080/app
+```
+
+- [docs/BACKEND.md](docs/BACKEND.md): environment variables, provisioning,
+  migrations, deployment and the security model.
+- [docs/ASTRA_INTERFACE.md](docs/ASTRA_INTERFACE.md): upload identifiers,
+  processing status transitions and the authorized profile-update interface.
+- [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md): policy tests, the
+  two-organization browser walkthrough and the direct API attempts.
+
+Live AI, SSO, source licensing, CRM imports, secure data rooms and email
+delivery of introductions remain unfinished.
 
 ## Earlier blank preview
 

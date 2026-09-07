@@ -1275,3 +1275,14 @@
     transition: none !important;
   }
 }
+
+.fm-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.fm-nav-actions .fm-text-button {
+  font-size: 14px;
+  color: inherit;
+  text-decoration: none;
+}

@@ -15,6 +15,13 @@
       "when": 1788723530161,
       "tag": "0001_fundmatch_seed_demo_data",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788754800000,
+      "tag": "0002_fundmatch_accounts_persistence",
+      "breakpoints": true
     }
   ]
 }

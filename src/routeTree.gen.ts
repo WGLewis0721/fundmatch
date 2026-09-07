@@ -10,11 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as AppInviteRouteImport } from './routes/app/invite'
+import { Route as AppLoginRouteImport } from './routes/app/login'
+import { Route as AppOnboardingRouteImport } from './routes/app/onboarding'
+import { Route as AppRecoverRouteImport } from './routes/app/recover'
+import { Route as AppResetRouteImport } from './routes/app/reset'
+import { Route as AppSignupRouteImport } from './routes/app/signup'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoRoute = DemoRouteImport.update({
@@ -22,30 +35,119 @@ const DemoRoute = DemoRouteImport.update({
   path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInviteRoute = AppInviteRouteImport.update({
+  id: '/invite',
+  path: '/invite',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLoginRoute = AppLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOnboardingRoute = AppOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRecoverRoute = AppRecoverRouteImport.update({
+  id: '/recover',
+  path: '/recover',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResetRoute = AppResetRouteImport.update({
+  id: '/reset',
+  path: '/reset',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSignupRoute = AppSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/demo': typeof DemoRoute
+  '/app/invite': typeof AppInviteRoute
+  '/app/login': typeof AppLoginRoute
+  '/app/onboarding': typeof AppOnboardingRoute
+  '/app/recover': typeof AppRecoverRoute
+  '/app/reset': typeof AppResetRoute
+  '/app/signup': typeof AppSignupRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/app/invite': typeof AppInviteRoute
+  '/app/login': typeof AppLoginRoute
+  '/app/onboarding': typeof AppOnboardingRoute
+  '/app/recover': typeof AppRecoverRoute
+  '/app/reset': typeof AppResetRoute
+  '/app/signup': typeof AppSignupRoute
+  '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
   '/demo': typeof DemoRoute
+  '/app/invite': typeof AppInviteRoute
+  '/app/login': typeof AppLoginRoute
+  '/app/onboarding': typeof AppOnboardingRoute
+  '/app/recover': typeof AppRecoverRoute
+  '/app/reset': typeof AppResetRoute
+  '/app/signup': typeof AppSignupRoute
+  '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/demo'
+    | '/app/invite'
+    | '/app/login'
+    | '/app/onboarding'
+    | '/app/recover'
+    | '/app/reset'
+    | '/app/signup'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo'
-  id: '__root__' | '/' | '/demo'
+  to:
+    | '/'
+    | '/demo'
+    | '/app/invite'
+    | '/app/login'
+    | '/app/onboarding'
+    | '/app/recover'
+    | '/app/reset'
+    | '/app/signup'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/demo'
+    | '/app/invite'
+    | '/app/login'
+    | '/app/onboarding'
+    | '/app/recover'
+    | '/app/reset'
+    | '/app/signup'
+    | '/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
   DemoRoute: typeof DemoRoute
 }
 
@@ -58,6 +160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo': {
       id: '/demo'
       path: '/demo'
@@ -65,11 +174,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/': {
+      id: '/app/'
+      path: '/'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/invite': {
+      id: '/app/invite'
+      path: '/invite'
+      fullPath: '/app/invite'
+      preLoaderRoute: typeof AppInviteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/login': {
+      id: '/app/login'
+      path: '/login'
+      fullPath: '/app/login'
+      preLoaderRoute: typeof AppLoginRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/onboarding': {
+      id: '/app/onboarding'
+      path: '/onboarding'
+      fullPath: '/app/onboarding'
+      preLoaderRoute: typeof AppOnboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/recover': {
+      id: '/app/recover'
+      path: '/recover'
+      fullPath: '/app/recover'
+      preLoaderRoute: typeof AppRecoverRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/reset': {
+      id: '/app/reset'
+      path: '/reset'
+      fullPath: '/app/reset'
+      preLoaderRoute: typeof AppResetRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/signup': {
+      id: '/app/signup'
+      path: '/signup'
+      fullPath: '/app/signup'
+      preLoaderRoute: typeof AppSignupRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppInviteRoute: typeof AppInviteRoute
+  AppLoginRoute: typeof AppLoginRoute
+  AppOnboardingRoute: typeof AppOnboardingRoute
+  AppRecoverRoute: typeof AppRecoverRoute
+  AppResetRoute: typeof AppResetRoute
+  AppSignupRoute: typeof AppSignupRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppInviteRoute: AppInviteRoute,
+  AppLoginRoute: AppLoginRoute,
+  AppOnboardingRoute: AppOnboardingRoute,
+  AppRecoverRoute: AppRecoverRoute,
+  AppResetRoute: AppResetRoute,
+  AppSignupRoute: AppSignupRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
   DemoRoute: DemoRoute,
 }
 export const routeTree = rootRouteImport
