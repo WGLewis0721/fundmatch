@@ -1,23 +1,32 @@
 # FundMatch Roadmap
 
-This document is the product and implementation source of truth for FundMatch. Read it before starting any new work and update it after meaningful changes.
+This document is the product and implementation source of truth for FundMatch. Read it before starting new product work and update it after meaningful changes.
 
 ## Product definition
 
 FundMatch is an AI-assisted capital discovery and fundraising-readiness platform for startup founders and investment teams.
 
-It helps founders package their company once, understand readiness gaps, and get discovered by investors who fit. It helps investors review cleaner company profiles, confirm thesis fit, understand why a company is relevant, and move promising companies into pipeline and diligence.
+It helps founders package their company once, understand readiness gaps and become discoverable to investors who fit. It helps investors review cleaner company profiles, confirm thesis fit, understand why a company is relevant, and move promising companies into an introduction/diligence workflow.
 
 ## Serious positioning
 
-**AI-powered deal discovery and matching for founders and investment teams.**
+**AI-assisted deal discovery and matching for founders and investment teams.**
 
-Do not reduce the product to “Tinder for VC.” The swipe/feed interaction is useful as a simple discovery surface, but the deeper product is structured company/investor data, explainable matching, provenance, readiness, diligence, and workflow.
+Do not reduce FundMatch to “Tinder for VC.” The feed/swipe interaction is a useful discovery surface. The deeper product is structured company/investor data, candidate retrieval, explainable ranking, provenance, readiness, introductions, diligence and outcome learning.
 
 ## Core product loop
 
 ```text
-Connect data → Build profiles → Infer thesis → Score fit → Surface opportunities → Take action → Learn from outcomes
+Connect data
+→ Build profiles
+→ Infer / confirm thesis
+→ Retrieve eligible candidates
+→ Score and explain fit
+→ Surface opportunities
+→ Pass / Save / Interested
+→ Manage introduction / diligence
+→ Record outcome
+→ Improve future ranking
 ```
 
 ## Product goals
@@ -25,27 +34,31 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 1. Help founders create a clean, standardized investor-facing profile.
 2. Help founders understand whether they are ready to raise.
 3. Help investors discover better-fit companies faster.
-4. Make match scoring explainable instead of mysterious.
+4. Keep candidate eligibility and match scoring explainable.
 5. Preserve provenance for important claims and AI-generated suggestions.
-6. Support diligence workflow: materials, notes, statuses, and collaboration.
+6. Support diligence workflow: materials, notes, statuses and collaboration.
 7. Keep AI-generated edits reviewable by the human/company that owns the profile.
-8. Build a rules-based baseline before relying on LLM/ML ranking.
-9. Avoid unlicensed proprietary private-market data.
-10. Keep the public demo clearly separated from production/private data.
+8. Build a deterministic rules baseline before relying on ML ranking.
+9. Capture marketplace outcomes so future ranking can learn from useful conversations, not just clicks.
+10. Avoid unlicensed proprietary private-market data.
+11. Keep the public demo clearly separated from production/private data.
+12. Do not add large-scale infrastructure before measured demand justifies it.
 
 ## Canonical user flows
 
 ### Founder flow
 
 1. Create or claim company profile.
-2. Enter or import company basics, traction, raise details, and materials.
+2. Enter/import company basics, traction, raise details and materials.
 3. Upload or link pitch deck and supporting documents.
-4. Receive AI-assisted profile suggestions with source/provenance.
+4. Receive AI-assisted profile suggestions with provenance.
 5. Accept or reject suggestions.
 6. See fundraising-readiness checklist and gaps.
 7. Generate a standardized FundMatch investor packet/profile.
-8. Become discoverable to matching investors.
-9. Track views, saves, interest, intro requests, and readiness status.
+8. Become discoverable to eligible investors.
+9. Receive investor interest requests.
+10. Review investor/firm context and Accept / Decline / Request more information.
+11. Track introductions, meetings, diligence and outcomes.
 
 ### Investor flow
 
@@ -53,13 +66,22 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 2. Enter thesis or import permitted firm/deal data.
 3. Confirm inferred investment preferences and exclusions.
 4. Browse ranked company cards.
-5. Pass, Save, or mark Interested.
-6. Move promising companies through pipeline.
-7. Add team notes and diligence questions.
-8. Review provenance and materials before meetings.
-9. Feed outcomes back into future ranking.
+5. Pass, Save or mark Interested.
+6. Send a permissioned interest request rather than exposing private founder contact details automatically.
+7. Move accepted opportunities through pipeline.
+8. Add team notes and diligence questions.
+9. Review provenance/materials before meetings.
+10. Record outcomes to improve future ranking.
 
-## Current architecture
+## Architecture decision
+
+FundMatch should remain a **modular monolith backed by managed services** until scale proves otherwise.
+
+The useful lesson from Tinder/Hinge-style systems is the recommendation pipeline boundary — candidate retrieval, ranking, decision, workflow and feedback — not their mature-company deployment complexity.
+
+See [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md) for the full decision record.
+
+## Current / target architecture
 
 ### 1. Public demo
 
@@ -67,93 +89,158 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 
 **Routes:** `/`, `/demo`
 
-**Tech:** React/TanStack/Vite static Pages build, local/browser storage.
+**Tech:** React/TanStack/Vite static Pages build, fictional browser data/local storage.
 
 **Status:** Working.
 
-**Important constraint:** no real backend, no real documents, no confidential data, no real investors, no live AI.
+**Constraint:** no real backend, confidential documents, real investors or production AI.
 
 ### 2. Authenticated app
 
-**Purpose:** real users, organizations, server-side persistence, and private documents.
+**Purpose:** real users, organizations, persistence, private documents and marketplace workflows.
 
 **Route:** `/app`
 
-**Tech:** TanStack Start/Vite app, Supabase Auth, Supabase Postgres, Row-Level Security, private Supabase Storage bucket, Drizzle migrations.
+**Tech:** React 19 + TanStack Start/Router + TypeScript; Supabase Auth/Postgres/RLS/Storage; Drizzle migrations.
 
-**Deployment target:** Cloudflare Workers/Nitro or another Node-compatible host, separate from GitHub Pages.
+**Deployment:** Cloudflare Workers/Nitro target for the authenticated web application.
 
-**Status:** Implemented in code; requires environment configuration and deployment acceptance before being treated as live production.
+**Status:** Implemented in code; production deployment acceptance pending.
 
-### 3. Data model and security
+### 3. System of record and authorization
 
-**Purpose:** organization-scoped app data.
-
-**Tech:** Supabase Postgres + RLS, storage policies, service-role-only worker paths.
+**Tech:** Supabase Postgres + Row-Level Security + private Storage.
 
 **Status:** Implemented in migrations and documented in `docs/BACKEND.md`.
 
-**Important constraint:** service role key must never reach the browser.
+**Constraint:** service-role credentials never reach browser code.
 
-### 4. AI worker / Astra interface
+### 4. Production discovery pipeline
 
-**Purpose:** process uploaded documents, suggest profile updates, suggest readiness improvements, and persist richer match explanations.
+**Purpose:** retrieve eligible companies, rank them, explain the result and persist investor decisions.
 
-**Tech:** TBD worker/runtime. The database interface is documented in `docs/ASTRA_INTERFACE.md`; runtime is not finalized.
+**Tech now:** Postgres relational filters/indexes + existing deterministic MatchEngine.
 
-**Status:** Interface documented; live AI worker not implemented.
+**Target augmentation:** `pgvector` semantic thesis/company similarity after deterministic production matching works.
 
-### 5. Integrations
+**Status:** deterministic demo exists; production candidate retrieval/ranking loop incomplete.
 
-**Purpose:** import permitted data from founder and investor tools.
+**Pipeline:**
 
-**Possible later sources:** websites, decks, DocSend-style links, CRM, Stripe/revenue systems, Google/Microsoft files, investor CRM, market-data vendors.
+```text
+Eligibility filters
+→ candidate retrieval
+→ deterministic score
+→ optional semantic augmentation
+→ business/diversity rules
+→ explanation
+→ Pass / Save / Interested
+```
 
-**Tech:** TBD per integration.
+### 5. Marketplace event history
 
-**Status:** mocked/demo only.
+**Purpose:** retain behavioral and outcome history separately from current state.
 
-**Important constraint:** do not scrape or redistribute proprietary private-market datasets without licensing.
+**Recommended tech:** append-only Postgres event table(s).
 
-### 6. Introductions and email delivery
+**Initial events:** impression, profile open, pass, save, interested, intro requested/accepted/declined, meeting, diligence, funded/no-deal.
 
-**Purpose:** allow founders/investors to request, manage, and deliver introductions.
+**Status:** current state/activity concepts exist; full discovery/outcome event model not complete.
 
-**Tech:** TBD transactional email provider and workflow model.
+### 6. Realtime
+
+**Purpose:** deliver important workflow changes without refresh.
+
+**Tech decision:** Supabase Realtime **Broadcast** for new interest, founder response, team pipeline changes, document processing and suggestion availability.
+
+**Status:** not yet wired as the production marketplace notification layer.
+
+**Constraint:** Postgres remains source of truth; realtime is delivery.
+
+### 7. Background jobs / AI worker
+
+**Purpose:** durable document extraction, embeddings, match recomputation, email and integration jobs.
+
+**Tech decision:** Supabase Queues (`pgmq`) + server-side worker/Edge Function. Supabase Edge Functions are the preferred first privileged runtime because they sit beside Auth/Postgres/Storage; Cloudflare Workers may call the same server interfaces where appropriate.
+
+**Status:** database/Astra interfaces exist; durable queue worker is not implemented.
+
+**Constraint:** privileged operations require service-role access server-side only. Jobs must be retryable/idempotent.
+
+### 8. Semantic retrieval
+
+**Purpose:** find companies whose meaning fits a thesis even when exact labels differ.
+
+**Tech decision:** Postgres + `pgvector`; normal SQL remains responsible for hard eligibility filters.
 
 **Status:** not implemented.
 
-### 7. Billing and production commercialization
+**Constraint:** semantic similarity augments ranking; it does not override explicit exclusions or hard mandate constraints.
 
-**Purpose:** monetize FundMatch if it becomes an active product.
+### 9. Introductions and transactional email
 
-**Potential models:** founder readiness subscription, investor seat subscription, pay-per-standardized-packet, firm pilot package, data/workflow license.
+**Purpose:** move interest into a permissioned conversation.
 
-**Tech:** TBD.
+**Workflow:** investor Interested → founder notified → Accept / Decline / Request more information → accepted introduction thread.
+
+**Tech:** Postgres workflow records + queue + server-side email provider. Preferred first email provider: Resend, unless deployment requirements change.
 
 **Status:** not implemented.
+
+### 10. Integrations
+
+**Purpose:** import permitted customer-owned data.
+
+**Potential sources:** company websites, decks, Google/Microsoft files, Stripe/revenue systems, DocSend-style links, CRM, investor CRM, licensed market-data vendors.
+
+**Tech:** server-side OAuth/integration workers + queues per provider.
+
+**Status:** demo/mocked only.
+
+**Constraint:** do not scrape or redistribute proprietary private-market datasets without permission/license.
+
+### 11. Billing
+
+**Purpose:** commercialize FundMatch after pilot value is proven.
+
+**Potential models:** founder readiness subscription, investor seats, firm pilot package, workflow/data license.
+
+**Tech decision:** Stripe when billing begins.
+
+**Status:** not implemented.
+
+### 12. Search/cache/service decomposition — later only
+
+Do not add these as roadmap vanity milestones:
+
+- Redis
+- Elasticsearch/OpenSearch
+- Kafka
+- Kubernetes
+- large microservice fleet
+
+Add dedicated search when Postgres/full-text/pgvector misses measured retrieval latency or throughput targets. Add Redis when hot-read/recommendation caching meaningfully reduces database load. Add event streaming when event volume and independent consumers exceed Postgres event tables + queues. Split services when independent deployment/ownership/scale requires it.
 
 ## Current repository status
 
 ### Complete / working demo
 
 - Public homepage and product film.
+- Investor/founder hero preview.
 - Public `/demo` founder/investor workspace.
-- Demo company discovery.
-- Search and filters.
-- Pass / Save / Interested actions.
+- Company discovery, search and filters.
+- Pass / Save / Interested actions and horizontal gestures.
 - Rules-based MatchEngine with explainable scores.
 - Editable investor thesis.
 - Company profiles and provenance sections.
-- Pipeline stages.
-- Saved shortlist.
-- Guided founder profile editing for Dippi and Soapbox Caddie, with draft saves.
+- Pipeline stages and saved shortlist.
+- Guided founder profile editing for Dippi and Soapbox Caddie.
 - Profile essentials and missing-material indicators.
-- Investor packet preview, selected-link HTML export and browser print/save-PDF.
+- Investor packet preview, selected-link HTML export and print/save-PDF.
 - Literal PDF/text extraction and review in the demo (component memory only; no live AI).
-- VC and PE readiness templates.
-- Local persistence and reset.
-- Responsive UI and accessibility basics.
+- VC/PE readiness templates.
+- Local persistence/reset.
+- Responsive UI/accessibility basics.
 
 ### Implemented but needs production acceptance
 
@@ -163,188 +250,263 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 - Email-bound invitations.
 - Organization-scoped persistence.
 - Private document metadata/storage model.
-- RLS and storage policies.
+- RLS/storage policies.
 - Backend deployment docs.
 
-### Not implemented / demo only
+### Not implemented / production gap
 
-- Live AI extraction.
-- Live LLM summaries.
-- Production-grade AI ranking.
-- Investor introductions.
-- Email delivery.
+- Accepted production deployment of `/app`.
+- Production candidate retrieval/ranking loop.
+- Append-only discovery/outcome event model.
+- Investor interest → founder response workflow.
+- Live AI extraction/LLM summaries.
+- Queue-backed worker runtime.
+- Semantic `pgvector` matching.
+- Realtime marketplace notifications.
+- Transactional email delivery.
 - Real CRM/data integrations.
 - SSO.
 - Licensed private-market data ingestion.
 - Billing.
 - Outcome-trained recommendation models.
 
-## Roadmap phases
+# Roadmap phases
 
 ## Phase 1 — Product/demo foundation
 
 **Goal:** make FundMatch understandable and demonstrable without signup.
 
-**Build:** homepage, product film, demo founder/investor personas, discovery feed, pass/save/interested behavior, profile pages, pipeline, notes, readiness templates.
-
 **Status:** Complete enough for demo use.
 
-**Done when:** a viewer can understand the founder/investor matching story and click through a complete fictional workflow with explicit demo labels.
+**Done:** homepage, demo personas, discovery, pass/save/interested, profiles, pipeline, notes and readiness templates.
 
 ## Phase 2 — Brand and context consolidation
 
-**Goal:** preserve product context, visual direction, and AI handoff material in the repo and Gray Matter project folder.
+**Goal:** preserve product context, visual direction and AI handoff material.
 
-**Build:** refreshed README, roadmap, brand docs, repo-native graphics, source/asset manifest, AI handoff guidance.
+**Status:** Complete.
 
-**Status:** Complete; documentation and brand assets merged in PR #6.
-
-**Done when:** README, `ROADMAP.md`, `docs/brand/BRAND.md`, `docs/brand/ASSET_MANIFEST.md`, and repo graphics exist and point future agents in the same direction.
+**Done:** README, roadmap, brand docs, graphics, asset manifest and agent guidance.
 
 ## Phase 3 — Founder Readiness MVP
 
-**Goal:** create single-sided value for founders before depending on marketplace liquidity.
+**Goal:** create single-sided founder value before relying on marketplace liquidity.
 
-**Build:** guided company profile builder, fundraising-readiness checklist, deck/materials checklist, standardized FundMatch investor packet/profile, missing-materials indicators, provenance labels, founder review/accept/reject of AI suggestions.
+**Status:** Implemented in public demo and authenticated app code; production acceptance pending.
 
-**Tech:** existing React app + Supabase authenticated app where real data is used. AI worker runtime is TBD.
+**Delivered:** guided profile builder, readiness/material gaps and standardized investor packet.
 
-**Status:** Implemented in the public demo and authenticated app (2026-09-10); production acceptance remains pending.
-
-**Delivered:** shared three-step profile builder with draft saves, optional numeric values (unknown is not zero), profile-essential gap indicators, existing independent VC/PE checklists and materials workflow, and a standardized investor packet with selected external links, HTML download and browser print/save-PDF. The packet includes only company-supplied/confirmed fields and checklist statuses; it excludes internal notes, private uploads, storage paths and pending suggestions. Existing accept/dismiss controls for persisted suggestions remain; the separate literal deck parser remains explicitly local/in-memory.
-
-**Acceptance boundary:** typecheck, app/static builds and automated tests can verify this implementation. Real signup, persistence, upload and cross-organization acceptance must run against the authorized FundMatch backend before calling it production-ready. The configured Supabase project was not accessible through the connected Supabase account during this work. No replacement database was created.
-
-**Done when:** a founder can create a profile, see readiness gaps, attach/link materials, and generate a clean standardized investor-facing FundMatch packet.
+**Done when in production:** a real founder can create a private profile, attach materials, see gaps and generate a clean packet in an accepted deployed workspace.
 
 ## Phase 4 — Investor Sourcing MVP
 
-**Goal:** make FundMatch useful to one investor team even before a large two-sided network exists.
+**Goal:** make FundMatch useful to one investor team before a large two-sided network exists.
 
-**Build:** thesis builder, thesis confirmation, company card ranking, explainable fit, risks/questions, team notes, pipeline, manual company import.
+**Build:** thesis builder/confirmation, production candidate retrieval, deterministic ranking, explainable fit, team notes, persistent decisions/pipeline and manual company import.
 
-**Tech:** existing React app + Supabase. AI augmentation TBD.
+**Tech:** Supabase Postgres/RLS + existing rules engine. Add `pgvector` only after deterministic production matching works.
 
-**Status:** deterministic demo exists; production investor workflow not complete.
+**Status:** deterministic demo exists; production loop incomplete.
 
-**Done when:** an investor team can define a thesis, review imported/created companies against it, and move companies through a persistent team pipeline.
+**Done when:** an investor can log in, define a thesis, review ranked real test/pilot companies, take persistent decisions and resume later without duplicate/invalid candidates.
 
-## Phase 5 — Authenticated deployment acceptance
+## Phase 5 — Authenticated deployment acceptance — NEXT
 
-**Goal:** verify `/app` works as a real private workspace.
+**Goal:** prove `/app` is a real private workspace.
 
-**Build:** configure Supabase environment variables, deploy authenticated app, run signup/login/org creation/invitation/document upload/download/delete, verify RLS and private storage behavior.
+**Build/verify:** configure intended FundMatch Supabase project, deploy authenticated app, run signup/login/org creation/invitation/document upload/download/delete and verify RLS/private storage behavior.
 
-**Tech:** Supabase + Cloudflare Workers/Nitro or another Node-compatible host.
+**Tech:** Supabase + Cloudflare Workers/Nitro.
 
-**Status:** implemented in code; acceptance pending.
+**Status:** code exists; acceptance pending.
 
-**Done when:** two separate organizations cannot read or mutate each other’s data, private document links remain private, and `/app` can be used without demo/localStorage assumptions.
+**Done when:** two separate test organizations cannot read or mutate each other's private data and the production app works without demo/localStorage assumptions.
 
-## Phase 6 — AI document processing loop
+## Phase 6 — Production marketplace decisions + event history
 
-**Goal:** turn uploaded decks/materials into reviewable suggestions.
+**Goal:** convert the demo discovery loop into durable marketplace behavior.
 
-**Build:** worker sees uploaded documents, marks status processing, extracts structured fields, writes `profile_suggestions`, updates readiness rows, records provenance, and handles failures safely.
+**Build:** production eligibility query, candidate retrieval, persistent Pass/Save/Interested, append-only discovery events, score/version metadata and resume behavior.
 
-**Tech:** worker/runtime TBD; Supabase service role server-side only; LLM/provider TBD.
+**Tech:** Postgres/RLS + server/domain matching layer.
 
-**Status:** database interface documented; worker not implemented.
+**Status:** not complete.
 
-**Done when:** an uploaded deck can produce founder-reviewable profile suggestions and readiness updates without silently overwriting company claims.
+**Done when:** every surfaced candidate and decision is auditable and the feed can resume predictably across sessions.
 
-## Phase 7 — Standardized FundMatch packet
+## Phase 7 — Interest and introduction workflow
 
-**Goal:** give founders a concrete output investors can read.
+**Goal:** move “Interested” into a safe founder/investor workflow.
 
-**Build:** generated profile/packet view with company summary, traction, raise details, team, market, materials, readiness status, risks/questions, and source labels.
+**Build:** interest records, founder notification, Accept / Decline / Request more information, introduction threads, audit history.
 
-**Tech:** shared React packet renderer, standalone HTML export, browser print/save-PDF.
-
-**Status:** baseline delivered within Phase 3. A separate server-generated PDF, versioned packets, permissioned share links and richer field-level provenance are future work, not active capabilities.
-
-**Done when:** a founder can produce a clean standardized investor packet from confirmed profile/material data.
-
-## Phase 8 — Real integrations
-
-**Goal:** reduce manual entry using permitted customer-owned data sources.
-
-**Build:** first one or two integrations, likely founder-side documents/drive/deck links first, then investor CRM or email/calendar later.
-
-**Tech:** TBD per integration.
+**Tech:** Postgres/RLS + Realtime Broadcast + queue-backed transactional email.
 
 **Status:** not implemented.
 
-**Done when:** one real data source can be connected/imported with clear permissions, provenance, and revocation behavior.
+**Done when:** investor interest reaches the correct founder organization, founder response is permissioned/auditable, and contact information is not exposed automatically.
 
-## Phase 9 — Introduction workflow
+## Phase 8 — AI document processing loop
 
-**Goal:** move from interest to conversation.
+**Goal:** turn private uploaded materials into reviewable sourced suggestions.
 
-**Build:** intro request, accept/decline, founder/investor messaging state, email notifications, audit history.
+**Build:** queue uploaded documents, process them in a privileged worker, extract structured fields, write profile/readiness suggestions, preserve provenance and report failures.
 
-**Tech:** TBD email provider and workflow model.
+**Tech:** Supabase Queues + Edge Function/worker + service role server-side only + chosen LLM/extraction provider.
+
+**Status:** interface documented; live queue worker not implemented.
+
+**Done when:** an uploaded private deck produces founder-reviewable suggestions and readiness updates without silently overwriting company claims.
+
+## Phase 9 — Semantic matching augmentation
+
+**Goal:** improve candidate recall beyond exact categorical labels.
+
+**Build:** company/thesis embeddings, versioned embedding pipeline, semantic candidate similarity and combined explanations.
+
+**Tech:** `pgvector` + queue-backed embedding generation.
 
 **Status:** not implemented.
 
-**Done when:** an investor can request an intro and the founder can safely respond through a tracked workflow.
+**Done when:** semantic augmentation demonstrably surfaces useful candidates missed by exact labels while hard eligibility/exclusions remain authoritative.
 
-## Phase 10 — Market pilot
+## Phase 10 — Realtime and notification layer
 
-**Goal:** test whether a focused customer segment will use and pay for FundMatch.
+**Goal:** make important marketplace state feel immediate.
 
-**Build:** pilot onboarding, pricing offer, support workflow, analytics, measurable outcomes.
+**Build:** durable notifications + Realtime Broadcast + queued email fallback.
 
-**Likely first pilot:** founder readiness product or small VC investor sourcing assistant, not the full two-sided marketplace.
+**First events:** new interest, founder response, document processing completed/failed, team pipeline update, new suggestion.
 
-**Status:** not started.
+**Status:** not implemented as a complete layer.
 
-**Done when:** real pilot users complete the chosen workflow and produce evidence around time saved, readiness improvement, match quality, or meeting conversion.
+**Done when:** users see important changes without manual refresh and offline users receive controlled transactional email.
+
+## Phase 11 — Real integrations
+
+**Goal:** reduce manual entry using permitted customer-owned sources.
+
+**Build:** first one or two integrations, likely founder-owned documents/files first, then investor CRM/calendar later.
+
+**Status:** not implemented.
+
+**Done when:** one real source can be connected/imported with clear permissions, provenance and revocation behavior.
+
+## Phase 12 — Controlled market pilot
+
+**Goal:** test whether a focused segment repeatedly uses and values FundMatch.
+
+**Likely cohort:** founders + angels/small VC firms/accelerators rather than a broad marketplace launch.
+
+**Measure founder side:** profile completion, readiness completion, packet generation, response to investor interest.
+
+**Measure investor side:** profile open, save, interested, intro acceptance, meeting conversion and time-to-decision.
+
+**Measure marketplace:** eligible candidates per thesis, empty-feed rate, weak-fit feedback, response latency and progression to meeting/diligence.
+
+**Done when:** real pilot users complete the loop and provide evidence around match quality, time saved, readiness improvement or meeting conversion.
+
+## Phase 13 — Billing/commercialization
+
+**Goal:** charge for demonstrated value rather than speculative features.
+
+**Tech:** Stripe.
+
+**Status:** not implemented.
+
+**Done when:** a validated pilot offer can be purchased and provisioned reliably.
+
+## Phase 14 — Learned recommendation system
+
+**Goal:** improve ranking using accumulated marketplace outcomes.
+
+Do not start until FundMatch has enough clean real events/outcomes to train/evaluate against the deterministic baseline.
+
+Potential signals:
+
+- profile open/save/interest behavior
+- intro acceptance
+- meeting conversion
+- diligence progression
+- funded/no-deal outcomes
+- explicit weak-fit feedback
+
+**Done when:** an offline/online evaluation shows a learned model improves useful outcomes without destroying explainability, fairness or hard mandate constraints.
+
+## Mobile companion — post-validation, not launch blocker
+
+Dating products are mobile-first, but FundMatch includes diligence, document preparation and team pipeline work that benefits from desktop/web.
+
+Keep responsive web primary through pilot. After validation, consider React Native/Expo for discovery, notifications, quick replies and messaging while reusing the same backend contracts.
+
+## IP / public-repository boundary
+
+The public product may describe architecture at a high level, but do not publish the future secret sauce.
+
+Appropriate public material:
+
+- fictional demo data
+- high-level product flow
+- interaction patterns
+- generic architecture boundaries
+
+Keep private when commercially meaningful:
+
+- production source code
+- ranking weights / proprietary features
+- prompts/model configuration
+- proprietary sourcing methods
+- private investor/company datasets
+- behavioral/outcome training data
+- production credentials
+
+Before external pilots, prefer a private core repository or public-demo/private-core split.
 
 ## Visual identity milestone — September 2026
 
-**Status:** implemented and locally validated.
+**Status:** implemented.
 
-- User-directed 60/30/10 off-white, sage and periwinkle surface hierarchy.
-- Original generated arch artwork, self-hosted editorial type, asymmetric homepage and sage-framed film.
-- Shared workspace styling, layered discovery cards, accessible thesis-fit rings and founder-readiness panels.
-- Responsive layouts, focus states and reduced-motion support; existing matching, preparation and packet behavior preserved.
-- Typecheck, full app build, Pages build and all 40 local unit tests pass. Database checks run separately in CI. Browser visual QA was not performed in this pass.
+- 60/30/10 off-white, sage and periwinkle hierarchy.
+- Original editorial imagery and typography.
+- Product-led homepage preview.
+- Shared investor/founder workspace styling.
+- Responsive/focus/reduced-motion support.
+- Discovery cards with Pass/Save/Interested interactions.
 
-This is a visual milestone; it does not change Phase 5 backend deployment acceptance. See `docs/brand/VISUAL_REFRESH.md`.
+Visual refinement is no longer the highest-priority work. Do not redesign the interface again before proving the production marketplace loop unless usability testing reveals a real problem.
 
-## Product polish milestone — second design pass
+## Recommended execution order
 
-**Status:** implemented; full app/Pages builds and 43 local tests pass.
+```text
+1. Phase 5  — authenticated deployment acceptance
+2. Phase 4  — production investor sourcing loop
+3. Phase 6  — durable decisions + discovery event history
+4. Phase 7  — investor interest → founder response
+5. Phase 8  — queue-backed AI document processing
+6. Phase 9  — semantic matching augmentation
+7. Phase 10 — realtime + email notifications
+8. Phase 12 — controlled market pilot
+9. Phase 13 — billing
+10. Phase 14 — learned recommendations only after real outcome data
+```
 
-- Matching now leads the homepage through a working investor/founder preview and selectable company stories.
-- Original editorial imagery for the fictional Dippi and Soapbox Caddie examples; private profiles use sector identity instead of invented photography.
-- Shared discovery cards put fit, business metrics and Pass/Save/Interested into a coherent action surface, with horizontal gestures and scoped keyboard shortcuts.
-- Stronger Manrope interface typography with selective Instrument Serif display, preserving the 60/30/10 palette.
-- Vertical/diagonal gestures do not create decisions; reduced motion, keyboard focus and pending-state controls remain supported.
-- The internal preview started successfully but the cloud browser could not reach it. Deployment and public-site verification remain separate from authenticated backend acceptance.
-
-See `docs/brand/PRODUCT_POLISH.md` for implementation and asset provenance.
-
-## Recommended next step
-
-Complete **Phase 5 — Authenticated deployment acceptance** on the intended FundMatch backend, then build the remaining Phase 4 investor sourcing work (including manual company import).
-
-Phase 3 now provides the connected preparation workflow in code. The critical next gap is proving that the private workspace works for real accounts and isolated organizations. Do not assume that the connected Supabase project for another product is FundMatch’s backend.
-
-See `docs/FOUNDER_READINESS.md` for the implementation, validation record and acceptance steps.
+See [`docs/IMPLEMENTATION_NEXT_STEPS.md`](docs/IMPLEMENTATION_NEXT_STEPS.md) for the executable checklist.
 
 ## AI agent rules
 
 Every future AI coding session must:
 
 1. Read this roadmap first.
-2. Inspect the current repository before making claims.
-3. Work on only one phase or milestone at a time.
-4. Keep demo behavior clearly labeled.
-5. Never mark mocked integrations as live.
-6. Never put service role keys or secrets in browser code.
-7. Preserve provenance for important claims.
-8. Keep AI-generated profile changes human-reviewable.
-9. Avoid unlicensed proprietary private-market data.
-10. Update this roadmap after meaningful changes.
+2. Read `docs/MATCHING_ARCHITECTURE.md` before changing matching/infrastructure.
+3. Inspect current repository state before making claims.
+4. Work on one phase/milestone at a time.
+5. Keep demo behavior clearly labeled.
+6. Never mark mocked integrations as live.
+7. Never put service-role keys or secrets in browser code.
+8. Preserve provenance for important claims.
+9. Keep AI-generated profile changes human-reviewable.
+10. Keep hard eligibility rules outside LLM control.
+11. Avoid unlicensed proprietary private-market data.
+12. Do not expose proprietary production ranking details in public docs.
+13. Avoid premature Redis/Kafka/search/Kubernetes/microservice work.
+14. Update this roadmap after meaningful changes.

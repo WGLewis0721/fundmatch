@@ -11,15 +11,19 @@
 
 # Agent instructions
 
-Before changing FundMatch, read `ROADMAP.md` and the current `README.md`.
+Before changing FundMatch, read `ROADMAP.md`, `README.md`, and `docs/MATCHING_ARCHITECTURE.md`. For implementation sequencing, also read `docs/IMPLEMENTATION_NEXT_STEPS.md`.
 
 Rules:
 
 1. Work on one milestone at a time.
 2. Inspect the current repo before making claims about what exists.
 3. Keep demo behavior clearly labeled.
-4. Do not present mocked integrations, AI extraction, introductions, or production ranking as live.
+4. Do not present mocked integrations, AI extraction, introductions, semantic matching, or production ranking as live.
 5. Preserve the separation between the public demo (`/`, `/demo`) and authenticated app (`/app`).
-6. Keep service-role keys, migration URLs, and backend secrets out of browser code and public docs.
+6. Keep service-role keys, migration URLs, backend secrets, proprietary ranking weights, prompts, and production feature engineering out of browser code and public docs.
 7. Preserve provenance and human review for AI-generated company/investor claims.
-8. Update `ROADMAP.md` after meaningful product or infrastructure changes.
+8. Keep hard eligibility rules deterministic and outside LLM control.
+9. Prefer the documented managed-service modular-monolith architecture; do not introduce Redis, Kafka, dedicated search clusters, Kubernetes, or microservice decomposition without measured production need.
+10. Persist marketplace truth in Postgres; treat realtime as delivery and background queues as asynchronous execution.
+11. Avoid unlicensed proprietary private-market data.
+12. Update `ROADMAP.md` after meaningful product or infrastructure changes.
