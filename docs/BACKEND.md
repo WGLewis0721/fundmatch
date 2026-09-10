@@ -28,13 +28,13 @@ git-ignored except the example.
 | `VITE_SUPABASE_PUBLISHABLE_KEY`            | browser               | no (RLS-limited) | Publishable/anon key                                                                                       |
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | server functions      | no               | Same values for SSR/server functions                                                                       |
 | `SUPABASE_SERVICE_ROLE_KEY`                | backend workers only  | **yes**          | Bypasses RLS. Never in a client bundle, never in the Pages build. Only Astra's processing worker needs it. |
-| `LOVABLE_DB_MIGRATION_URL`                 | `drizzle-kit migrate` | **yes**          | Direct Postgres URL for migrations                                                                         |
+| `FUNDMATCH_DB_MIGRATION_URL`               | `drizzle-kit migrate` | **yes**          | Direct Postgres URL for migrations                                                                         |
 | `FUNDMATCH_TEST_DATABASE_URL`              | `bun test`            | local only       | Plain Postgres for the policy tests                                                                        |
 
 ## Provisioning a Supabase project
 
-1. Create a Supabase project (or use the existing Lovable Cloud project
-   `ejzizfvjnpzieigviglc` from `supabase/config.toml`).
+1. Create or access the dedicated FundMatch Supabase project
+   `ejzizfvjnpzieigviglc` from `supabase/config.toml`.
 2. Auth → Providers → Email: enable email + password. Keep **Confirm email**
    on for production (the signup screen handles the "check your inbox" case).
 3. Auth → URL configuration: set the Site URL to the deployed app origin and
@@ -48,7 +48,7 @@ git-ignored except the example.
 ### Migrations
 
 ```sh
-LOVABLE_DB_MIGRATION_URL=postgres://... bun run db:migrate
+FUNDMATCH_DB_MIGRATION_URL=postgres://... bun run db:migrate
 ```
 
 `drizzle-kit migrate` applies `drizzle/migrations/*.sql` in journal order and
@@ -74,7 +74,7 @@ currently carries hand-written additions for migration 0002.
 ## Deploying the authenticated app
 
 `bun run build` produces `.output/` through Nitro with the Cloudflare preset
-already configured by `@lovable.dev/vite-tanstack-config`.
+configured in `vite.config.ts`.
 
 Cloudflare Workers:
 
@@ -87,8 +87,7 @@ npx wrangler deploy --config .output/server/wrangler.json
 ```
 
 Any Node host works as well: run the Nitro server entry from `.output/server`
-with the same environment variables. Lovable Cloud deploys use the same build
-and read the variables from the connected Supabase project.
+with the same environment variables.
 
 Keep GitHub Pages pointed at the demo build only. The Pages workflow does not
 receive backend variables, by design.
