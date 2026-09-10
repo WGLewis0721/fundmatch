@@ -2,6 +2,17 @@
 
 Use one prompt at a time. Do not start the next phase until GPT-5.6 Sol accepts the current phase.
 
+## Mandatory completion protocol for every Sonnet prompt
+
+At the end of **every** Sonnet 5 implementation turn, you must produce two things:
+
+1. your normal implementation report with branch/PR, changes, tests, deployment evidence, blockers and readiness status; and
+2. a **ready-to-paste GPT-5.6 Sol follow-up prompt** using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+
+The Sol follow-up prompt is mandatory even if the implementation is incomplete, blocked, has no PR, or only changed documentation. It must be self-contained and include the exact phase, branch, PR, head commit, backend/environment, migrations or external changes, verification completed, security/data-boundary notes, blockers, files Sol should inspect first, and the exact acceptance/review task Sol should perform next.
+
+Do not merely say “send this to Sol.” Fill out the full template with real facts from the work you just performed. Never claim an unverified deployment/test/external change succeeded. Sonnet must stop after handing the current phase to Sol; it must not begin the next roadmap phase on its own.
+
 ## Prompt 1 — Authenticated production deployment
 
 You are the primary implementation engineer for FundMatch.
@@ -24,7 +35,7 @@ Tasks:
 
 Do not redesign the UI, add AI features, add billing, add integrations, or change the architecture. Do not create a replacement backend if the intended FundMatch backend is unavailable; document the blocker precisely.
 
-Return: changed files, tests run, deployment/acceptance result, remaining blockers, and PR-ready summary.
+Return: changed files, tests run, deployment/acceptance result, remaining blockers, PR-ready summary, and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 
 ## Prompt 2 — Production candidate retrieval
 
@@ -44,7 +55,7 @@ Requirements:
 
 Do not implement semantic matching, realtime, email, AI or billing.
 
-Return a PR-ready implementation with migration/query changes, tests and documentation.
+Return a PR-ready implementation with migration/query changes, tests, documentation, and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 
 ## Prompt 3 — Persistent Pass / Save / Interested
 
@@ -61,6 +72,8 @@ Requirements:
 - Add tests for duplicate submissions, retries, unauthorized mutation, refresh/resume and demo separation.
 
 Do not build founder responses or introductions yet.
+
+Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 
 ## Prompt 4 — Interest → founder response workflow
 
@@ -80,6 +93,8 @@ Requirements:
 
 Do not add realtime/email yet unless a no-op interface is needed for the later phase.
 
+Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+
 ## Prompt 5 — Append-only marketplace events
 
 Implement the FundMatch discovery/outcome event history defined in the architecture docs.
@@ -97,6 +112,8 @@ Requirements:
 - Document which events are facts vs user-entered outcomes.
 
 Do not train a recommendation model yet.
+
+Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 
 ## Prompt 6 — Queue-backed AI document processing
 
@@ -116,6 +133,8 @@ Requirements:
 
 Use the existing extraction/LLM interface where available; if provider credentials are unavailable, implement/test the durable pipeline boundary without pretending the provider is live.
 
+Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+
 ## Prompt 7 — Semantic matching with pgvector
 
 Implement Roadmap Phase 9 only after deterministic production discovery works.
@@ -132,6 +151,8 @@ Requirements:
 - Do not expose proprietary weights in public UI/docs.
 
 Do not add learned ranking yet.
+
+Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 
 ## Prompt 8 — Realtime + transactional notifications
 
@@ -152,6 +173,8 @@ Requirements:
 
 Do not build social-style chat.
 
+Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+
 ## Prompt 9 — Pilot readiness hardening
 
 Act as the implementation engineer preparing FundMatch for a controlled founder + angel/small-VC pilot.
@@ -162,6 +185,8 @@ Exercise end-to-end:
 founder account → company/profile/materials/readiness → investor account/thesis → candidate retrieval → score/explanation → Pass/Save/Interested → founder response → pipeline/outcome → notifications.
 
 Fix broken states, weak error handling, empty/loading states, data-integrity issues and accessibility regressions. Add missing regression tests. Do not add speculative features. Produce a pilot blocker list ranked P0/P1/P2.
+
+Return the pilot-hardening report, PR information, evidence, blocker list, and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 
 ## Prompt 10 — Implementation handoff
 
@@ -175,3 +200,4 @@ Requirements:
 - Update roadmap/docs only with verified capabilities.
 - Provide a concise architecture-impact summary and a list of files Opus/Astra may safely refine without changing behavior.
 - Do not merge your own PR unless explicitly instructed.
+- **Mandatory:** finish by generating a complete, ready-to-paste GPT-5.6 Sol follow-up prompt using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`. The Sol prompt must tell Sol what was changed, what was actually verified, what remains uncertain, what files to inspect first, and whether Sol should ACCEPT/REJECT the phase before any next-stage work begins.
