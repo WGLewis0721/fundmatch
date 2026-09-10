@@ -4,13 +4,15 @@ You are the primary implementation engineer for FundMatch.
 
 ## Mission
 
-Complete **Roadmap Phase 5 — Authenticated deployment acceptance** and stop. Do not begin production discovery/ranking work.
+Complete the **implementation** required for Roadmap Phase 5 — Authenticated deployment acceptance — and stop. Do not begin production discovery/ranking work.
+
+Sonnet is not the exhaustive validation agent. GitHub Copilot will perform the broader auth/browser/RLS/storage/adversarial validation after GPT-5.6 Sol reviews the PR.
 
 ## Repository
 
 `WGLewis0721/fundmatch`
 
-Read these files first:
+Read first:
 
 1. `AGENTS.md`
 2. `ROADMAP.md`
@@ -19,134 +21,74 @@ Read these files first:
 5. `docs/IMPLEMENTATION_NEXT_STEPS.md`
 6. `docs/BACKEND.md`
 7. `docs/PHASE5_ACCEPTANCE_AUDIT.md`
-8. `docs/TEST_EVIDENCE.md`
-9. `docs/ai-prompts/SONNET5_BUILD_PROMPTS.md`
-10. `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`
+8. `docs/ai-prompts/SONNET5_BUILD_PROMPTS.md`
+9. `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`
+10. `docs/ai-prompts/COPILOT_VALIDATION_HANDOFF_TEMPLATE.md`
 
-Use Prompt 1 from the Sonnet prompt file as the implementation contract.
+## Verified environment identity
 
-## Verified starting state
+FundMatch Supabase project ref: `ejzizfvjnpzieigviglc`
 
-The intended FundMatch Supabase project reference in the repo is:
+FundMatch Lovable project: `34443a2f-0671-4404-94db-fe807d4a7448`
 
-`ejzizfvjnpzieigviglc`
+Separate APEX Supabase project: `fnmxlmjrkgojowpzrcwa`
 
-The backend is attached to the original Lovable project:
+**Do not modify APEX.**
 
-`34443a2f-0671-4404-94db-fe807d4a7448`
-
-A separate directly connected Supabase project currently contains APEX tables such as `workspaces`, `subscriptions`, `stripe_connections`, `apex_billing_accounts`, and related credit-ledger tables. **Do not modify that project. It is not FundMatch.**
-
-The live FundMatch database is enabled and currently contains the original FundMatch tables, but it is still on the older permissive security model.
-
-Observed live policies include:
-
-- `profiles readable by authenticated`
-- `orgs read`
-- `orgs write`
-- `members read`
-- `members insert own`
-- `members delete own`
-- `startups read`
-- `startups write`
-- `metrics read`
-- `metrics write`
-- `materials read`
-- `materials write`
-- `investors read`
-- `investors write`
-- `theses read`
-- `theses write`
-- `matches read`
-- `matches write`
-- `swipes read`
-- `swipes own write`
-- `saved read`
-- `saved own write`
-- `pipeline read`
-- `pipeline write`
-- `notes read`
-- `notes write`
-- `intros read`
-- `intros write`
-- `activity read`
-- `activity write`
-
-The live database was also observed to be missing the newer Phase 5 tables expected from `drizzle/migrations/0002_fundmatch_accounts_persistence.sql`:
-
-- `organization_invitations`
-- `readiness_items`
-- `documents`
-- `profile_suggestions`
-
-Treat this as migration/deployment/acceptance work, not a backend redesign.
+The FundMatch backend was previously observed on the older permissive schema/security state and missing the newer Phase 5 tables/bucket expected by the repository migrations.
 
 ## Required implementation
 
-1. Inspect the live FundMatch schema before applying anything.
-2. Reconcile it against repository migrations `0000`, `0001`, and `0002`.
-3. Apply only the missing intended FundMatch migration changes.
-4. Replace the permissive RLS policies with the organization-scoped policy model in the repository.
-5. Verify all `SECURITY DEFINER` helpers/RPCs have explicit grants/revocations and enforce caller/organization authorization.
-6. Create/verify the private `documents` bucket and storage policies exactly as intended.
-7. Wire the authenticated `/app` deployment environment without committing secrets.
-8. Deploy the authenticated app using the documented existing architecture. Do not redesign hosting unless the documented target is impossible; if blocked, document the blocker rather than inventing a replacement platform.
-9. Verify signup, email-confirmation behavior, login, logout and password reset.
-10. Verify startup and investment-firm organization creation.
-11. Verify invitation acceptance and member-role boundaries.
-12. Verify founder profile/readiness/material persistence.
-13. Verify investor profile/thesis persistence.
-14. Verify document upload/download/delete.
-15. Run a two-organization acceptance test proving cross-org private row isolation.
-16. Run a two-organization storage test proving cross-org file isolation.
-17. Confirm the public `/` and `/demo` build remains browser-only and contains no backend/service-role secrets.
-18. Run typecheck, tests, relevant DB/RLS tests and production builds.
-19. Update `docs/TEST_EVIDENCE.md`, `docs/BACKEND.md`, and `ROADMAP.md` only with facts actually verified.
+1. Inspect the live FundMatch schema before applying changes.
+2. Reconcile it against the intended repo migrations; do not blindly replay the original schema/seed over an existing database.
+3. Apply the missing intended Phase 5 changes from `0002_fundmatch_accounts_persistence.sql`.
+4. Apply `0003_phase5_function_privileges.sql` immediately after `0002`.
+5. Replace old permissive policies with the intended organization-scoped policy model.
+6. Ensure privileged helpers/RPCs have explicit grants/revocations, safe `search_path`, and the intended caller/org checks.
+7. Create/verify the private `documents` bucket and intended object policies.
+8. Regenerate Supabase TypeScript types if the available tooling supports it.
+9. Wire/deploy the current authenticated `/app` to the intended FundMatch backend using the documented architecture; do not commit secrets or publish a stale replacement build.
+10. Configure the intended auth redirect URLs for the deployed origin when access permits.
+11. Fix only implementation issues required for Phase 5.
+12. Update `docs/BACKEND.md`, `ROADMAP.md`, and acceptance notes only with facts directly observed during implementation.
+13. Open a PR to `main`; do not merge it yourself.
 
-## Supabase security review requirements
+## Sonnet validation boundary
 
-Pay special attention to:
+Run only minimum sanity checks needed to avoid handing off obviously broken work, such as a directly relevant typecheck/build/migration sanity check when practical.
 
-- no authorization decisions using user-editable `user_metadata`;
-- `UPDATE` RLS policies having both `USING` and `WITH CHECK` where applicable;
-- `TO authenticated` never being treated as sufficient authorization by itself;
-- `SECURITY DEFINER` functions not being executable by `PUBLIC`/`anon` unless explicitly intended;
-- explicit `auth.uid()`/organization checks inside privileged helpers;
-- views, if any, not bypassing RLS unexpectedly;
-- Storage upsert permissions matching intended insert/select/update behavior;
-- service-role credentials never reaching the browser or Pages bundle.
+Do **not** spend the Sonnet turn performing the full signup/recovery browser walkthrough, two-organization attack matrix, Storage attack matrix, broad DB/RLS regression suite, full browser matrix, repeated builds, or other above-and-beyond validation. Those are GitHub Copilot's job after Sol reviews the implementation.
+
+## Security design requirements
+
+While implementing, preserve these boundaries:
+
+- no authorization based on user-editable `user_metadata`;
+- `UPDATE` RLS policies use both `USING` and `WITH CHECK` where applicable;
+- `TO authenticated` alone is never treated as authorization;
+- `SECURITY DEFINER` functions are not broadly executable unless explicitly intended;
+- service-role credentials never reach browser/public assets;
+- private Storage remains private and organization-scoped.
 
 ## Do not build
 
-Do not add:
+No Phase 6+, pgvector, new discovery retrieval, realtime notifications, queued AI extraction, billing, integrations, chat, UI redesign, Redis, Kafka, OpenSearch/Elasticsearch, Kubernetes, or microservice split.
 
-- semantic/pgvector matching;
-- production candidate retrieval;
-- realtime notifications;
-- queued AI extraction;
-- billing;
-- integrations;
-- generic messaging/chat;
-- UI redesign;
-- Redis/Kafka/OpenSearch/Kubernetes/microservices.
+## Required final report
 
-## Deliverable
+Return:
 
-Return a PR-ready implementation and report:
-
-- exact live backend used;
-- migration/schema changes;
+- branch and PR number/URL;
+- exact FundMatch backend/project used;
+- exact migration/schema/infrastructure changes actually applied;
+- confirmation APEX was untouched;
+- deployment URL/state for `/app`;
+- minimum sanity checks Sonnet ran;
 - files changed;
-- deployment URL;
-- tests/builds run and results;
-- two-org RLS evidence;
-- two-org Storage evidence;
-- auth-flow evidence;
-- remaining blockers;
-- explicit statement whether Phase 5 is ready for GPT-5.6 Sol acceptance review.
+- remaining blockers/uncertainties;
+- **proposed GitHub Copilot validations** for auth, RLS, Storage, two-org isolation, deployment, secret exclusion, and regression;
+- explicit statement: `READY FOR GPT-5.6 SOL ARCHITECTURE REVIEW` or `NOT READY`, with reason.
 
-Then **always include a complete ready-to-paste GPT-5.6 Sol follow-up prompt** using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`. Fill it with the actual implementation context, branch/PR/SHA, backend identity, deployment state, migrations, verification evidence, security notes, blockers, files to inspect first, and the exact acceptance task for Sol.
+Then include a complete ready-to-paste GPT-5.6 Sol follow-up prompt using `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`. Sol should inspect the PR/design and conclude by writing the authoritative GitHub Copilot validation prompt. Sol should not perform the entire mechanical validation matrix itself.
 
-The handoff prompt must tell Sol to independently review the PR, rerun the Phase 5 gate, return an explicit ACCEPT/REJECT decision, and either identify the next roadmap phase or generate the corrective Sonnet prompt. The user should never need to reconstruct context manually.
-
-Stop after Phase 5. Do not merge unless explicitly instructed.
+Stop after Phase 5 implementation. Do not merge unless explicitly instructed.
