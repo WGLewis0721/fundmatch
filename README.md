@@ -61,7 +61,10 @@ The public demo and authenticated app are intentionally separate. Keep GitHub Pa
 - Company profiles, source transparency, supporting material links, and review notes.
 - Pipeline stages: **New**, **Reviewing**, **Meeting**, **Passed**.
 - Saved shortlist.
-- Founder profile editing for Dippi and Soapbox Caddie.
+- Three-step founder profile builder for Dippi and Soapbox Caddie, with draft saves and honest unknown values.
+- Missing-profile/material indicators connected to the preparation workflow.
+- Standardized investor packet with checklist status, company-reported sources, selected external links, HTML download, and print/save-PDF.
+- Existing literal PDF/text extraction and human review under Build from deck (in-memory demo, not live AI).
 - Fundraising Readiness templates for VC and PE preparation.
 - Local persistence with schema validation, graceful storage failure, and confirmed reset.
 - Responsive layouts, keyboard focus, accessible dialogs, and empty states.
@@ -72,6 +75,7 @@ The public demo and authenticated app are intentionally separate. Keep GitHub Pa
 - Organization creation and roles: owner, admin, member.
 - Email-bound invitations.
 - Server-side persistence for company profiles, metrics, investment theses, discovery decisions, pipeline stages, team notes, material records, and readiness checklists.
+- The same guided founder builder, profile gap indicators and investor packet as the demo, backed by the authenticated data layer.
 - Private document upload model with validation, authorized downloads, and deletion.
 - Supabase Row-Level Security policies scoped to the authorized organization.
 
@@ -196,13 +200,14 @@ The film is a product motion graphic, not a claim that live AI, investor introdu
 - [`ROADMAP.md`](ROADMAP.md): source of truth for product goals, current status, phases, infrastructure, and next build steps.
 - [`docs/BACKEND.md`](docs/BACKEND.md): authenticated app backend, Supabase setup, RLS, private documents, and deployment.
 - [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md): upload processing, profile suggestions, readiness suggestions, and AI worker boundaries.
-- [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md): testing and security evidence.
+- [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md): earlier backend testing and security evidence.
+- [`docs/FOUNDER_READINESS.md`](docs/FOUNDER_READINESS.md): founder-readiness implementation, current validation and production acceptance gap.
 - [`docs/brand/BRAND.md`](docs/brand/BRAND.md): brand positioning, tokens, graphics, copy rules, and asset usage.
 - [`docs/brand/ASSET_MANIFEST.md`](docs/brand/ASSET_MANIFEST.md): graphics and source/context index.
 
 ## Best next product move
 
-The strongest near-term wedge is **Founder Readiness MVP**: help startup teams assemble a standardized investor-ready profile, readiness checklist, and FundMatch packet before requiring a fully liquid two-sided marketplace.
+The **Founder Readiness MVP** is now implemented in both surfaces: guided profile → materials → readiness → standardized packet. Real private-workspace acceptance is still pending. Next, verify the intended FundMatch backend and authenticated deployment before starting the remaining investor sourcing work.
 
 This creates value for founders immediately, strengthens the investor-side data model, and avoids depending on marketplace network effects too early.
 
