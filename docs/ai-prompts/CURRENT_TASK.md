@@ -4,33 +4,28 @@
 
 **Roadmap Phase 5 — Authenticated deployment acceptance**
 
-**Primary builder:** Sonnet 5  
-**Architecture/security reviewer:** GPT-5.6 Sol  
-**Downstream refinement:** Opus  
-**Downstream product/visual polish:** Astra
+Lovable is retired. The production target is:
 
-## Builder prompt
+`GitHub → standalone Supabase → Cloudflare Workers/Nitro`
 
-Run **Prompt 1 — Authenticated production deployment** from [`SONNET5_BUILD_PROMPTS.md`](SONNET5_BUILD_PROMPTS.md).
+## Current owner
 
-Before implementation, read:
+**GitHub Copilot** owns the immediate mechanical cleanup, standalone-backend migration, deployment and focused validation work.
 
-- `AGENTS.md`
-- `ROADMAP.md`
-- `README.md`
-- `docs/MATCHING_ARCHITECTURE.md`
-- `docs/IMPLEMENTATION_NEXT_STEPS.md`
-- `docs/BACKEND.md`
-- `docs/PHASE5_ACCEPTANCE_AUDIT.md`
+Run:
 
-## Critical live-backend finding
+`docs/ai-prompts/COPILOT_PHASE5_REMOVE_LOVABLE_AND_FINISH.md`
 
-The intended FundMatch database is attached to the original Lovable FundMatch project and is reachable there. The directly connected standalone Supabase project is APEX and must not be used.
+GPT-5.6 Sol remains the final Phase 5 acceptance authority after Copilot returns evidence.
 
-The live FundMatch database still has the old permissive RLS policy set and is missing the newer Phase 5 tables/private-document layer from migration `0002_fundmatch_accounts_persistence.sql`.
+## Critical facts
 
-Do not treat `/app` as safe for real private data until migration reconciliation, deployment and two-organization acceptance all pass.
+- APEX Supabase project `fnmxlmjrkgojowpzrcwa` is not FundMatch and must not be modified.
+- The prior Lovable-backed FundMatch project is retired from the production path.
+- FundMatch now needs its own standalone Supabase project.
+- The current GitHub app must deploy to Cloudflare from native TanStack Start/Nitro build tooling with no `@lovable.dev/*` dependency.
+- Phase 5 acceptance still requires the focused auth, RLS, Storage, persistence and two-organization checks in `PHASE5_ACCEPTANCE_CHECKLIST.md`.
 
 ## Stop condition
 
-Do **not** begin production candidate retrieval (Roadmap Phase 6) until GPT-5.6 Sol reviews and accepts Phase 5 evidence.
+Do **not** begin Roadmap Phase 6 until GitHub Copilot completes the requested Phase 5 evidence and GPT-5.6 Sol explicitly returns `ACCEPT PHASE 5`.
