@@ -318,7 +318,7 @@ Add dedicated search when Postgres/full-text/pgvector misses measured retrieval 
 
 **Tech:** Supabase + Cloudflare Workers/Nitro.
 
-**Status:** code exists; acceptance pending.
+**Status:** code exists; acceptance pending. GPT-5.6 Sol rejected the 2026-09-10 gate (live schema/RLS/storage/deployment blockers); a same-day Sonnet 5 continuation session could not close those blockers because it had no credentialed access to the live FundMatch Supabase project or to any deployment platform — see `docs/ai-prompts/SONNET5_PHASE5_BLOCKED_2026-09-10.md`. Repository-side code health (migrations apply cleanly locally, full test suite, typecheck, both builds) was reconfirmed; no live-backend or deployment work could be attempted.
 
 **Done when:** two separate test organizations cannot read or mutate each other's private data and the production app works without demo/localStorage assumptions.
 

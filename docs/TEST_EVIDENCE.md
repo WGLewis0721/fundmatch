@@ -149,3 +149,40 @@ variables, so the public demo keeps deploying exactly as before.
   / `PASSWORD_RECOVERY` flow but need one manual pass on a real project.
 - Astra's worker path (`set_document_processing`, `profile_suggestions`) is
   covered by the policy tests using the service role, not by a running worker.
+
+## Reconfirmation — 2026-09-10 (Sonnet 5, blocked continuation session)
+
+A Sonnet 5 session attempting the Phase 5 continuation work
+(`docs/ai-prompts/SONNET5_PHASE5_CONTINUE_AFTER_GATE.md`) had no credentialed
+path to the live FundMatch Supabase project or to any deployment platform
+(see `docs/ai-prompts/SONNET5_PHASE5_BLOCKED_2026-09-10.md` for the full
+access-blocker record). It re-ran the non-live verification path above
+against the current `main` tree to confirm code health did not regress:
+
+```text
+$ FUNDMATCH_DB_SHIM=1 sh scripts/db/apply-migrations.sh   # 0000 -> 0003, local PostgreSQL 16
+migrations applied
+
+$ FUNDMATCH_TEST_DATABASE_URL=postgres://... bun test
+60 pass
+0 fail
+241 expect() calls
+Ran 60 tests across 7 files.
+
+$ bun run typecheck   # clean
+$ bun run build       # authenticated /app (Nitro, cloudflare-module) - succeeds
+$ bun run build:pages # public demo - succeeds
+```
+
+A case-insensitive `grep -i supabase dist/assets/*.js` after `build:pages`
+finds only the literal environment-variable names `VITE_SUPABASE_URL` and
+`VITE_SUPABASE_PUBLISHABLE_KEY`, both resolving to `void 0` because the Pages
+build never defines them, plus the existing "backend configured" boolean
+gate — no project URL, key value, `createClient` call or `@supabase/*`
+runtime code. The bare case-sensitive `grep supabase` this document
+previously cited also still returns zero matches; the case-insensitive check
+is the more precise one and it still finds no secret material.
+
+This reconfirms the build/typecheck/unit-test result on the current `main`,
+but does not add any live-backend, deployment, auth-flow, or two-organization
+evidence — those remain exactly as blocked as before this session.

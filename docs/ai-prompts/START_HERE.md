@@ -12,6 +12,21 @@ Read the full result first:
 
 Phase 6 is blocked until the Phase 5 blockers are fixed and Sol reruns/accepts the gate.
 
+## Sonnet 5 continuation attempt — blocked on environment access (2026-09-10)
+
+A Sonnet 5 continuation session attempted the work below and could not reach
+the live FundMatch backend or any deployment platform from that session
+(its Supabase MCP connection only exposed the APEX project). Read:
+
+`docs/ai-prompts/SONNET5_PHASE5_BLOCKED_2026-09-10.md`
+
+That document records exactly what was verified without live-backend access
+(migrations apply cleanly locally, full test suite passes, typecheck clean,
+both builds succeed, no backend secrets in the public bundle) and exactly
+what a future session needs (real credentials/access to FundMatch project
+`ejzizfvjnpzieigviglc` and a deployment path for `/app`) before the
+remaining live blockers can be closed out.
+
 ## Sonnet 5 — next action
 
 Start here:
@@ -20,7 +35,7 @@ Start here:
 
 That prompt contains the verified backend identity, live schema/RLS findings, migration order, deployment requirements, tests, hard boundaries and required final report.
 
-Use it as the implementation contract. Branch from the latest `main`, complete Phase 5 only, open a PR, and stop for Sol review.
+Use it as the implementation contract. Branch from the latest `main`, complete Phase 5 only, open a PR, and stop for Sol review. **Before starting, confirm the session actually has credentialed access to FundMatch project `ejzizfvjnpzieigviglc`** (Supabase MCP scoped to that project, or the `LOVABLE_DB_MIGRATION_URL` secret) and a way to deploy `/app` — otherwise the live-backend blockers cannot be closed and the session will land in the same blocked state recorded above.
 
 The key pending migrations are:
 
