@@ -313,6 +313,19 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 
 This is a visual milestone; it does not change Phase 5 backend deployment acceptance. See `docs/brand/VISUAL_REFRESH.md`.
 
+## Product polish milestone — second design pass
+
+**Status:** implemented; full app/Pages builds and 43 local tests pass.
+
+- Matching now leads the homepage through a working investor/founder preview and selectable company stories.
+- Original editorial imagery for the fictional Dippi and Soapbox Caddie examples; private profiles use sector identity instead of invented photography.
+- Shared discovery cards put fit, business metrics and Pass/Save/Interested into a coherent action surface, with horizontal gestures and scoped keyboard shortcuts.
+- Stronger Manrope interface typography with selective Instrument Serif display, preserving the 60/30/10 palette.
+- Vertical/diagonal gestures do not create decisions; reduced motion, keyboard focus and pending-state controls remain supported.
+- The internal preview started successfully but the cloud browser could not reach it. Deployment and public-site verification remain separate from authenticated backend acceptance.
+
+See `docs/brand/PRODUCT_POLISH.md` for implementation and asset provenance.
+
 ## Recommended next step
 
 Complete **Phase 5 — Authenticated deployment acceptance** on the intended FundMatch backend, then build the remaining Phase 4 investor sourcing work (including manual company import).

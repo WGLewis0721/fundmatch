@@ -1,4 +1,4 @@
-import { MatchScore, WorkspaceSignature } from "@/components/fundmatch/brand-details";
+import { DiscoveryCard } from "@/components/fundmatch/discovery-card";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -18,7 +18,6 @@ import {
   ShieldCheck,
   Sparkles,
   Users,
-  X,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -161,10 +160,7 @@ export function Demo() {
           ["integrations", "Integrations", Link2],
         ] as const);
   const headings: Record<View, [string, string]> = {
-    discover: [
-      "Find your next “tell me more.”",
-      "A focused look at companies that overlap with your thesis.",
-    ],
+    discover: ["Discover your next big thing.", "A good fit deserves a closer look."],
     pipeline: ["Good conversations start here.", "Keep your next moves in view."],
     insights: [
       "The bigger picture.",
@@ -218,7 +214,7 @@ export function Demo() {
       </header>
       <div className="demo-layout">
         <aside className="demo-sidebar" aria-label="Demo navigation">
-          <div className="fm-workspace-caption">YOUR CORNER OF POSSIBILITY</div>
+          <div className="fm-workspace-caption">YOUR WORKSPACE</div>
           {nav.map(([v, label, Icon]) => (
             <Link
               key={v}
@@ -231,7 +227,6 @@ export function Demo() {
               {label}
             </Link>
           ))}
-          <WorkspaceSignature persona={persona} />
           <small>
             Fictional demo data.
             <br />
@@ -310,68 +305,34 @@ export function Demo() {
                     </select>
                   </div>
                   {active ? (
-                    <div className="demo-grid">
-                      <article className="demo-card demo-discovery" key={active.c.id}>
-                        <div className="fm-discovery-label">
-                          <span>THE DISCOVERY EDIT</span>
-                          <span>THESIS-LED SELECTION</span>
-                        </div>
-                        <div className="demo-discovery-top">
-                          <span className="fm-company-logo">
-                            {active.c.name.slice(0, 1).toLowerCase()}.
-                          </span>
-                          <MatchScore score={active.match.score} />
-                        </div>
-                        <h2>{active.c.name}</h2>
-                        <p>{active.c.tagline}</p>
-                        <div className="demo-meta">
-                          <span>{active.c.sector}</span>
-                          <span>{active.c.stage}</span>
-                          <span>{active.c.geography}</span>
-                        </div>
-                        <p>{active.c.summary}</p>
-                        <Metrics company={active.c} />
+                    <div className="demo-grid fm-discovery-grid">
+                      <DiscoveryCard
+                        key={active.c.id}
+                        company={active.c}
+                        score={active.match.score}
+                        metrics={<Metrics company={active.c} />}
+                        demo
+                        onDecide={(decision) => decide(active.c.id, decision)}
+                      >
                         <Link
                           to="/demo"
                           search={navigate("company", active.c.id)}
                           className="demo-link"
                         >
-                          Explore the company <ArrowUpRight size={13} className="inline" />
+                          View full profile <ArrowUpRight size={15} />
                         </Link>
-                        <div className="demo-controls">
-                          <button
-                            className="fm-button secondary"
-                            onClick={() => decide(active.c.id, "pass")}
-                          >
-                            <X size={15} />
-                            Pass
-                          </button>
-                          <button
-                            className="fm-button secondary"
-                            onClick={() => decide(active.c.id, "save")}
-                          >
-                            <Bookmark size={15} />
-                            Save
-                          </button>
-                          <button
-                            className="fm-button"
-                            onClick={() => decide(active.c.id, "interested")}
-                          >
-                            Interested <ArrowUpRight size={15} />
-                          </button>
-                        </div>
-                      </article>
+                      </DiscoveryCard>
                       <aside>
                         <article className="demo-card">
-                          <span className="fm-kicker">THE REASON BEHIND THE FIT</span>
-                          <h3>Why it’s worth a look.</h3>
+                          <span className="fm-kicker">YOUR THESIS, IN FOCUS</span>
+                          <h3>Here’s the connection.</h3>
                           {active.match.strengths.map((x) => (
                             <div className="demo-check" key={x}>
                               <Check size={16} />
                               {x}
                             </div>
                           ))}
-                          <h3>Questions to explore</h3>
+                          <h3 className="fm-diligence-heading">Worth a conversation</h3>
                           {active.match.risks.map((x) => (
                             <p key={x}>{x}</p>
                           ))}
