@@ -6,9 +6,8 @@
 
 /*
  * FundMatch design system.
- * 60% warm off-white surfaces / 30% charcoal-navy structure /
- * 5% mint positive accents / 5% periwinkle secondary accents.
- * All colors are oklch tokens. Never hardcode colors in components.
+ * 60% warm off-white / 30% sage green / 10% periwinkle blue.
+ * Semantic tokens mirror the public and private FundMatch brand surfaces.
  */
 
 @theme inline {
@@ -68,48 +67,48 @@
 
 :root {
   --radius: 1rem;
-  --background: oklch(0.975 0.007 95);
-  --foreground: oklch(0.245 0.031 259);
-  --surface: oklch(1 0 0);
-  --surface-muted: oklch(0.955 0.009 95);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.245 0.031 259);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.245 0.031 259);
-  --primary: oklch(0.245 0.031 259);
-  --primary-foreground: oklch(0.985 0.006 95);
-  --secondary: oklch(0.945 0.011 95);
-  --secondary-foreground: oklch(0.245 0.031 259);
-  --muted: oklch(0.948 0.009 95);
-  --muted-foreground: oklch(0.53 0.021 259);
-  --accent: oklch(0.93 0.055 158);
-  --accent-foreground: oklch(0.38 0.09 158);
-  --mint: oklch(0.915 0.068 158);
-  --mint-strong: oklch(0.78 0.12 158);
-  --mint-foreground: oklch(0.42 0.1 158);
-  --peri: oklch(0.74 0.128 271);
-  --peri-soft: oklch(0.93 0.045 271);
-  --peri-foreground: oklch(0.44 0.16 271);
+  --background: #f8f7f2;
+  --foreground: #28352e;
+  --surface: #fdfcf8;
+  --surface-muted: #e3e9dc;
+  --card: #fdfcf8;
+  --card-foreground: #28352e;
+  --popover: #fdfcf8;
+  --popover-foreground: #28352e;
+  --primary: #909be8;
+  --primary-foreground: #242d48;
+  --secondary: #e3e9dc;
+  --secondary-foreground: #28352e;
+  --muted: #eeefe8;
+  --muted-foreground: #626a61;
+  --accent: #e3e9dc;
+  --accent-foreground: #3f5139;
+  --mint: #a5b89c;
+  --mint-strong: #647c5a;
+  --mint-foreground: #354b30;
+  --peri: #909be8;
+  --peri-soft: #e6e8f8;
+  --peri-foreground: #47538b;
   --destructive: oklch(0.58 0.19 22);
   --destructive-foreground: oklch(0.985 0.006 95);
   --warning: oklch(0.85 0.11 82);
   --warning-foreground: oklch(0.45 0.1 60);
-  --border: oklch(0.9 0.011 95);
-  --input: oklch(0.9 0.011 95);
-  --ring: oklch(0.74 0.128 271);
-  --chart-1: oklch(0.74 0.128 271);
-  --chart-2: oklch(0.78 0.12 158);
+  --border: #d8ddd1;
+  --input: #cbd2c3;
+  --ring: #5c67b4;
+  --chart-1: #909be8;
+  --chart-2: #647c5a;
   --chart-3: oklch(0.245 0.031 259);
   --chart-4: oklch(0.85 0.11 82);
   --chart-5: oklch(0.63 0.09 230);
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.245 0.031 259);
-  --sidebar-primary: oklch(0.245 0.031 259);
-  --sidebar-primary-foreground: oklch(0.985 0.006 95);
-  --sidebar-accent: oklch(0.948 0.009 95);
-  --sidebar-accent-foreground: oklch(0.245 0.031 259);
-  --sidebar-border: oklch(0.9 0.011 95);
-  --sidebar-ring: oklch(0.74 0.128 271);
+  --sidebar: #a5b89c;
+  --sidebar-foreground: #28352e;
+  --sidebar-primary: #f8f7f2;
+  --sidebar-primary-foreground: #28352e;
+  --sidebar-accent: #e3e9dc;
+  --sidebar-accent-foreground: #28352e;
+  --sidebar-border: #93a789;
+  --sidebar-ring: #5c67b4;
 }
 
 @layer base {

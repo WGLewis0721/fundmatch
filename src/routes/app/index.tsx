@@ -1,3 +1,4 @@
+import { MatchScore, WorkspaceSignature } from "@/components/fundmatch/brand-details";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
@@ -189,7 +190,7 @@ function WorkspaceShell() {
   };
   const props: ViewProps = { ws: data, toast: setToast };
   return (
-    <div className="fm-demo">
+    <div className="fm-demo" data-persona={persona}>
       <header className="demo-header">
         <Link to="/">
           <Brand />
@@ -225,12 +226,20 @@ function WorkspaceShell() {
       </header>
       <div className="demo-layout">
         <aside className="demo-sidebar" aria-label="Workspace navigation">
+          <div className="fm-workspace-caption">YOUR CORNER OF POSSIBILITY</div>
           {nav.map(([v, label, Icon]) => (
-            <Link key={v} to="/app" search={{ view: v }} className={view === v ? "active" : ""}>
+            <Link
+              key={v}
+              to="/app"
+              search={{ view: v }}
+              className={view === v ? "active" : ""}
+              aria-current={view === v ? "page" : undefined}
+            >
               <Icon size={17} />
               {label}
             </Link>
           ))}
+          <WorkspaceSignature persona={persona} />
           <small>
             Signed in as {data.email}.
             <br />
@@ -435,15 +444,16 @@ function Discover({ ws, toast }: ViewProps) {
         <QueryState query={decisions}>
           {active ? (
             <div className="demo-grid">
-              <article className="demo-card demo-discovery">
+              <article className="demo-card demo-discovery" key={active.startup.id}>
+                <div className="fm-discovery-label">
+                  <span>THE DISCOVERY EDIT</span>
+                  <span>THESIS-LED SELECTION</span>
+                </div>
                 <div className="demo-discovery-top">
                   <span className="fm-company-logo">
                     {active.startup.name.slice(0, 1).toLowerCase()}.
                   </span>
-                  <div className="demo-score">
-                    <strong>{active.match.score}</strong>
-                    <span>THESIS FIT / 100</span>
-                  </div>
+                  <MatchScore score={active.match.score} />
                 </div>
                 <h2>{active.startup.name}</h2>
                 <p>{active.startup.tagline}</p>

@@ -1,3 +1,4 @@
+import { MatchScore, WorkspaceSignature } from "@/components/fundmatch/brand-details";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -188,7 +189,7 @@ export function Demo() {
     company: [company.name, company.tagline],
   };
   return (
-    <div className="fm-demo">
+    <div className="fm-demo" data-persona={persona}>
       <header className="demo-header">
         <Link to="/">
           <Brand />
@@ -217,12 +218,20 @@ export function Demo() {
       </header>
       <div className="demo-layout">
         <aside className="demo-sidebar" aria-label="Demo navigation">
+          <div className="fm-workspace-caption">YOUR CORNER OF POSSIBILITY</div>
           {nav.map(([v, label, Icon]) => (
-            <Link key={v} to="/demo" search={navigate(v)} className={view === v ? "active" : ""}>
+            <Link
+              key={v}
+              to="/demo"
+              search={navigate(v)}
+              className={view === v ? "active" : ""}
+              aria-current={view === v ? "page" : undefined}
+            >
               <Icon size={17} />
               {label}
             </Link>
           ))}
+          <WorkspaceSignature persona={persona} />
           <small>
             Fictional demo data.
             <br />
@@ -302,15 +311,16 @@ export function Demo() {
                   </div>
                   {active ? (
                     <div className="demo-grid">
-                      <article className="demo-card demo-discovery">
+                      <article className="demo-card demo-discovery" key={active.c.id}>
+                        <div className="fm-discovery-label">
+                          <span>THE DISCOVERY EDIT</span>
+                          <span>THESIS-LED SELECTION</span>
+                        </div>
                         <div className="demo-discovery-top">
                           <span className="fm-company-logo">
                             {active.c.name.slice(0, 1).toLowerCase()}.
                           </span>
-                          <div className="demo-score">
-                            <strong>{active.match.score}</strong>
-                            <span>THESIS FIT / 100</span>
-                          </div>
+                          <MatchScore score={active.match.score} />
                         </div>
                         <h2>{active.c.name}</h2>
                         <p>{active.c.tagline}</p>

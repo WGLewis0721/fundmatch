@@ -66,21 +66,31 @@ Avoid saying:
 The current app CSS defines these core FundMatch tokens in `src/fundmatch.css`:
 
 ```css
---fm-ink: #24272b;
---fm-paper: #f8f7f3;
---fm-mint: #c6efde;
---fm-peri: #9caafa;
---fm-muted: #727579;
---fm-line: #e5e4df;
+--fm-ink: #28352e;
+--fm-paper: #f8f7f2;
+--fm-mint: #a5b89c;
+--fm-peri: #909be8;
+--fm-muted: #626a61;
+--fm-line: #d8ddd1;
 ```
 
 Use these as the default brand base unless a future full redesign is explicitly requested.
+
+## September 2026 visual refresh
+
+The user-approved balance is **60% off-white / 30% sage green / 10% periwinkle blue**, measured as an approximate hierarchy of visible surfaces rather than an exact pixel count. Charcoal-green is reserved for typography and fine detail. The `--fm-mint` compatibility token now means sage, not mint.
+
+The direction is a premium venture journal: Instrument Serif regular/italic for expressive headlines, a clean system sans for product controls, original ceramic/glass artwork, sage workspace navigation, layered discovery cards and periwinkle thesis-fit rings. The homepage campaign line is “Great companies. Right chemistry.”
+
+`src/fundmatch-personality.css` carries this treatment across the public homepage, demo and authenticated workspace. `src/styles.css` supplies matching semantic tokens for shared controls. Fonts are self-hosted with their OFL license. Keep actionable information as real HTML, keep source and demo labels visible, and honor reduced-motion preferences.
+
+See [VISUAL_REFRESH.md](VISUAL_REFRESH.md) for references, asset provenance and validation.
 
 ## Visual direction
 
 - off-white editorial canvas
 - charcoal typography
-- soft mint and periwinkle accents
+- sage green structure and periwinkle accents
 - rounded cards
 - clear status chips
 - investor/pipeline dashboards
@@ -99,7 +109,7 @@ These SVG files are included for README, docs, and future design reference:
 - `docs/brand/assets/fundmatch-investor-feed.svg`
 - `docs/brand/assets/fundmatch-standardized-packet.svg`
 
-They are intentionally simple, text-friendly, and consistent with the current app tokens.
+These earlier concept diagrams remain editable; their original colors predate the September visual refresh. Use the tokens above for new implementation.
 
 ## Prior generated graphics
 

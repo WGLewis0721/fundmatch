@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { backendConfigured } from "@/lib/backend";
 import "../fundmatch.css";
+import "../fundmatch-personality.css";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -68,30 +69,70 @@ export function Home() {
       </header>
       <main>
         <section className="fm-hero">
-          <div className="fm-eyebrow">
-            <span /> THE NEXT CHAPTER STARTS WITH A MATCH
+          <div className="fm-hero-copy">
+            <div className="fm-eyebrow">
+              <span /> THE NEXT CHAPTER STARTS WITH A MATCH
+            </div>
+            <h1>
+              Great companies.
+              <br />
+              <span>
+                Right <em>chemistry.</em>
+              </span>
+            </h1>
+            <p>
+              A little more conviction. A lot less cold outreach. Bring your company story and
+              investment thesis into the same conversation.
+            </p>
+            <div className="fm-actions">
+              <Link
+                to="/demo"
+                search={{ persona: "investor", view: "discover", company: "dippi" }}
+                className="fm-button"
+              >
+                Find your next match <ArrowRight size={17} />
+              </Link>
+              <button className="fm-text-button" onClick={() => setFilm(true)}>
+                Watch the film <Play size={15} fill="currentColor" />
+              </button>
+            </div>
+            <div className="fm-hero-footnote">
+              <span className="fm-live-dot" /> Built for founders. Curated by your thesis.
+            </div>
           </div>
-          <h1>
-            Great companies.
-            <br />
-            <span>Right investors.</span>
-          </h1>
-          <p>
-            Less searching. More possibility.
-            <br />
-            Meet the workspace that brings capital and ambition together.
-          </p>
-          <div className="fm-actions">
-            <Link
-              to="/demo"
-              search={{ persona: "investor", view: "discover", company: "dippi" }}
-              className="fm-button"
-            >
-              Find your next match <ArrowRight size={17} />
-            </Link>
-            <button className="fm-text-button" onClick={() => setFilm(true)}>
-              Watch the film <Play size={15} fill="currentColor" />
-            </button>
+          <figure className="fm-hero-art">
+            <img
+              src={media + "fundmatch-arch.webp"}
+              alt="Sage ceramic and periwinkle glass ribbons curve together into an open arch."
+              width="1536"
+              height="1024"
+              fetchPriority="high"
+            />
+            <figcaption>
+              <span>THE ART OF FINDING FIT</span>
+              <span>
+                Two perspectives.
+                <br />
+                <em>One possibility.</em>
+              </span>
+              <ArrowUpRight size={24} />
+            </figcaption>
+            <div className="fm-art-label">
+              <span className="fm-live-dot" /> A SHARED AMBITION
+            </div>
+          </figure>
+          <div className="fm-hero-index">
+            <span>01 — DISCOVER THE OVERLAP</span>
+            <span>
+              Capital meets a little chemistry. <ArrowRight size={16} />
+            </span>
+          </div>
+        </section>
+        <section className="fm-cinema" aria-label="Meet FundMatch in motion">
+          <div className="fm-cinema-intro">
+            <span className="fm-kicker">A FEEL FOR WHAT’S NEXT</span>
+            <h2>A better beginning.</h2>
+            <p>Take a 24-second look inside FundMatch.</p>
           </div>
           <div className="fm-film-frame">
             <video
