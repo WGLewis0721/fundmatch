@@ -11,7 +11,7 @@
 
 # Agent instructions
 
-Before changing FundMatch, read `ROADMAP.md`, `README.md`, and `docs/MATCHING_ARCHITECTURE.md`. For implementation sequencing, also read `docs/IMPLEMENTATION_NEXT_STEPS.md`.
+Before changing FundMatch, read `ROADMAP.md`, `README.md`, and `docs/MATCHING_ARCHITECTURE.md`. For implementation sequencing, also read `docs/IMPLEMENTATION_NEXT_STEPS.md`. If multiple AI models are being used for build/review/refinement/polish, read `docs/ai-prompts/README.md` and use the role-specific prompts there.
 
 Rules:
 
