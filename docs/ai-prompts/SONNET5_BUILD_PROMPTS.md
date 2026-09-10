@@ -4,14 +4,19 @@ Use one prompt at a time. Do not start the next phase until GPT-5.6 Sol accepts 
 
 ## Mandatory completion protocol for every Sonnet prompt
 
-At the end of **every** Sonnet 5 implementation turn, you must produce two things:
+Sonnet 5 is the **builder**, not the exhaustive validation agent.
 
-1. your normal implementation report with branch/PR, changes, tests, deployment evidence, blockers and readiness status; and
-2. a **ready-to-paste GPT-5.6 Sol follow-up prompt** using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+For each phase:
 
-The Sol follow-up prompt is mandatory even if the implementation is incomplete, blocked, has no PR, or only changed documentation. It must be self-contained and include the exact phase, branch, PR, head commit, backend/environment, migrations or external changes, verification completed, security/data-boundary notes, blockers, files Sol should inspect first, and the exact acceptance/review task Sol should perform next.
+1. implement the scoped feature/infrastructure work;
+2. run only the minimum sanity checks needed to avoid handing off obviously broken work (for example a directly relevant typecheck/build/focused changed-area test when practical);
+3. do **not** spend the turn on broad regression suites, extensive browser walkthroughs, adversarial matrices, repeated environment checks, or above-and-beyond validation;
+4. propose the exact validations GitHub Copilot should perform;
+5. finish with a complete GPT-5.6 Sol follow-up prompt using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 
-Do not merely say “send this to Sol.” Fill out the full template with real facts from the work you just performed. Never claim an unverified deployment/test/external change succeeded. Sonnet must stop after handing the current phase to Sol; it must not begin the next roadmap phase on its own.
+Sol will review the architecture/diff and turn the proposed checks into the authoritative Copilot validation prompt. GitHub Copilot owns extended validation and evidence gathering.
+
+Never claim an unverified deployment/test/external change succeeded. Stop after handing the current phase to Sol.
 
 ## Prompt 1 — Authenticated production deployment
 
@@ -19,43 +24,41 @@ You are the primary implementation engineer for FundMatch.
 
 Repository: `WGLewis0721/fundmatch`
 
-Read `AGENTS.md`, `ROADMAP.md`, `docs/MATCHING_ARCHITECTURE.md`, `docs/IMPLEMENTATION_NEXT_STEPS.md`, `docs/BACKEND.md`, and `README.md` before changing code.
+Read `AGENTS.md`, `ROADMAP.md`, `docs/MATCHING_ARCHITECTURE.md`, `docs/IMPLEMENTATION_NEXT_STEPS.md`, `docs/BACKEND.md`, `README.md`, and `docs/ai-prompts/COPILOT_VALIDATION_HANDOFF_TEMPLATE.md` before changing code.
 
-Goal: complete Roadmap Phase 5 — Authenticated deployment acceptance.
+Goal: complete Roadmap Phase 5 — Authenticated deployment acceptance implementation.
 
 Tasks:
 - Inspect the existing `/app` implementation and current Supabase configuration.
 - Wire the intended FundMatch Supabase project and deployment environment without exposing secrets.
-- Deploy or prepare the authenticated app for Cloudflare Workers/Nitro using the existing architecture.
-- Verify signup, email confirmation behavior, login, logout, password recovery, organization creation, invitation flow, private document upload/download/delete and organization-scoped persistence.
-- Test with two separate organizations and prove they cannot read or mutate each other's private rows or files.
-- Fix only issues required for this acceptance boundary.
-- Add/update automated tests where practical.
-- Update `ROADMAP.md`, `docs/BACKEND.md`, and test evidence with what was actually verified.
+- Reconcile/apply the intended Phase 5 migrations and security model.
+- Prepare/deploy the authenticated app using the documented architecture.
+- Fix only implementation issues required for this acceptance boundary.
+- Add focused tests only when they are directly part of the implementation contract; leave extended execution/validation to GitHub Copilot.
+- Update docs with what was actually changed or directly observed.
 
-Do not redesign the UI, add AI features, add billing, add integrations, or change the architecture. Do not create a replacement backend if the intended FundMatch backend is unavailable; document the blocker precisely.
+Do not redesign the UI, add AI features, billing, integrations, production discovery, or change architecture.
 
-Return: changed files, tests run, deployment/acceptance result, remaining blockers, PR-ready summary, and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return: changed files, implementation/deployment state, minimum sanity checks, blockers, PR-ready summary, proposed GitHub Copilot validations, and the completed GPT-5.6 Sol follow-up prompt.
 
 ## Prompt 2 — Production candidate retrieval
 
-Read the FundMatch architecture docs first. Implement only the production discovery retrieval layer for Roadmap Phase 6.
+Implement only the production discovery retrieval layer for Roadmap Phase 6.
 
 Goal: authenticated investor users receive eligible startup candidates from Postgres instead of demo/localStorage data.
 
 Requirements:
-- Hard eligibility filters must remain authoritative: visibility, stage, sector, geography, check/raise compatibility and explicit exclusions as currently modeled.
-- Query must respect RLS and organization permissions.
-- Do not expose private founder documents/readiness/internal fields.
-- Avoid resurfacing candidates whose current decision state makes them ineligible for the active feed.
-- Make retrieval deterministic and testable.
-- Keep the existing MatchEngine as the scoring baseline; do not add embeddings yet.
-- Add indexes only when justified by the actual query.
-- Add tests for eligibility, exclusions, duplicate suppression and organization boundaries.
+- hard eligibility filters remain authoritative: visibility, stage, sector, geography, check/raise compatibility and explicit exclusions;
+- query respects RLS and organization permissions;
+- private founder documents/readiness/internal fields are not exposed;
+- previously decided/suppressed candidates are handled according to the approved state contract;
+- retrieval remains deterministic and testable;
+- existing MatchEngine remains the scoring baseline; no embeddings yet;
+- add indexes only when justified by the actual query.
 
-Do not implement semantic matching, realtime, email, AI or billing.
+Do not spend the implementation turn exhaustively exercising eligibility combinations. Define those as Copilot validations.
 
-Return a PR-ready implementation with migration/query changes, tests, documentation, and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return implementation details, minimum sanity checks, proposed Copilot validation cases, and the completed Sol follow-up prompt.
 
 ## Prompt 3 — Persistent Pass / Save / Interested
 
@@ -64,36 +67,34 @@ Implement durable production decisions for authenticated investors.
 Goal: Pass, Save and Interested survive refresh/login/device changes and produce correct current state.
 
 Requirements:
-- Persist decisions server-side under the correct user/organization.
-- Enforce uniqueness/idempotency so repeated clicks/retries do not create inconsistent state.
-- Preserve a clean distinction between current decision state and append-only behavioral history.
-- Wire the existing discovery-card UI to the production data layer while preserving demo behavior on `/demo`.
-- Handle mutation failure honestly: the card must remain actionable if the server write fails.
-- Add tests for duplicate submissions, retries, unauthorized mutation, refresh/resume and demo separation.
+- persist decisions server-side under the correct user/organization;
+- enforce uniqueness/idempotency in the implementation;
+- keep current decision state distinct from append-only behavioral history;
+- wire existing discovery UI to production data while preserving `/demo` behavior;
+- failed server writes must not falsely advance/remove the card.
 
-Do not build founder responses or introductions yet.
+Do not run broad retry/race/regression matrices yourself. Specify those for Copilot.
 
-Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return implementation details, minimum sanity checks, proposed Copilot validations, and the completed Sol follow-up prompt.
 
 ## Prompt 4 — Interest → founder response workflow
 
 Implement Roadmap Phase 7 without turning FundMatch into open messaging.
 
-Goal: investor `Interested` creates a permissioned interest request that the founder organization can Accept, Decline or Request more information.
+Goal: investor `Interested` creates a permissioned request that the founder organization can Accept, Decline or Request more information.
 
 Requirements:
-- Create the minimum workflow tables/state transitions required.
-- Do not automatically expose founder personal contact information.
-- Restrict reads/writes with RLS so only the relevant investor and founder organizations can access the request.
-- Record actor, timestamps and state transition history.
-- Make transitions idempotent and reject invalid transitions.
-- Add founder UI for pending interest and investor UI for status.
-- Preserve demo-only behavior separately.
-- Add tests for authorization, valid/invalid transitions, duplicate requests and cross-org isolation.
+- create the minimum workflow tables/state transitions;
+- do not automatically expose founder personal contact information;
+- restrict access with RLS to relevant investor/founder organizations;
+- record actor, timestamps and transition history;
+- make transitions idempotent and reject invalid transitions;
+- add founder pending-interest UI and investor status UI;
+- preserve demo-only behavior separately.
 
-Do not add realtime/email yet unless a no-op interface is needed for the later phase.
+Do not perform exhaustive state-machine or cross-org attack testing in this turn; assign it to Copilot.
 
-Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return implementation details, minimum sanity checks, proposed Copilot validations, and the completed Sol follow-up prompt.
 
 ## Prompt 5 — Append-only marketplace events
 
@@ -101,19 +102,18 @@ Implement the FundMatch discovery/outcome event history defined in the architect
 
 Goal: preserve auditable behavioral history separately from current state.
 
-Initial event types should cover: impression, profile_open, pass, save, interested, intro_requested, intro_accepted, intro_declined, meeting, diligence, funded and no_deal.
+Initial event types: impression, profile_open, pass, save, interested, intro_requested, intro_accepted, intro_declined, meeting, diligence, funded and no_deal.
 
 Requirements:
-- Use append-only event records with actor, organization, subject/candidate, timestamp and relevant score/model/version context.
-- Prevent ordinary clients from editing or deleting history they should not control.
-- Keep current-state tables optimized for product reads; do not force the UI to reconstruct all state from events.
-- Add event writes to the relevant existing actions.
-- Add tests for event integrity, authorization and duplicate/idempotent command handling.
-- Document which events are facts vs user-entered outcomes.
+- append-only event records include actor, organization, subject/candidate, timestamp and relevant score/model/version context;
+- ordinary clients cannot edit/delete history they should not control;
+- current-state tables remain optimized for reads;
+- relevant actions emit events;
+- document which events are system facts vs user-entered outcomes.
 
-Do not train a recommendation model yet.
+Delegate exhaustive event-integrity/idempotency/authorization validation to Copilot.
 
-Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return implementation details, minimum sanity checks, proposed Copilot validations, and the completed Sol follow-up prompt.
 
 ## Prompt 6 — Queue-backed AI document processing
 
@@ -122,37 +122,35 @@ Implement Roadmap Phase 8 using the existing Astra/profile-intelligence contract
 Goal: a private uploaded deck/material can be processed asynchronously into founder-reviewable suggestions with provenance.
 
 Requirements:
-- Use Supabase Queues/`pgmq` for durable work.
-- Use a privileged server-side worker/Edge Function; service-role credentials never reach the browser.
-- Make jobs retryable and idempotent.
-- Preserve document lifecycle states and safe failure messages.
-- Produce suggestions; never silently overwrite founder-controlled profile fields.
-- Preserve document/source provenance and confidence.
-- Keep private documents private.
-- Add tests for duplicate delivery, failed jobs, unauthorized access and accepted/rejected suggestion behavior.
+- use Supabase Queues/`pgmq` for durable work;
+- privileged server-side worker/Edge Function; service-role credentials never reach browser;
+- jobs are designed retryable/idempotent;
+- preserve document lifecycle states and safe failure messages;
+- produce suggestions, never silent profile overwrites;
+- preserve provenance and confidence;
+- keep private documents private.
 
-Use the existing extraction/LLM interface where available; if provider credentials are unavailable, implement/test the durable pipeline boundary without pretending the provider is live.
+If provider credentials are unavailable, implement the durable boundary honestly. Do not spend the build turn exhaustively simulating failure/retry/duplicate cases; assign them to Copilot.
 
-Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return implementation details, minimum sanity checks, proposed Copilot validations, and the completed Sol follow-up prompt.
 
 ## Prompt 7 — Semantic matching with pgvector
 
-Implement Roadmap Phase 9 only after deterministic production discovery works.
+Implement Roadmap Phase 9 only after deterministic production discovery is accepted.
 
 Goal: augment candidate recall using semantic similarity while preserving hard mandate constraints.
 
 Requirements:
-- Add versioned company and investor-thesis embeddings using `pgvector`.
-- Generate/update embeddings through the queue-backed worker path, not the browser.
-- Apply SQL hard filters first; semantic similarity must not override explicit exclusions or mandatory stage/geography/check constraints.
-- Combine deterministic MatchEngine score and semantic signal in a transparent, configurable server-side ranking contract.
-- Persist enough version metadata to reproduce/explain a surfaced score.
-- Add tests proving hard exclusions win over high semantic similarity.
-- Do not expose proprietary weights in public UI/docs.
+- add versioned company/investor-thesis embeddings using `pgvector`;
+- generate/update embeddings through server/worker path, not browser;
+- SQL hard filters remain authoritative before semantic ranking;
+- deterministic MatchEngine score + semantic signal combine under a transparent server-side contract;
+- persist enough version metadata to reproduce/explain surfaced scores;
+- do not expose proprietary weights publicly.
 
-Do not add learned ranking yet.
+Do not exhaustively adversarial-test the ranking in the build turn. Write the hard-exclusion/high-similarity cases Copilot must validate.
 
-Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return implementation details, minimum sanity checks, proposed Copilot validations, and the completed Sol follow-up prompt.
 
 ## Prompt 8 — Realtime + transactional notifications
 
@@ -160,44 +158,40 @@ Implement Roadmap Phase 10.
 
 Goal: users receive important marketplace/workflow changes without manual refresh, with email fallback where appropriate.
 
-First notification events: new investor interest, founder response, document processing completed/failed, new profile suggestion and team pipeline update.
+Initial events: new investor interest, founder response, document processing completed/failed, new profile suggestion and team pipeline update.
 
 Requirements:
-- Postgres remains source of truth.
-- Use Supabase Realtime Broadcast for in-app delivery.
-- Store durable notification state where needed.
-- Use queue-backed transactional email for offline/important events.
-- Add deduplication, retry behavior and sensible rate limits.
-- Never leak private startup/investor data in channels a user is not authorized to receive.
-- Add tests around authorization and duplicate notification delivery.
+- Postgres remains source of truth;
+- use Supabase Realtime Broadcast for in-app delivery;
+- store durable notification state where needed;
+- use queue-backed transactional email for offline/important events;
+- implement dedupe/retry/rate-limit boundaries;
+- never leak private data into unauthorized channels.
 
-Do not build social-style chat.
+Do not perform broad reconnect/email/retry/security matrices yourself; assign them to Copilot.
 
-Return the PR-ready implementation report and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return implementation details, minimum sanity checks, proposed Copilot validations, and the completed Sol follow-up prompt.
 
 ## Prompt 9 — Pilot readiness hardening
 
 Act as the implementation engineer preparing FundMatch for a controlled founder + angel/small-VC pilot.
 
-Goal: close implementation defects across the accepted production flow without adding new roadmap scope.
+Goal: fix known implementation defects across the accepted production flow without adding new roadmap scope.
 
-Exercise end-to-end:
-founder account → company/profile/materials/readiness → investor account/thesis → candidate retrieval → score/explanation → Pass/Save/Interested → founder response → pipeline/outcome → notifications.
+Use existing evidence and reported failures to fix broken states, weak error handling, data-integrity issues and accessibility regressions. Do not personally rerun the entire end-to-end pilot matrix. GitHub Copilot owns that validation pass.
 
-Fix broken states, weak error handling, empty/loading states, data-integrity issues and accessibility regressions. Add missing regression tests. Do not add speculative features. Produce a pilot blocker list ranked P0/P1/P2.
-
-Return the pilot-hardening report, PR information, evidence, blocker list, and the completed GPT-5.6 Sol follow-up prompt required by `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+Return changed implementation, minimum sanity checks, known risks, a prioritized Copilot pilot-validation prompt proposal, and the completed Sol follow-up prompt.
 
 ## Prompt 10 — Implementation handoff
 
-Prepare the completed implementation for review and downstream refinement.
+Prepare the completed implementation for technical review.
 
 Requirements:
-- Run typecheck, lint, unit tests, relevant database/RLS tests and production build.
-- Remove dead/debug code introduced during the phase.
-- Confirm demo/private-app boundaries still hold.
-- Confirm secrets are not in source or built public assets.
-- Update roadmap/docs only with verified capabilities.
-- Provide a concise architecture-impact summary and a list of files Opus/Astra may safely refine without changing behavior.
-- Do not merge your own PR unless explicitly instructed.
-- **Mandatory:** finish by generating a complete, ready-to-paste GPT-5.6 Sol follow-up prompt using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`. The Sol prompt must tell Sol what was changed, what was actually verified, what remains uncertain, what files to inspect first, and whether Sol should ACCEPT/REJECT the phase before any next-stage work begins.
+- remove dead/debug code introduced during the phase;
+- perform only the minimum changed-area sanity checks needed to ensure the handoff is coherent;
+- confirm no knowingly committed secrets;
+- update docs only with directly verified implementation facts;
+- provide concise architecture impact and safe refinement areas for Opus/Astra;
+- do not merge your own PR unless explicitly instructed;
+- do **not** run an exhaustive pre-merge regression gate yourself;
+- conclude by proposing the exact GitHub Copilot validations needed for this phase and by generating the complete GPT-5.6 Sol follow-up prompt from `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
