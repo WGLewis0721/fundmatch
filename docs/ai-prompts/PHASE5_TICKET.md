@@ -1,22 +1,21 @@
-# Phase 5 implementation ticket — Sonnet 5
+# Phase 5 implementation ticket
 
-**Objective:** complete authenticated deployment acceptance for FundMatch and stop before Phase 6.
-
-**Primary prompt:** `docs/ai-prompts/PHASE5_SONNET_HANDOFF.md`
-
-**Required preflight:** `docs/ai-prompts/PHASE5_PREIMPLEMENTATION_REVIEW.md`
-
-**Acceptance gate:** `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md`
+**Objective:** finish authenticated application acceptance for FundMatch and stop before Phase 6.
 
 ## Critical facts
 
-- Intended FundMatch Supabase ref: `ejzizfvjnpzieigviglc`.
-- Original Lovable project: `34443a2f-0671-4404-94db-fe807d4a7448`.
-- Connected standalone Supabase project `fnmxlmjrkgojowpzrcwa` is APEX. Do not modify it.
-- Live FundMatch database still has pre-Phase-5 permissive RLS.
-- Apply/reconcile `0002_fundmatch_accounts_persistence.sql` and `0003_phase5_function_privileges.sql`.
-- Live two-organization row and private-Storage isolation is mandatory before acceptance.
+- Standalone FundMatch Supabase ref: `dkanoobzseckccbwnpyi`.
+- Supabase API URL: `https://dkanoobzseckccbwnpyi.supabase.co`.
+- APEX project `fnmxlmjrkgojowpzrcwa` is unrelated and must not be modified.
+- Lovable is retired from the active architecture.
+- Live FundMatch migrations `0000` through `0004` are applied.
+- Repo migration `0004_phase5_has_role_privilege_hardening.sql` mirrors the live privilege fix.
+- Production Cloudflare deployment is intentionally deferred by the maintainer for now.
 
-## Completion output
+## Current task
 
-Return a PR with exact deployment URL, schema/migration evidence, auth evidence, two-org RLS evidence, private Storage evidence, tests/builds, remaining blockers, and a statement that the PR is ready for GPT-5.6 Sol acceptance review.
+Gather focused evidence for the standalone backend boundary: schema/RLS state, helper privileges, two-organization row isolation, private-document authorization, auth/org workflow behavior, and founder/investor persistence. Use GitHub Copilot for the extended mechanical validation.
+
+## Acceptance gate
+
+Use `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md`. GPT-5.6 Sol owns the final decision. Full production acceptance remains pending while `/app` deployment and deployment-dependent Auth redirects/browser testing are deferred.
