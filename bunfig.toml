@@ -2,4 +2,14 @@
 saveTextLockfile = true
 # 24h supply-chain guard: skip package versions published less than a day ago.
 minimumReleaseAge = 86400
-minimumReleaseAgeExcludes = ["@cloudflare/vite-plugin", "wrangler", "workerd", "miniflare"]
+minimumReleaseAgeExcludes = [
+  "@cloudflare/vite-plugin",
+  "wrangler",
+  "workerd",
+  "miniflare",
+  "@cloudflare/workerd-darwin-64",
+  "@cloudflare/workerd-darwin-arm64",
+  "@cloudflare/workerd-linux-64",
+  "@cloudflare/workerd-linux-arm64",
+  "@cloudflare/workerd-windows-64",
+]
