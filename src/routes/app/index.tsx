@@ -1,4 +1,4 @@
-import { MatchScore, WorkspaceSignature } from "@/components/fundmatch/brand-details";
+import { DiscoveryCard } from "@/components/fundmatch/discovery-card";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
@@ -18,7 +18,6 @@ import {
   Trash2,
   Upload,
   Users,
-  X,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
@@ -173,7 +172,7 @@ function WorkspaceShell() {
           ["team", "Team", Users],
         ] as const);
   const headings: Record<View, [string, string]> = {
-    discover: ["Find your next “tell me more.”", "Listed companies ranked against your thesis."],
+    discover: ["Discover your next big thing.", "Listed companies ranked against your thesis."],
     pipeline: ["Good conversations start here.", "Your firm’s pipeline, shared with your team."],
     insights: ["The bigger picture.", "Your decisions and thesis overlap."],
     thesis: ["Your thesis. Your lens.", "Preferences drive matching for everyone at your firm."],
@@ -226,7 +225,7 @@ function WorkspaceShell() {
       </header>
       <div className="demo-layout">
         <aside className="demo-sidebar" aria-label="Workspace navigation">
-          <div className="fm-workspace-caption">YOUR CORNER OF POSSIBILITY</div>
+          <div className="fm-workspace-caption">YOUR WORKSPACE</div>
           {nav.map(([v, label, Icon]) => (
             <Link
               key={v}
@@ -239,7 +238,6 @@ function WorkspaceShell() {
               {label}
             </Link>
           ))}
-          <WorkspaceSignature persona={persona} />
           <small>
             Signed in as {data.email}.
             <br />
@@ -443,71 +441,34 @@ function Discover({ ws, toast }: ViewProps) {
       <QueryState query={listed}>
         <QueryState query={decisions}>
           {active ? (
-            <div className="demo-grid">
-              <article className="demo-card demo-discovery" key={active.startup.id}>
-                <div className="fm-discovery-label">
-                  <span>THE DISCOVERY EDIT</span>
-                  <span>THESIS-LED SELECTION</span>
-                </div>
-                <div className="demo-discovery-top">
-                  <span className="fm-company-logo">
-                    {active.startup.name.slice(0, 1).toLowerCase()}.
-                  </span>
-                  <MatchScore score={active.match.score} />
-                </div>
-                <h2>{active.startup.name}</h2>
-                <p>{active.startup.tagline}</p>
-                <div className="demo-meta">
-                  <span>{active.startup.sector}</span>
-                  <span>{active.startup.stage}</span>
-                  <span>{active.startup.geography}</span>
-                </div>
-                <p>{active.startup.summary}</p>
-                <Metrics company={active.startup} />
+            <div className="demo-grid fm-discovery-grid">
+              <DiscoveryCard
+                key={active.startup.id}
+                company={active.startup}
+                score={active.match.score}
+                metrics={<Metrics company={active.startup} />}
+                disabled={record.isPending}
+                onDecide={(decision) => decide(active.startup.id, decision)}
+              >
                 <Link
                   to="/app"
                   search={{ view: "company", company: active.startup.id }}
                   className="demo-link"
                 >
-                  Explore the company <ArrowUpRight size={13} className="inline" />
+                  View full profile <ArrowUpRight size={15} />
                 </Link>
-                <div className="demo-controls">
-                  <button
-                    className="fm-button secondary"
-                    disabled={record.isPending}
-                    onClick={() => decide(active.startup.id, "pass")}
-                  >
-                    <X size={15} />
-                    Pass
-                  </button>
-                  <button
-                    className="fm-button secondary"
-                    disabled={record.isPending}
-                    onClick={() => decide(active.startup.id, "save")}
-                  >
-                    <Bookmark size={15} />
-                    Save
-                  </button>
-                  <button
-                    className="fm-button"
-                    disabled={record.isPending}
-                    onClick={() => decide(active.startup.id, "interested")}
-                  >
-                    Interested <ArrowUpRight size={15} />
-                  </button>
-                </div>
-              </article>
+              </DiscoveryCard>
               <aside>
                 <article className="demo-card">
-                  <span className="fm-kicker">THE REASON BEHIND THE FIT</span>
-                  <h3>Why it’s worth a look.</h3>
+                  <span className="fm-kicker">YOUR THESIS, IN FOCUS</span>
+                  <h3>Here’s the connection.</h3>
                   {active.match.strengths.map((x) => (
                     <div className="demo-check" key={x}>
                       <Check size={16} />
                       {x}
                     </div>
                   ))}
-                  <h3>Questions to explore</h3>
+                  <h3 className="fm-diligence-heading">Worth a conversation</h3>
                   {active.match.risks.map((x) => (
                     <p key={x}>{x}</p>
                   ))}

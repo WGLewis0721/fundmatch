@@ -80,7 +80,7 @@ Use these as the default brand base unless a future full redesign is explicitly 
 
 The user-approved balance is **60% off-white / 30% sage green / 10% periwinkle blue**, measured as an approximate hierarchy of visible surfaces rather than an exact pixel count. Charcoal-green is reserved for typography and fine detail. The `--fm-mint` compatibility token now means sage, not mint.
 
-The direction is a premium venture journal: Instrument Serif regular/italic for expressive headlines, a clean system sans for product controls, original ceramic/glass artwork, sage workspace navigation, layered discovery cards and periwinkle thesis-fit rings. The homepage campaign line is “Great companies. Right chemistry.”
+The direction is a premium venture journal: Instrument Serif regular/italic for expressive headlines, self-hosted Manrope for product controls, original ceramic/glass artwork, sage workspace navigation, layered discovery cards and periwinkle thesis-fit rings. The current homepage campaign line is “Big ideas. Right people. Real possibility.” The second pass puts a working company preview ahead of abstract artwork. See [PRODUCT_POLISH.md](PRODUCT_POLISH.md).
 
 `src/fundmatch-personality.css` carries this treatment across the public homepage, demo and authenticated workspace. `src/styles.css` supplies matching semantic tokens for shared controls. Fonts are self-hosted with their OFL license. Keep actionable information as real HTML, keep source and demo labels visible, and honor reduced-motion preferences.
 

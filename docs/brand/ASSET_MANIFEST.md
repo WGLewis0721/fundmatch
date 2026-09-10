@@ -11,6 +11,16 @@ This manifest records the repo-native graphics and the prior concept assets gath
 
 The raster is original generated art, not a screenshot or copied reference. See [VISUAL_REFRESH.md](VISUAL_REFRESH.md) for its prompt and generation record. The companion Higgsfield generation was rejected by its plan requirement; no Higgsfield output is included.
 
+## Second-pass product assets
+
+| Asset | Path | Purpose |
+| --- | --- | --- |
+| Dippi editorial still | `public/media/dippi-editorial.webp` | Original generated delivery concept for the fictional demo company. |
+| Soapbox editorial still | `public/media/soapbox-editorial.webp` | Original generated laundry concept for the fictional demo company. |
+| Manrope variable | `public/fonts/manrope-variable.ttf` | Self-hosted interface/display sans. License: `public/fonts/Manrope-OFL.txt`. |
+
+These concept photos are explicitly demo-only. They are never attached to real private companies based on a matching name. The previous arch is retained as an available brand asset. See [PRODUCT_POLISH.md](PRODUCT_POLISH.md).
+
 ## Repo-native SVG graphics
 
 These assets are lightweight, editable text/SVG files stored in the repo.

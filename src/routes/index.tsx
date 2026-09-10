@@ -1,3 +1,4 @@
+import { ProductPreview } from "@/components/fundmatch/discovery-card";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
@@ -71,18 +72,18 @@ export function Home() {
         <section className="fm-hero">
           <div className="fm-hero-copy">
             <div className="fm-eyebrow">
-              <span /> THE NEXT CHAPTER STARTS WITH A MATCH
+              <span /> GOOD COMPANIES. GREAT CHEMISTRY.
             </div>
             <h1>
-              Great companies.
+              Big ideas.
               <br />
-              <span>
-                Right <em>chemistry.</em>
-              </span>
+              Right people.
+              <br />
+              <em>Real possibility.</em>
             </h1>
             <p>
-              A little more conviction. A lot less cold outreach. Bring your company story and
-              investment thesis into the same conversation.
+              Meet the investors who share your vision. Discover the companies that fit your thesis.
+              A better connection starts here.
             </p>
             <div className="fm-actions">
               <Link
@@ -90,48 +91,34 @@ export function Home() {
                 search={{ persona: "investor", view: "discover", company: "dippi" }}
                 className="fm-button"
               >
-                Find your next match <ArrowRight size={17} />
+                Find your fit <ArrowRight size={17} />
               </Link>
               <button className="fm-text-button" onClick={() => setFilm(true)}>
                 Watch the film <Play size={15} fill="currentColor" />
               </button>
             </div>
             <div className="fm-hero-footnote">
-              <span className="fm-live-dot" /> Built for founders. Curated by your thesis.
+              <span className="fm-live-dot" /> For founders, angels and investment teams.
             </div>
           </div>
-          <figure className="fm-hero-art">
-            <img
-              src={media + "fundmatch-arch.webp"}
-              alt="Sage ceramic and periwinkle glass ribbons curve together into an open arch."
-              width="1536"
-              height="1024"
-              fetchPriority="high"
-            />
-            <figcaption>
-              <span>THE ART OF FINDING FIT</span>
-              <span>
-                Two perspectives.
-                <br />
-                <em>One possibility.</em>
-              </span>
-              <ArrowUpRight size={24} />
-            </figcaption>
-            <div className="fm-art-label">
-              <span className="fm-live-dot" /> A SHARED AMBITION
-            </div>
-          </figure>
+          <ProductPreview />
           <div className="fm-hero-index">
-            <span>01 — DISCOVER THE OVERLAP</span>
+            <span>BUILT AROUND WHAT MATTERS</span>
             <span>
-              Capital meets a little chemistry. <ArrowRight size={16} />
+              <span>Thesis fit</span>
+              <span>Company stories</span>
+              <span>Next moves</span>
             </span>
           </div>
         </section>
         <section className="fm-cinema" aria-label="Meet FundMatch in motion">
           <div className="fm-cinema-intro">
-            <span className="fm-kicker">A FEEL FOR WHAT’S NEXT</span>
-            <h2>A better beginning.</h2>
+            <span className="fm-kicker">THE 24-SECOND INTRODUCTION</span>
+            <h2>
+              Less searching.
+              <br />
+              <em>More finding.</em>
+            </h2>
             <p>Take a 24-second look inside FundMatch.</p>
           </div>
           <div className="fm-film-frame">
