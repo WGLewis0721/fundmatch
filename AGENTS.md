@@ -27,3 +27,5 @@ Rules:
 10. Persist marketplace truth in Postgres; treat realtime as delivery and background queues as asynchronous execution.
 11. Avoid unlicensed proprietary private-market data.
 12. Update `ROADMAP.md` after meaningful product or infrastructure changes.
+13. Use the resource-efficient validation split in `docs/ai-prompts/README.md`: Sonnet 5 implements and runs only minimum sanity checks; GPT-5.6 Sol reviews architecture/security/contracts; GitHub Copilot owns extended regression, adversarial, browser, environment and evidence-gathering validation. Do not duplicate large validation matrices across models.
+14. Every Sonnet implementation/correction turn must propose GitHub Copilot validations and end with a ready-to-paste Sol handoff. Every post-implementation Sol review must end with the authoritative GitHub Copilot validation prompt. Sol makes final phase acceptance decisions after Copilot evidence.
