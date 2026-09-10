@@ -93,6 +93,7 @@ Use these as the default brand base unless a future full redesign is explicitly 
 
 These SVG files are included for README, docs, and future design reference:
 
+- `docs/brand/assets/fundmatch-brand-board.svg`
 - `docs/brand/assets/fundmatch-product-story.svg`
 - `docs/brand/assets/fundmatch-founder-readiness.svg`
 - `docs/brand/assets/fundmatch-investor-feed.svg`
