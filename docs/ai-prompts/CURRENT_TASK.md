@@ -20,9 +20,12 @@ GPT-5.6 Sol remains the final Phase 5 acceptance authority after Copilot returns
 
 ## Critical facts
 
-- APEX Supabase project `fnmxlmjrkgojowpzrcwa` is not FundMatch and must not be modified.
+- Dedicated FundMatch Supabase project now exists: `dkanoobzseckccbwnpyi`.
+- FundMatch API URL: `https://dkanoobzseckccbwnpyi.supabase.co`.
+- Region: `us-east-1`.
+- APEX application Supabase project `fnmxlmjrkgojowpzrcwa` is not FundMatch and must not be modified.
 - The prior Lovable-backed FundMatch project is retired from the production path.
-- FundMatch now needs its own standalone Supabase project.
+- Remaining backend work is to apply/reconcile migrations `0000` through `0003`, generate types, and configure production Auth redirects after Cloudflare deployment.
 - The current GitHub app must deploy to Cloudflare from native TanStack Start/Nitro build tooling with no `@lovable.dev/*` dependency.
 - Phase 5 acceptance still requires the focused auth, RLS, Storage, persistence and two-organization checks in `PHASE5_ACCEPTANCE_CHECKLIST.md`.
 
