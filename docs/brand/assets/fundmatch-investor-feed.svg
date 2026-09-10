@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">FundMatch investor feed</title>
+  <desc id="desc">A visual of an investor discovery feed with Dippi and Soapbox Caddie company cards, fit scores, and Pass, Save, Interested actions.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#24272b" flood-opacity="0.13"/>
+    </filter>
+  </defs>
+  <rect width="1400" height="760" rx="44" fill="#f8f7f3"/>
+  <text x="76" y="96" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="50" font-weight="850" letter-spacing="-2">Investor Discovery Feed</text>
+  <text x="78" y="136" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="23">Ranked company cards with clear fit reasons, provenance, and next actions.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="92" y="210" width="360" height="420" rx="34" fill="#ffffff" stroke="#e5e4df"/>
+    <rect x="124" y="248" width="104" height="38" rx="19" fill="#c6efde"/>
+    <text x="148" y="272" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="800">Seed</text>
+    <text x="124" y="338" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="38" font-weight="850">Dippi</text>
+    <text x="124" y="376" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17">On-demand liquor delivery</text>
+    <circle cx="358" cy="300" r="58" fill="#9caafa"/>
+    <text x="324" y="307" fill="#ffffff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="850">94%</text>
+    <text x="124" y="438" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16" font-weight="750">Why it fits</text>
+    <text x="124" y="470" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">Consumer marketplace · high growth</text>
+    <text x="124" y="498" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">Seed ask inside check range</text>
+    <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="800">
+      <rect x="124" y="552" width="70" height="36" rx="18" fill="#f8f7f3" stroke="#e5e4df"/>
+      <text x="146" y="575" fill="#24272b">Pass</text>
+      <rect x="208" y="552" width="70" height="36" rx="18" fill="#f8f7f3" stroke="#e5e4df"/>
+      <text x="232" y="575" fill="#24272b">Save</text>
+      <rect x="292" y="552" width="116" height="36" rx="18" fill="#c6efde"/>
+      <text x="316" y="575" fill="#24272b">Interested</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)" opacity="0.96">
+    <rect x="520" y="250" width="360" height="380" rx="34" fill="#ffffff" stroke="#e5e4df"/>
+    <rect x="552" y="288" width="104" height="38" rx="19" fill="#f8f7f3" stroke="#e5e4df"/>
+    <text x="577" y="312" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="800">Seed</text>
+    <text x="552" y="382" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="34" font-weight="850">Soapbox Caddie</text>
+    <text x="552" y="420" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17">Laundry pickup and delivery</text>
+    <circle cx="790" cy="334" r="54" fill="#c6efde"/>
+    <text x="758" y="341" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="850">87%</text>
+    <text x="552" y="486" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">Logistics · recurring behavior</text>
+    <text x="552" y="514" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15">Proof needed on unit economics</text>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="980" y="210" width="328" height="420" rx="34" fill="#24272b"/>
+    <text x="1020" y="270" fill="#ffffff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="28" font-weight="850">Firm thesis</text>
+    <text x="1020" y="310" fill="#c6efde" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="16">Consumer + B2B2C software</text>
+    <g font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" font-weight="750">
+      <rect x="1020" y="366" width="236" height="42" rx="21" fill="#ffffff" opacity="0.1"/>
+      <text x="1042" y="392" fill="#ffffff">Seed to Series A</text>
+      <rect x="1020" y="426" width="236" height="42" rx="21" fill="#ffffff" opacity="0.1"/>
+      <text x="1042" y="452" fill="#ffffff">$500K–$4M checks</text>
+      <rect x="1020" y="486" width="236" height="42" rx="21" fill="#ffffff" opacity="0.1"/>
+      <text x="1042" y="512" fill="#ffffff">Southeast + Texas</text>
+      <rect x="1020" y="546" width="236" height="42" rx="21" fill="#ffffff" opacity="0.1"/>
+      <text x="1042" y="572" fill="#ffffff">Exclude hardware-heavy</text>
+    </g>
+  </g>
+
+  <text x="388" y="704" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="750">Simple actions on top. Structured thesis and provenance underneath.</text>
+</svg>

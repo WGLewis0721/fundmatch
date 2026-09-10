@@ -2,115 +2,208 @@
 
 **Great companies. Right investors.**
 
-FundMatch is a founder/investor product demo with a refined off-white, charcoal, mint and periwinkle visual system. The homepage includes an original **24-second H.264 product film with music**, a poster, captions, playback controls and reduced-motion support.
+FundMatch is an AI-assisted capital discovery product for startup teams seeking funding and VC, growth-equity, and eventually PE teams seeking better-fit investment opportunities.
+
+The simple surface is a modern discovery feed: investors can **Pass**, **Save**, or mark a company **Interested**. The serious product underneath is a structured profile, readiness, provenance, and matching system that turns messy founder and investor data into cleaner capital conversations.
+
+> FundMatch is not just “Tinder for VC.” The swipe experience is the consumption layer. The value is profile standardization, investment-thesis understanding, explainable fit scores, readiness checks, diligence workflow, and investor/founder pipeline management.
+
+![FundMatch product story](docs/brand/assets/fundmatch-product-story.svg)
+
+## Product thesis
+
+Private-market discovery is fragmented.
+
+Founders repeatedly package the same company story, deck, traction, metrics, and raise details for different investors. Investors review too many weak-fit companies across CRMs, email, pitch decks, warm introductions, public websites, databases, and notes.
+
+FundMatch’s core loop is:
+
+```text
+Connect data → Build profiles → Infer thesis → Score fit → Surface opportunities → Take action → Learn from outcomes
+```
+
+## Who it is for
+
+### Founders
+
+FundMatch helps startup teams prepare a clearer investor-facing profile, understand readiness gaps, standardize materials, and get discovered by investors whose thesis actually fits.
+
+Founder promise:
+
+> Tell your story once. Get discovered by investors who actually fit.
+
+### Investors
+
+FundMatch helps investment teams confirm an investment thesis, review standardized company cards, understand why a company fits, and move promising companies into pipeline and diligence.
+
+Investor promise:
+
+> Find companies that match your thesis before your team wastes time on weak-fit deals.
 
 ## Two products in one repository
 
-- **Public demo** (`/` and `/demo`): no signup, browser storage only, deployed
-  to GitHub Pages. Unchanged by the accounts work.
-- **Authenticated app** (`/app`): real accounts, organizations, server-side
-  persistence and private document storage on Supabase. Deployed separately.
-  See [docs/BACKEND.md](docs/BACKEND.md).
+| Surface | Routes | Purpose | Backend | Status |
+| --- | --- | --- | --- | --- |
+| Public demo | `/`, `/demo` | No-signup product story, founder/investor demo, and product film | Browser storage only | Working demo |
+| Authenticated app | `/app` | Real accounts, organizations, persistence, and private documents | Supabase Auth, Postgres/RLS, Storage | Implemented in code; deployment/config required |
+
+The public demo and authenticated app are intentionally separate. Keep GitHub Pages pointed at the demo build only. The Pages bundle should not contain Supabase secrets or backend-only code.
 
 ## What works today
 
-- Home page and full-screen film player.
-- No-signup founder and investor demo workspaces.
-- Company discovery: search, sector/stage filters, Pass, Save, Interested.
-- Working rules-based MatchEngine, editable investment thesis and ranked insights.
-- Company profiles, source transparency, supporting material links and review notes.
-- Pipeline stages: New, Reviewing, Meeting, Passed; saved shortlist.
-- Founder profile editing for Dippi and Soapbox Caddie.
-- Fundraising Readiness: separate VC and PE preparation templates, categories, filters, owner, due date, status, evidence link and notes.
-- Local persistence with schema validation, graceful storage failure and confirmed reset.
-- Responsive layouts, keyboard focus, accessible dialogs and empty states.
+### Public demo
 
-**The `/demo` workspace is a browser demo, not a production fundraising platform.** Its changes are stored on the current browser/device only, its records are fictional, and it never contacts a backend. Do not put confidential documents, financial data or credentials into the demo. Introductions, emails to investors, live AI and external integrations are still unimplemented in both the demo and the authenticated app.
+- Home page and full-screen product film player.
+- No-signup founder and investor demo workspaces.
+- Company discovery with search, sector/stage filters, **Pass**, **Save**, and **Interested** actions.
+- Working rules-based `MatchEngine` with deterministic fit scoring and explanations.
+- Editable investor thesis and ranked insights.
+- Company profiles, source transparency, supporting material links, and review notes.
+- Pipeline stages: **New**, **Reviewing**, **Meeting**, **Passed**.
+- Saved shortlist.
+- Founder profile editing for Dippi and Soapbox Caddie.
+- Fundraising Readiness templates for VC and PE preparation.
+- Local persistence with schema validation, graceful storage failure, and confirmed reset.
+- Responsive layouts, keyboard focus, accessible dialogs, and empty states.
+
+### Authenticated app
+
+- Signup, login, logout, and password recovery flow.
+- Organization creation and roles: owner, admin, member.
+- Email-bound invitations.
+- Server-side persistence for company profiles, metrics, investment theses, discovery decisions, pipeline stages, team notes, material records, and readiness checklists.
+- Private document upload model with validation, authorized downloads, and deletion.
+- Supabase Row-Level Security policies scoped to the authorized organization.
+
+See [`docs/BACKEND.md`](docs/BACKEND.md) for backend setup and security details.
+
+## What is still not real
+
+Do **not** present these as production features yet:
+
+- Live AI extraction from uploaded documents.
+- Live investor introductions.
+- Investor email delivery.
+- SSO.
+- Real Affinity, PitchBook, DocSend, Stripe, HubSpot, Google, or Microsoft integrations.
+- Licensed market-data ingestion.
+- Secure data room workflows beyond the private-document foundation.
+- Outcome-trained ranking models.
+- Production billing.
+
+The `/demo` workspace is fictional browser data. Do not put confidential documents, financial data, credentials, or real fundraising material into the public demo.
+
+## Product examples
+
+FundMatch uses fictional startups to demonstrate the workflow:
+
+- **Dippi** — on-demand liquor delivery connecting local stores and consumers.
+- **Soapbox Caddie** — pickup-and-delivery laundry service for busy households.
+
+These companies are demo examples, not real fundraising opportunities.
+
+## AI role
+
+FundMatch is mostly conventional software with an AI intelligence layer.
+
+AI should help with:
+
+- company profile generation and normalization
+- deck/document summarization
+- investment-thesis inference
+- match ranking augmentation
+- “why this fits” explanations
+- strengths, risks, and open questions
+- readiness suggestions
+- profile suggestions that humans accept or reject
+
+AI should **not** silently overwrite founder profiles or make unsupported investment claims. Important claims need provenance.
+
+See [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md) for the current worker/interface direction.
+
+## Fundraising readiness
+
+A major near-term product direction is helping founders know whether they have their ducks in a row before raising.
+
+![FundMatch founder readiness](docs/brand/assets/fundmatch-founder-readiness.svg)
+
+Readiness should cover:
+
+- company basics
+- pitch deck
+- team and founder background
+- market/problem clarity
+- business model and pricing
+- traction and customer proof
+- financials and revenue evidence
+- legal/corporate basics
+- fundraising ask and use of funds
+- investor materials and data room
+- risks and open questions
+
+A useful early version does not need to perfectly analyze every document. It can still create value by collecting the right materials, showing what is missing, and standardizing the company into a clean FundMatch investor packet.
+
+## Matching and provenance
+
+The current `MatchEngine` scores sector, stage, geography, funding ask/check-range approximation, growth, and business model, with penalties for exclusions.
+
+This is a deterministic rules baseline, not a validated probability model and not investment advice. It is useful because every future AI ranking system needs a clear explainable baseline to compare against.
 
 ## Run locally
 
-Node 22.12+ and Bun 1.4.2:
+Node 22.12+ and Bun 1.4.2 are expected.
 
 ```sh
 bun install --frozen-lockfile
 bun run dev
 ```
 
-No environment variables or paid services are required for the homepage or
-local demo. The authenticated app at `/app` needs the Supabase variables in
-`.env.example`; without them it shows a "backend not configured" screen.
+No environment variables or paid services are required for the homepage or local public demo.
+
+Useful commands:
 
 ```sh
-bun run build       # Existing TanStack Start / Cloudflare build (includes /app)
+bun run build       # TanStack Start / Cloudflare-style build, including /app
 bun run typecheck
 bun test            # demo tests; database policy tests when FUNDMATCH_TEST_DATABASE_URL is set
-bun run build:pages # Same interface, static GitHub Pages build in dist/
+bun run build:pages # static GitHub Pages build in dist/
+bun run lint
 ```
 
-The package manager and Bun lockfile from the original project are retained. `vite.config.ts` remains the original Lovable/TanStack build; `vite.pages.config.ts` is a separate optional static build, not a framework migration.
+The authenticated app at `/app` needs the Supabase values from `.env.example`. Without them, it should show a backend-not-configured screen instead of failing.
 
-## Put the demo online with GitHub Pages
+## Deploy the public demo with GitHub Pages
 
-The workflow `.github/workflows/pages.yml` builds and checks the app, then deploys the static output.
+The workflow `.github/workflows/pages.yml` builds and deploys the static Pages output.
 
 1. In this repository, open **Settings → Pages → Build and deployment → Source → GitHub Actions**.
 2. Run **Actions → Build and publish FundMatch → Run workflow**, or push a commit to `main`.
-3. Use the URL from the successful deployment. The expected repository URL is `https://wglewis0721.github.io/fundmatch/`; it is not live until Pages is enabled and deployment succeeds.
+3. Expected Pages URL: `https://wglewis0721.github.io/fundmatch/`.
 
-The build handles the `/fundmatch/` base path and emits a real `/demo/index.html` so direct links and refreshes work on Pages. No secret or backend credential is required, and the Pages bundle contains no Supabase client code: the authenticated app is deployed separately, as described in [docs/BACKEND.md](docs/BACKEND.md). See [GitHub’s Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+The Pages build handles the `/fundmatch/` base path and emits a real `/demo/index.html` so direct links and refreshes work.
 
 ## Product film
 
-- `public/media/fundmatch-film.mp4`: 24 seconds, 1280×720, H.264 + AAC; under 1 MB.
+- `public/media/fundmatch-film.mp4`: 24-second H.264 + AAC product motion graphic.
 - `public/media/fundmatch-poster.jpg`: first-scene poster.
 - `public/media/fundmatch-film.vtt`: accessible English captions.
-- `scripts/render-film.py`: reproducible motion design and original synthesized soundtrack. Requires Python, Pillow, NumPy, FFmpeg and the Nimbus Sans fonts (font paths are configurable at the top).
+- `scripts/render-film.py`: reproducible film renderer.
 
-The film is a product motion graphic, not a claim of connected AI/investor activity. Its illustrated metrics are fictional. The muted hero respects reduced-motion preferences; full playback with sound is user initiated.
+The film is a product motion graphic, not a claim that live AI, investor introductions, or market integrations are complete.
 
-## Matching and provenance
+## Current documentation
 
-The existing MatchEngine scores sector, stage, geography, funding ask/check-range approximation, growth and business model, with penalties for exclusions. It is deterministic and explainable. Scores are heuristic fit scores, not validated probabilities or investment advice. A company's total raise is only an approximation of check alignment; lead/co-investment allocations need a richer model before production.
+- [`ROADMAP.md`](ROADMAP.md): source of truth for product goals, current status, phases, infrastructure, and next build steps.
+- [`docs/BACKEND.md`](docs/BACKEND.md): authenticated app backend, Supabase setup, RLS, private documents, and deployment.
+- [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md): upload processing, profile suggestions, readiness suggestions, and AI worker boundaries.
+- [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md): testing and security evidence.
+- [`docs/brand/BRAND.md`](docs/brand/BRAND.md): brand positioning, tokens, graphics, copy rules, and asset usage.
+- [`docs/brand/ASSET_MANIFEST.md`](docs/brand/ASSET_MANIFEST.md): graphics and source/context index.
 
-The demo uses explicit fictional source labels. Adding a material or evidence link stores only its URL/title; it does not fetch or analyze the document, verify authenticity, upload a file, or change its access permissions.
+## Best next product move
 
-## Accounts, persistence and private documents
+The strongest near-term wedge is **Founder Readiness MVP**: help startup teams assemble a standardized investor-ready profile, readiness checklist, and FundMatch packet before requiring a fully liquid two-sided marketplace.
 
-The authenticated application lives at `/app` and needs a Supabase project.
+This creates value for founders immediately, strengthens the investor-side data model, and avoids depending on marketplace network effects too early.
 
-- Signup, login, logout and password recovery.
-- Organization creation, membership roles (owner, admin, member) and
-  email-bound invitations. A user cannot grant themselves access to an
-  organization they were not invited to.
-- Server-side persistence for company profiles, metrics, investment theses,
-  discovery decisions, pipeline stages, team notes, material records and
-  readiness checklists, scoped to the authorized organization.
-- Private document uploads with validation, authorized downloads and
-  deletion. The storage bucket is private; no public URLs are issued and the
-  service role key never reaches the browser.
-
-`drizzle/migrations/0002_fundmatch_accounts_persistence.sql` **drops the
-permissive policies from the original migration** (several allowed any
-authenticated user broad table access) and replaces them with
-organization-scoped policies, then adds the new tables, RPCs and storage
-rules.
-
-```sh
-cp .env.example .env.local   # add VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY
-bun run db:migrate           # with LOVABLE_DB_MIGRATION_URL set
-bun run dev                  # http://localhost:8080/app
-```
-
-- [docs/BACKEND.md](docs/BACKEND.md): environment variables, provisioning,
-  migrations, deployment and the security model.
-- [docs/ASTRA_INTERFACE.md](docs/ASTRA_INTERFACE.md): upload identifiers,
-  processing status transitions and the authorized profile-update interface.
-- [docs/TEST_EVIDENCE.md](docs/TEST_EVIDENCE.md): policy tests, the
-  two-organization browser walkthrough and the direct API attempts.
-
-Live AI, SSO, source licensing, CRM imports, secure data rooms and email
-delivery of introductions remain unfinished.
-
-## Earlier blank preview
-
-The original `/` route only rendered Lovable's blank-app placeholder. The earlier repository copy also omitted `previewAuthStorage.ts` and contained a tool error instead of a valid `.gitignore`. This update replaces the placeholder, restores the missing integration file and repairs the ignore rules. No published Git history is rewritten. GitHub-to-Lovable sync is not assumed; this repository is the delivery source.
+See [`ROADMAP.md`](ROADMAP.md) before starting any future work.
