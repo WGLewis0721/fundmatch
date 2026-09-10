@@ -2,7 +2,13 @@
 
 Every Sonnet 5 implementation turn must end with a **ready-to-paste follow-up prompt for GPT-5.6 Sol**. This is mandatory even when the phase is blocked or incomplete.
 
-The purpose is to preserve exact context between models so Sol can review the implementation, run the acceptance gate, identify defects, decide whether the phase can be accepted, and determine the next safe step without reconstructing the session from scratch.
+The workflow is intentionally resource-efficient: Sonnet implements, Sol reviews architecture/correctness, and GitHub Copilot performs the broader mechanical validation. Sonnet should not spend its implementation turn on exhaustive validation that can be delegated.
+
+## Sonnet validation boundary
+
+Sonnet may run only the minimum sanity checks needed to avoid handing off obviously broken work: for example a directly relevant typecheck/build command, focused changed-area test, or migration parse/apply check when practical. Do **not** perform broad regression suites, extensive browser walkthroughs, adversarial matrices, repeated cross-environment testing, or above-and-beyond validation unless the task cannot be implemented safely without a narrow check.
+
+Sonnet must instead propose the phase-specific validation work that GitHub Copilot should perform. GPT-5.6 Sol reviews that proposal and writes the authoritative Copilot validation prompt.
 
 ## Required handoff prompt
 
@@ -34,19 +40,15 @@ LIVE ENVIRONMENT / EXTERNAL STATE
 - Migrations/infrastructure changes actually applied: <facts only>
 - External systems intentionally NOT modified: <for example APEX>
 
-VERIFICATION COMPLETED
-- Typecheck: <PASS/FAIL/NOT RUN + command>
-- Unit tests: <PASS/FAIL/NOT RUN + count/command>
-- DB/RLS/security tests: <PASS/FAIL/NOT RUN + evidence>
-- Production build: <PASS/FAIL/NOT RUN>
-- Demo/Pages build: <PASS/FAIL/NOT RUN>
-- Browser/end-to-end acceptance: <PASS/FAIL/PARTIAL/NOT RUN + evidence>
-- Other phase-specific verification: <results>
+MINIMUM SANITY CHECKS SONNET RAN
+- <directly relevant check + PASS/FAIL/NOT RUN>
+- <directly relevant check + PASS/FAIL/NOT RUN>
+Do not imply these are full acceptance validation.
 
-SECURITY / DATA BOUNDARY NOTES
-- <RLS/auth/storage/secrets/provenance finding>
-- <cross-org or permission evidence where applicable>
-- <anything Sol should attack or verify independently>
+SECURITY / DATA BOUNDARY NOTES FROM IMPLEMENTATION
+- <RLS/auth/storage/secrets/provenance design note>
+- <important permission/state boundary>
+- <anything Sol should inspect closely>
 
 KNOWN BLOCKERS / UNCERTAINTIES
 - <blocker or "None known">
@@ -56,23 +58,28 @@ FILES / AREAS SOL SHOULD REVIEW FIRST
 2. <path or subsystem>
 3. <path or subsystem>
 
-SOL TASK
-1. Read AGENTS.md, ROADMAP.md, README.md, docs/MATCHING_ARCHITECTURE.md, and the relevant phase acceptance/review docs.
-2. Inspect the PR/diff and independently verify the implementation claims above.
-3. Run the appropriate GPT-5.6 Sol review/acceptance prompt from docs/ai-prompts/GPT56_SOL_REVIEW_PROMPTS.md.
-4. Check architecture, security, authorization, data isolation, regression risk, deployment truth, and whether documentation overclaims anything.
-5. Return an explicit ACCEPT or REJECT for this phase, with P0/P1/P2 findings.
-6. If ACCEPTED, state the exact next roadmap phase and write the next scoped Sonnet 5 implementation prompt or point to the existing repo prompt that should be used.
-7. If REJECTED, write the exact corrective Sonnet 5 prompt needed to clear the gate. Do not allow work to advance to the next roadmap phase.
+PROPOSED GITHUB COPILOT VALIDATIONS
+1. <specific mechanical/security/browser/regression validation>
+2. <specific validation>
+3. <specific validation>
+4. <additional phase-specific checks as needed>
 
-Do not merge unreviewed implementation merely because CI is green. Do not expand scope beyond the current acceptance boundary.
+SOL TASK
+1. Read AGENTS.md, ROADMAP.md, README.md, docs/MATCHING_ARCHITECTURE.md, and the relevant phase docs.
+2. Inspect the actual PR/diff and evaluate architecture, authorization design, state/data contracts, migration safety, product truthfulness, and scope adherence.
+3. Do not duplicate broad mechanical validation that GitHub Copilot can perform.
+4. Correct/prioritize Sonnet's proposed validations and conclude your review with a complete ready-to-paste GitHub Copilot prompt using docs/ai-prompts/COPILOT_VALIDATION_HANDOFF_TEMPLATE.md and the matching prompt in GITHUB_COPILOT_VALIDATION_PROMPTS.md.
+5. After Copilot returns validation evidence, make the phase ACCEPT/REJECT decision. If rejected, write the corrective Sonnet prompt; if accepted, identify the exact next roadmap phase and its Sonnet prompt.
+
+Do not merge unreviewed implementation merely because a minimal sanity check or CI is green. Do not expand scope beyond the current acceptance boundary.
 ```
 
 ## Rules for Sonnet
 
-- Never return only a prose summary; include the filled GPT-5.6 Sol follow-up prompt.
-- Never claim a test, deployment, migration, auth flow, or external integration succeeded unless it was actually verified.
+- Always include the filled GPT-5.6 Sol follow-up prompt.
+- Always include **proposed GitHub Copilot validations** for the exact work performed.
+- Do not burn time/tokens on exhaustive validations assigned to Copilot.
+- Never claim a deployment, migration, auth flow, or integration succeeded unless actually observed during implementation.
 - Include exact PR/branch/commit/backend/deployment identifiers when available.
-- If blocked, the handoff prompt must make the blocker the first task for Sol to evaluate.
-- If no code changed, still produce the handoff prompt and explain why.
-- The prompt must be self-contained enough that a fresh GPT-5.6 Sol conversation can continue without access to Sonnet's chat history.
+- If blocked, make the blocker explicit and tell Sol/Copilot what can still be validated.
+- The handoff must be self-contained enough that a fresh Sol session can continue without Sonnet's chat history.

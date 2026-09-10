@@ -1,6 +1,6 @@
 # FundMatch AI Build Playbook
 
-This folder is the operational prompt set for finishing FundMatch without having multiple AI agents redesigning the same system at the same time.
+This folder is the operational prompt set for finishing FundMatch without having multiple AI agents duplicate the same work.
 
 ## Read first
 
@@ -17,37 +17,54 @@ The roadmap and architecture documents outrank these prompts if they conflict.
 
 ## Roles
 
-- **Sonnet 5 — primary builder.** Implements one scoped phase at a time: code, migrations, wiring, tests and implementation notes. Every Sonnet turn must end with a self-contained GPT-5.6 Sol follow-up prompt using `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
-- **GPT-5.6 Sol — technical lead/reviewer.** Defines acceptance boundaries, reviews Sonnet's PR, checks architecture/security/data isolation, tests edge cases, and either approves or returns a precise correction list. Sol should then identify the next roadmap phase or produce the exact corrective Sonnet prompt.
-- **Opus — refinement engineer.** Runs only after the phase is functionally accepted. Refactors, simplifies, improves resilience and code quality without changing the approved architecture or product scope.
-- **Astra — product experience/polish.** Runs after functionality is accepted. Improves interaction quality, visual presentation, motion, storytelling and supporting assets without inventing backend capabilities.
+- **Sonnet 5 — primary builder.** Implements one scoped phase at a time: code, migrations, wiring and focused implementation notes. Runs only minimum sanity checks needed for a coherent handoff. Every Sonnet turn ends with proposed GitHub Copilot validations plus a self-contained GPT-5.6 Sol follow-up prompt using `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+- **GPT-5.6 Sol — technical lead/reviewer.** Defines acceptance boundaries and reviews the actual implementation for architecture, authorization, data contracts, migration safety, state transitions and product truthfulness. Sol does not spend its turn on broad mechanical validation. Every post-implementation Sol review ends with the authoritative GitHub Copilot validation prompt.
+- **GitHub Copilot — validation/regression engineer.** Owns the heavier mechanical verification: broad regression, adversarial/security cases, two-user/two-org matrices, browser/end-to-end checks, retries/idempotency cases, deployment evidence and focused validation test harnesses. It reports evidence back to Sol for the final acceptance decision.
+- **Opus — refinement engineer.** Runs after functional acceptance to simplify/refactor/improve resilience without changing approved architecture or scope.
+- **Astra — product experience/polish.** Runs after functionality is accepted to improve interaction quality, visual presentation, motion, storytelling and assets without inventing backend capabilities.
 
 ## Required order
 
 For each phase:
 
 ```text
-GPT-5.6 Sol scope/acceptance
-→ Sonnet 5 implementation
-→ Sonnet produces ready-to-paste Sol context/review prompt
-→ GPT-5.6 Sol review/security/acceptance
-→ Sonnet 5 corrections if needed
-→ Sonnet produces updated Sol context/review prompt
+GPT-5.6 Sol scope
+→ Sonnet 5 implementation + minimum sanity checks
+→ Sonnet proposes Copilot validations + writes ready-to-paste Sol context prompt
+→ GPT-5.6 Sol architecture/security review
+→ Sol writes authoritative GitHub Copilot validation prompt
+→ GitHub Copilot performs focused extended validation and returns evidence to Sol
+→ GPT-5.6 Sol ACCEPT / REJECT
+→ Sonnet corrections if rejected
+→ repeat focused Sol → Copilot gate as needed
 → Opus refinement
-→ GPT-5.6 Sol regression check
-→ Astra experience polish when the phase has visible UX
+→ Sol writes focused post-refinement Copilot validation prompt
+→ GitHub Copilot regression check
+→ Astra experience polish when useful
+→ focused Copilot regression if Astra touched functional behavior
 → merge
 ```
 
-Do not let Opus or Astra redesign architecture before the implementation passes acceptance.
+This split is intentional: do not spend Sonnet/Sol context windows rerunning work Copilot can validate mechanically.
 
-## Model-to-model handoff rule
+## Validation economy rule
 
-The user should never have to reconstruct implementation context manually.
+Do not confuse “more checks” with “better validation.” Validate the changed phase and its affected boundaries, not the entire historical product on every turn.
 
-At the end of every Sonnet build/correction turn, Sonnet must fill out `SONNET_TO_SOL_HANDOFF_TEMPLATE.md` and include that completed prompt in its response. The prompt must contain the exact phase, branch, PR, head SHA, backend/deployment identity, migrations/external changes, verification completed, security/data-boundary evidence, blockers/uncertainties, the files Sol should inspect first, and the exact acceptance task.
+Sonnet should only run minimum implementation sanity checks. Sol should primarily reason from the code/diff and use narrow spot-checks only when needed to resolve ambiguity. GitHub Copilot owns the broader requested validation matrix.
 
-Sol must independently verify those claims. If the phase passes, Sol states the next roadmap phase and supplies/points to the next Sonnet implementation prompt. If the phase fails, Sol supplies the exact corrective Sonnet prompt. No phase advances simply because Sonnet reports success or CI is green.
+At the end of every Sonnet build/correction turn:
+
+- fill `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`;
+- include proposed Copilot validations.
+
+At the end of every post-implementation Sol review:
+
+- write a complete prompt using `COPILOT_VALIDATION_HANDOFF_TEMPLATE.md`;
+- use the matching phase checklist in `GITHUB_COPILOT_VALIDATION_PROMPTS.md`;
+- ask Copilot only for checks relevant to the current diff/phase.
+
+After Copilot returns evidence, Sol makes the final phase ACCEPT/REJECT decision. If rejected, Sol writes the exact corrective Sonnet prompt. If accepted, Sol identifies the next roadmap phase and points to/writes its Sonnet prompt.
 
 ## Branch rule
 
@@ -78,8 +95,10 @@ Suggested branch names:
 ## Prompt files
 
 - `SONNET5_BUILD_PROMPTS.md` — implementation prompts for the builder.
-- `SONNET_TO_SOL_HANDOFF_TEMPLATE.md` — mandatory ready-to-paste context/review prompt generated by Sonnet after every implementation/correction turn.
-- `GPT56_SOL_REVIEW_PROMPTS.md` — scope, review and acceptance prompts.
+- `SONNET_TO_SOL_HANDOFF_TEMPLATE.md` — mandatory Sonnet → Sol context handoff with proposed Copilot validations.
+- `GPT56_SOL_REVIEW_PROMPTS.md` — architecture/review prompts that conclude with a Copilot validation assignment.
+- `COPILOT_VALIDATION_HANDOFF_TEMPLATE.md` — standard Sol/Sonnet → GitHub Copilot validation prompt format.
+- `GITHUB_COPILOT_VALIDATION_PROMPTS.md` — phase-specific validation sets for Copilot.
 - `OPUS_REFINEMENT_PROMPT.md` — post-acceptance code refinement.
 - `ASTRA_POLISH_PROMPT.md` — post-acceptance UX/visual polish.
 - `RELEASE_HANDOFF_PROMPT.md` — final pre-merge/release handoff.
