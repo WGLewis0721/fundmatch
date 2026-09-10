@@ -4,11 +4,11 @@ The active FundMatch milestone is **Roadmap Phase 5 — Authenticated deployment
 
 ## Current state
 
-FundMatch now uses the standalone Supabase project `dkanoobzseckccbwnpyi`. The separate APEX project `fnmxlmjrkgojowpzrcwa` must not be modified.
+FundMatch uses standalone Supabase project `dkanoobzseckccbwnpyi`. The separate APEX project `fnmxlmjrkgojowpzrcwa` must not be modified.
 
-Backend provisioning is complete and live migrations `0000` through `0004` are applied. Lovable is retired from the active architecture. Production `/app` hosting on Cloudflare is intentionally deferred by the maintainer for now.
+Backend provisioning is complete and live migrations `0000` through `0005` are applied. Lovable is retired from the active architecture. The focused live database/RLS sub-gate is accepted. Production `/app` hosting on Cloudflare is intentionally deferred by the maintainer for now.
 
-Phase 6 remains blocked until the remaining Phase 5 acceptance evidence is complete and GPT-5.6 Sol explicitly accepts Phase 5.
+Phase 6 remains blocked until the remaining deployment/browser portion of Phase 5 is completed and GPT-5.6 Sol explicitly accepts the full phase, unless the roadmap is deliberately re-scoped.
 
 ## Resource-efficient agent split
 
@@ -20,13 +20,28 @@ GPT-5.6 Sol = final ACCEPT / REJECT
 Opus/Astra = refinement/polish after acceptance
 ```
 
-Sonnet and Sol should not spend their context windows duplicating exhaustive validation that Copilot can perform.
+## Phase 5 evidence already completed
 
-## Immediate Phase 5 work
+- standalone FundMatch project identity confirmed;
+- migration chain `0000`–`0005` applied;
+- old permissive policy names absent;
+- private `documents` bucket confirmed;
+- protected helper functions denied to anonymous callers;
+- two-organization private-row isolation confirmed;
+- cross-org mutation/document-row deletion denied;
+- private readiness/document/Storage metadata hidden cross-org;
+- organization creation, invitation email binding, member-role restrictions, and last-owner protection checked;
+- founder startup and investor-thesis persistence checked;
+- Supabase Storage direct-SQL delete incompatibility fixed by `0005`;
+- temporary validation fixtures removed.
 
-1. Keep source-of-truth aligned with standalone Supabase project `dkanoobzseckccbwnpyi`.
-2. Validate the non-deployment Phase 5 boundary: migration/RLS/function privileges, organization isolation, private document authorization, and repo/build separation.
-3. Treat production `/app` deployment plus production Auth redirect configuration as deferred—not complete.
-4. Do not begin Phase 6 before explicit Sol acceptance.
+See `docs/BACKEND.md`, `PHASE5_EXECUTION_STATUS.md`, and `PHASE5_ACCEPTANCE_CHECKLIST.md`.
 
-Use `PHASE5_ACCEPTANCE_CHECKLIST.md` for the acceptance boundary and `GITHUB_COPILOT_VALIDATION_PROMPTS.md` for extended mechanical checks.
+## Intentionally deferred
+
+- production `/app` deployment;
+- production Supabase Auth Site URL + `/app/login` and `/app/reset` redirects;
+- real browser signup/email confirmation/login/logout/recovery;
+- deployment-level end-to-end acceptance.
+
+Do not claim those deferred items are complete.
