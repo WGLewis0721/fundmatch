@@ -1,22 +1,30 @@
-# Phase 5 implementation ticket — Sonnet 5
+# Phase 5 implementation ticket — standalone production acceptance
 
 **Objective:** complete authenticated deployment acceptance for FundMatch and stop before Phase 6.
 
-**Primary prompt:** `docs/ai-prompts/PHASE5_SONNET_HANDOFF.md`
+**Immediate action prompt:** `docs/ai-prompts/COPILOT_PHASE5_REMOVE_LOVABLE_AND_FINISH.md`
 
-**Required preflight:** `docs/ai-prompts/PHASE5_PREIMPLEMENTATION_REVIEW.md`
+**Acceptance criteria:** `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md`
 
-**Acceptance gate:** `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md`
+## Current architecture decision
+
+Lovable is retired. FundMatch production is:
+
+`GitHub source → standalone Supabase → Cloudflare Workers/Nitro`
+
+The public demo remains on GitHub Pages.
 
 ## Critical facts
 
-- Intended FundMatch Supabase ref: `ejzizfvjnpzieigviglc`.
-- Original Lovable project: `34443a2f-0671-4404-94db-fe807d4a7448`.
-- Connected standalone Supabase project `fnmxlmjrkgojowpzrcwa` is APEX. Do not modify it.
-- Live FundMatch database still has pre-Phase-5 permissive RLS.
-- Apply/reconcile `0002_fundmatch_accounts_persistence.sql` and `0003_phase5_function_privileges.sql`.
-- Live two-organization row and private-Storage isolation is mandatory before acceptance.
+- APEX Supabase project `fnmxlmjrkgojowpzrcwa` is not FundMatch. Do not modify it.
+- The old Lovable-backed FundMatch environment is historical and must not remain a production dependency.
+- Provision/use a dedicated standalone Supabase project for FundMatch.
+- Apply/reconcile repository migrations `0000` through `0003` there.
+- Remove remaining Lovable runtime/build/package/lockfile/configuration coupling.
+- Deploy current `/app` from GitHub to Cloudflare.
+- GitHub Copilot performs focused Phase 5 validation and returns evidence to GPT-5.6 Sol.
+- GPT-5.6 Sol makes the final ACCEPT/REJECT decision.
 
 ## Completion output
 
-Return a PR with exact deployment URL, schema/migration evidence, auth evidence, two-org RLS evidence, private Storage evidence, tests/builds, remaining blockers, and a statement that the PR is ready for GPT-5.6 Sol acceptance review.
+Return the standalone Supabase project ref, Cloudflare `/app` URL, Lovable-removal summary, migration state, focused auth/RLS/Storage/two-org evidence, relevant build/test results, blockers, and a ready-to-paste GPT-5.6 Sol final acceptance prompt.
