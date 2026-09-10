@@ -2,19 +2,15 @@
 
 The active FundMatch milestone is **Roadmap Phase 5 — Authenticated deployment acceptance**.
 
-## Current gate status
+## Current state
 
-GPT-5.6 Sol previously **REJECTED Phase 5 for production acceptance** because the live FundMatch backend/deployment did not yet satisfy the Phase 5 boundary.
+FundMatch uses standalone Supabase project `dkanoobzseckccbwnpyi`. The separate APEX project `fnmxlmjrkgojowpzrcwa` must not be modified.
 
-Read:
+Backend provisioning is complete and live migrations `0000` through `0005` are applied. Lovable is retired from the active architecture. The focused live database/RLS sub-gate is accepted. Production `/app` hosting on Cloudflare is intentionally deferred by the maintainer for now.
 
-`docs/ai-prompts/PHASE5_ACCEPTANCE_RESULT_2026-09-10.md`
-
-Phase 6 remains blocked until Phase 5 implementation is corrected, GitHub Copilot performs the required validation, and Sol accepts the evidence.
+Phase 6 remains blocked until the remaining deployment/browser portion of Phase 5 is completed and GPT-5.6 Sol explicitly accepts the full phase, unless the roadmap is deliberately re-scoped.
 
 ## Resource-efficient agent split
-
-For this phase and all later phases:
 
 ```text
 Sonnet 5 = implement
@@ -24,50 +20,28 @@ GPT-5.6 Sol = final ACCEPT / REJECT
 Opus/Astra = refinement/polish after acceptance
 ```
 
-Sonnet and Sol should not spend their context windows on exhaustive validation that Copilot can perform.
+## Phase 5 evidence already completed
 
-## Sonnet 5 — next action
+- standalone FundMatch project identity confirmed;
+- migration chain `0000`–`0005` applied;
+- old permissive policy names absent;
+- private `documents` bucket confirmed;
+- protected helper functions denied to anonymous callers;
+- two-organization private-row isolation confirmed;
+- cross-org mutation/document-row deletion denied;
+- private readiness/document/Storage metadata hidden cross-org;
+- organization creation, invitation email binding, member-role restrictions, and last-owner protection checked;
+- founder startup and investor-thesis persistence checked;
+- Supabase Storage direct-SQL delete incompatibility fixed by `0005`;
+- temporary validation fixtures removed.
 
-Start with:
+See `docs/BACKEND.md`, `PHASE5_EXECUTION_STATUS.md`, and `PHASE5_ACCEPTANCE_CHECKLIST.md`.
 
-`docs/ai-prompts/SONNET5_PHASE5_CONTINUE_AFTER_GATE.md`
+## Intentionally deferred
 
-Also read:
+- production `/app` deployment;
+- production Supabase Auth Site URL + `/app/login` and `/app/reset` redirects;
+- real browser signup/email confirmation/login/logout/recovery;
+- deployment-level end-to-end acceptance.
 
-- `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`
-- `docs/ai-prompts/COPILOT_VALIDATION_HANDOFF_TEMPLATE.md`
-- Phase 5 in `docs/ai-prompts/GITHUB_COPILOT_VALIDATION_PROMPTS.md`
-
-Sonnet should implement Phase 5, run only minimum sanity checks, open a PR, propose the exact Copilot validations, and output a ready-to-paste Sol context prompt.
-
-Before implementation, confirm the session has credentialed access to FundMatch project `ejzizfvjnpzieigviglc` or the appropriate Lovable-backed database/deployment path. Do not touch the separate APEX Supabase project `fnmxlmjrkgojowpzrcwa`.
-
-Key pending migrations remain:
-
-- `0002_fundmatch_accounts_persistence.sql`
-- `0003_phase5_function_privileges.sql`
-
-## GPT-5.6 Sol — after Sonnet's PR
-
-Use Sonnet's generated Sol prompt.
-
-Sol should inspect the actual PR/diff and review architecture, RLS design, privileged-function boundaries, migration safety, deployment truthfulness, and scope. Sol should **not** personally execute the entire signup/recovery/browser/two-org/Storage/regression matrix.
-
-Sol must conclude the review with a ready-to-paste GitHub Copilot validation prompt using:
-
-- `docs/ai-prompts/COPILOT_VALIDATION_HANDOFF_TEMPLATE.md`
-- Phase 5 in `docs/ai-prompts/GITHUB_COPILOT_VALIDATION_PROMPTS.md`
-- `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md` as the acceptance criteria source
-
-## GitHub Copilot — validation
-
-Copilot performs the requested extended Phase 5 checks and returns evidence plus a ready-to-paste Sol follow-up prompt.
-
-## GPT-5.6 Sol — final decision
-
-After Copilot evidence, use Prompt G in `GPT56_SOL_REVIEW_PROMPTS.md` and return:
-
-- `ACCEPT PHASE 5` → identify the next roadmap phase/Sonnet prompt; or
-- `REJECT PHASE 5` → write the exact corrective Sonnet prompt.
-
-Do not begin Phase 6 before explicit Sol acceptance.
+Do not claim those deferred items are complete.

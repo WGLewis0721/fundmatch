@@ -19,13 +19,11 @@ The roadmap and architecture documents outrank these prompts if they conflict.
 
 - **Sonnet 5 — primary builder.** Implements one scoped phase at a time: code, migrations, wiring and focused implementation notes. Runs only minimum sanity checks needed for a coherent handoff. Every Sonnet turn ends with proposed GitHub Copilot validations plus a self-contained GPT-5.6 Sol follow-up prompt using `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
 - **GPT-5.6 Sol — technical lead/reviewer.** Defines acceptance boundaries and reviews the actual implementation for architecture, authorization, data contracts, migration safety, state transitions and product truthfulness. Sol does not spend its turn on broad mechanical validation. Every post-implementation Sol review ends with the authoritative GitHub Copilot validation prompt.
-- **GitHub Copilot — validation/regression engineer.** Owns the heavier mechanical verification: broad regression, adversarial/security cases, two-user/two-org matrices, browser/end-to-end checks, retries/idempotency cases, deployment evidence and focused validation test harnesses. It reports evidence back to Sol for the final acceptance decision.
+- **GitHub Copilot — validation/regression engineer.** Owns heavier mechanical verification: broad regression, adversarial/security cases, two-user/two-org matrices, browser/end-to-end checks, retries/idempotency cases, deployment evidence and focused validation harnesses. It reports evidence back to Sol for the final acceptance decision.
 - **Opus — refinement engineer.** Runs after functional acceptance to simplify/refactor/improve resilience without changing approved architecture or scope.
 - **Astra — product experience/polish.** Runs after functionality is accepted to improve interaction quality, visual presentation, motion, storytelling and assets without inventing backend capabilities.
 
 ## Required order
-
-For each phase:
 
 ```text
 GPT-5.6 Sol scope
@@ -38,37 +36,18 @@ GPT-5.6 Sol scope
 → Sonnet corrections if rejected
 → repeat focused Sol → Copilot gate as needed
 → Opus refinement
-→ Sol writes focused post-refinement Copilot validation prompt
-→ GitHub Copilot regression check
+→ focused Copilot regression as needed
 → Astra experience polish when useful
-→ focused Copilot regression if Astra touched functional behavior
 → merge
 ```
 
-This split is intentional: do not spend Sonnet/Sol context windows rerunning work Copilot can validate mechanically.
-
 ## Validation economy rule
 
-Do not confuse “more checks” with “better validation.” Validate the changed phase and its affected boundaries, not the entire historical product on every turn.
-
-Sonnet should only run minimum implementation sanity checks. Sol should primarily reason from the code/diff and use narrow spot-checks only when needed to resolve ambiguity. GitHub Copilot owns the broader requested validation matrix.
-
-At the end of every Sonnet build/correction turn:
-
-- fill `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`;
-- include proposed Copilot validations.
-
-At the end of every post-implementation Sol review:
-
-- write a complete prompt using `COPILOT_VALIDATION_HANDOFF_TEMPLATE.md`;
-- use the matching phase checklist in `GITHUB_COPILOT_VALIDATION_PROMPTS.md`;
-- ask Copilot only for checks relevant to the current diff/phase.
-
-After Copilot returns evidence, Sol makes the final phase ACCEPT/REJECT decision. If rejected, Sol writes the exact corrective Sonnet prompt. If accepted, Sol identifies the next roadmap phase and points to/writes its Sonnet prompt.
+Validate the changed phase and affected boundaries, not the entire historical product on every turn. Sonnet should run minimum implementation sanity checks. Sol should primarily reason from code/diff and narrow spot-checks. Copilot owns the broader requested validation matrix.
 
 ## Branch rule
 
-Use one branch/PR per phase. Do not combine unrelated roadmap phases. Do not rewrite already-published Git history because the repository is connected to Lovable.
+Use one branch/PR per phase. Do not combine unrelated roadmap phases. Do not rewrite published history without a specific repository reason.
 
 Suggested branch names:
 
@@ -80,6 +59,10 @@ Suggested branch names:
 - `implementation/phase10-notifications`
 - `implementation/phase11-integrations`
 - `pilot/phase12-readiness`
+
+## Active backend boundary
+
+FundMatch uses standalone Supabase project `dkanoobzseckccbwnpyi`. The APEX project `fnmxlmjrkgojowpzrcwa` is unrelated and must not be used for FundMatch.
 
 ## Hard constraints
 
