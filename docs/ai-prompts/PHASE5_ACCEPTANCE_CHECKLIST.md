@@ -1,6 +1,6 @@
 # Phase 5 acceptance checklist
 
-GPT-5.6 Sol owns the final ACCEPT/REJECT decision. GitHub Copilot owns the extended mechanical validation and evidence gathering. Production hosting is intentionally deferred by the maintainer, so deployment-dependent items remain explicitly pending rather than being treated as complete.
+GPT-5.6 Sol owns the final ACCEPT/REJECT decision. GitHub Copilot owns extended mechanical validation and evidence gathering. Production hosting is intentionally deferred by the maintainer, so deployment-dependent items remain explicitly pending rather than being treated as complete.
 
 ## Backend identity
 
@@ -10,42 +10,57 @@ GPT-5.6 Sol owns the final ACCEPT/REJECT decision. GitHub Copilot owns the exten
 
 ## Migration and schema
 
-- [x] Live migrations `0000` through `0004` are applied to FundMatch.
+- [x] Live migrations `0000` through `0005` are applied to FundMatch.
 - [x] `organization_invitations`, `readiness_items`, `documents`, and `profile_suggestions` exist.
-- [x] Private `documents` Storage bucket exists from migration `0002`.
-- [x] Repository contains the live `0004` has-role privilege hardening change.
+- [x] Private `documents` Storage bucket exists and is not public.
+- [x] Repository contains live hardening migrations `0004` and `0005`.
 
-## Authorization
+## Authorization — live backend evidence
 
-- [ ] Copilot evidence confirms old permissive policies are absent.
-- [ ] Copilot evidence confirms organization-scoped RLS behavior.
-- [ ] Copilot evidence confirms privileged helper execution boundaries.
-- [ ] Copilot evidence confirms two-organization isolation for private rows.
-- [ ] Copilot evidence confirms private document row/Storage authorization boundaries.
+- [x] Old permissive policy names targeted by Phase 5 are absent.
+- [x] Organization-scoped RLS allows each test organization to read its own private rows and hides the other organization’s private startup/investor rows.
+- [x] Cross-org startup mutation affects zero rows.
+- [x] Cross-org document-row deletion affects zero rows.
+- [x] Private readiness/document/Storage metadata are hidden from the unrelated test organization.
+- [x] Protected helper functions are not executable by `anon`; `startup_org()` does not disclose another organization’s ID.
+- [x] `has_role()` anonymous execution is revoked by `0004`.
+- [x] Hosted-Supabase-incompatible direct `storage.objects` deletion trigger is removed by `0005`.
+- [x] Phase 5 helper mutable-search-path findings fixed by `0005`.
 - [x] Service-role and migration secrets remain outside public/browser assets by design.
 
-## Auth and organization workflow
+## Organization workflow — database/RPC evidence
 
-- [ ] Signup/login/logout/recovery behavior validated against the standalone project.
-- [ ] Startup and investment-firm organization creation validated.
-- [ ] Invitation/role/last-owner boundaries validated.
+- [x] Startup organization creation works under authenticated claims.
+- [x] Investment-firm organization creation works under authenticated claims.
+- [x] Invitation email binding rejects the wrong identity.
+- [x] Correct invited identity can join.
+- [x] Non-admin member cannot invite members.
+- [x] Last-owner deletion is blocked.
 
-Production email redirect URLs cannot receive their final production values until an `/app` hosting origin is selected.
+## Persistence — database evidence
 
-## Persistence
+- [x] Founder startup profile updates persist across separate authenticated calls.
+- [x] Investor-thesis updates persist across separate authenticated calls.
+- [x] Readiness items can be initialized for the owning startup and remain invisible cross-org.
+- [x] Authorized document record + Storage metadata creation works under the required org/document path.
 
-- [ ] Founder profile/readiness/material persistence validated.
-- [ ] Investor profile/thesis persistence validated.
+## Auth — deployment/browser dependent
+
+- [ ] **DEFERRED:** real signup + email confirmation flow through the deployed app.
+- [ ] **DEFERRED:** real login/logout through the deployed app.
+- [ ] **DEFERRED:** password recovery through the deployed app.
+- [ ] **DEFERRED:** production Supabase Site URL and `/app/login` + `/app/reset` redirect allow-list.
 
 ## Deployment and regression
 
-- [x] Native TanStack Start + Cloudflare build configuration is on `main`.
-- [x] GitHub CI passed after Lovable build/runtime removal.
+- [x] Native TanStack Start + Cloudflare build configuration is on `main` from PR #17.
+- [x] GitHub CI passed after the Lovable build/runtime removal.
 - [x] `/` and `/demo` remain separate browser-only Pages build targets.
 - [ ] **DEFERRED:** production `/app` deployment.
-- [ ] **DEFERRED:** production Supabase Auth Site URL + `/app/login` and `/app/reset` redirects.
 - [ ] **DEFERRED:** browser/end-to-end acceptance against the production deployment.
 
 ## Sol acceptance result
 
-Full production **Phase 5 ACCEPT** requires the deferred deployment-dependent items unless the roadmap is deliberately re-scoped. Until then Sol may record the standalone backend/repo boundary as accepted while keeping Phase 5 production acceptance pending.
+**Backend/RLS sub-gate:** accepted based on focused live evidence above.
+
+Full production **Phase 5 ACCEPT** remains pending because the maintainer explicitly deferred production `/app` deployment and its browser/Auth-dependent checks. Phase 6 remains blocked unless the roadmap is deliberately re-scoped.
