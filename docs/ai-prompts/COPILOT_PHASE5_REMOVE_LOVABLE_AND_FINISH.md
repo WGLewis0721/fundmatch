@@ -7,7 +7,7 @@ Use this as the next action prompt.
 You are the infrastructure cleanup and validation engineer for **FundMatch**.
 
 Repository: `WGLewis0721/fundmatch`
-Base branch: latest `main`
+Active branch/PR: `chore/remove-lovable-phase5` / PR #16
 Active milestone: **Roadmap Phase 5 — Authenticated deployment acceptance**
 
 Read first:
@@ -24,7 +24,7 @@ Read first:
 10. `drizzle/migrations/0002_fundmatch_accounts_persistence.sql`
 11. `drizzle/migrations/0003_phase5_function_privileges.sql`
 
-## Decision already made
+## Decisions already made
 
 **Lovable is retired. Remove it completely from the active FundMatch production path.**
 
@@ -34,46 +34,52 @@ Supported production architecture:
 
 Public `/` + `/demo` stays on GitHub Pages and remains browser-only.
 
-The separate Supabase project `fnmxlmjrkgojowpzrcwa` is **APEX**. Never modify it or use it as FundMatch.
+Use this dedicated standalone FundMatch backend and no other project:
 
-## Part A — remove Lovable from the repo
+- Project name: `FundMatch`
+- Supabase project ref: `dkanoobzseckccbwnpyi`
+- API URL: `https://dkanoobzseckccbwnpyi.supabase.co`
+- Region: `us-east-1`
+- Organization: `Apex`
 
-Remove active Lovable coupling without redesigning the product:
+The separate Supabase project `fnmxlmjrkgojowpzrcwa` is the **APEX application project**. Never modify it or use it as FundMatch.
+
+Do not use the retired Lovable-backed FundMatch project.
+
+## Part A — finish Lovable removal from the repo
+
+A partial cleanup is already on this branch. Complete it without redesigning the product:
 
 1. Remove `@lovable.dev/vite-tanstack-config` from `package.json`.
-2. Replace `vite.config.ts` with the equivalent native TanStack Start + Vite + React + Tailwind + tsconfig-paths + Nitro/Cloudflare configuration using the packages already declared by the repo. Preserve the existing `src/server.ts` server entry and current route behavior.
+2. Replace `vite.config.ts` with the equivalent native TanStack Start + Vite + React + Tailwind + tsconfig-paths + Nitro/Cloudflare configuration. Preserve `src/server.ts`, current route behavior, environment injection and build output expectations.
 3. Regenerate `bun.lock` and `package-lock.json` from normal package registries so no Lovable package or Lovable npm-cache URL remains.
-4. Remove Lovable package exceptions from `bunfig.toml`.
-5. Remove any remaining Lovable runtime/error-reporting hook. The root error boundary should still render its existing user-facing fallback.
-6. Rename any Lovable-specific environment variables to FundMatch/generic names. Migrations must use `DATABASE_URL`; scheduled-worker auth must use `FUNDMATCH_CRON_SECRET` / `FUNDMATCH_CRON_SECRET_PREVIOUS` if that helper remains.
-7. Replace runtime messages such as `Connect Supabase in Lovable Cloud` with standalone Supabase configuration guidance.
-8. Update comments/runbooks/configuration so active docs do not instruct anyone to use Lovable.
-9. Historical audit documents may retain Lovable references only when clearly describing past events. Do not rewrite history just to remove a word.
-10. Search the active source, package manifests, build config and lockfiles for `lovable`, `@lovable.dev`, `LOVABLE_`, and Lovable registry/cache URLs. Active runtime/build/config references must be zero when finished.
+4. Confirm `bunfig.toml` has no Lovable package exception.
+5. Confirm the Lovable error-reporting hook has been removed while the existing root error fallback still works.
+6. Use only generic/FundMatch environment variables: `DATABASE_URL`, `FUNDMATCH_CRON_SECRET`, `FUNDMATCH_CRON_SECRET_PREVIOUS`, and the documented Supabase variables.
+7. Confirm runtime messages contain no instruction to connect Supabase through Lovable.
+8. Search active source, package manifests, build config and lockfiles for `lovable`, `@lovable.dev`, `LOVABLE_`, and Lovable registry/cache URLs. Active runtime/build/config references must be zero when finished. Historical audit prose may remain when clearly historical.
 
-## Part B — standalone Supabase
+## Part B — configure the standalone FundMatch Supabase project
 
-FundMatch must use a dedicated standalone Supabase project, not APEX and not the retired Lovable-backed project.
+Use only `dkanoobzseckccbwnpyi`.
 
-If a standalone FundMatch Supabase project reference/credentials are already available in the environment, use them. If not, complete Part A and stop with exactly one environment blocker: `STANDALONE FUNDMATCH SUPABASE PROJECT REQUIRED`.
+1. Apply/reconcile migrations `0000` → `0001` → `0002` → `0003` in journal order. Do not apply the local Supabase shim to the real project.
+2. Confirm the private `documents` bucket exists and `public = false`.
+3. Confirm the old permissive policies from `0000` have been replaced by the organization-scoped policies from `0002`.
+4. Confirm the helper/RPC execution hardening from `0003` is present.
+5. Generate `src/integrations/supabase/types.ts` from this project.
+6. Configure email/password Auth with email confirmation enabled.
+7. After Cloudflare deployment, configure the Site URL and redirect allow list for the deployed origin, including `/app/login` and `/app/reset`.
+8. Use this project's publishable key for browser/server publishable-key variables. Keep service-role/database secrets server-only.
 
-Do **not** create or substitute a database in a different account/project merely to make tests pass.
-
-Once the standalone project exists:
-
-1. Apply/reconcile migrations `0000` → `0001` → `0002` → `0003` in journal order using `DATABASE_URL`.
-2. Confirm the private `documents` bucket exists and is not public.
-3. Generate `src/integrations/supabase/types.ts` from that project.
-4. Configure email/password auth with email confirmation enabled.
-5. Configure Site URL and redirects for the deployed Cloudflare origin, including `/app/login` and `/app/reset`.
-6. Use the project's publishable key in browser/server publishable-key variables. Keep service role server-only.
+If your execution environment lacks Supabase credentials or access needed for a specific action, do not substitute another project and do not touch APEX. Report the exact blocked action while continuing any safe repo/deployment work that does not require that missing access.
 
 ## Part C — Cloudflare `/app` deployment
 
 Deploy **current GitHub code**, not an old preview snapshot.
 
 1. Build using the native TanStack Start/Nitro Cloudflare path after Lovable removal.
-2. Configure the standalone FundMatch Supabase URL/publishable key for the build/runtime.
+2. Configure `https://dkanoobzseckccbwnpyi.supabase.co` and its publishable key for the build/runtime.
 3. Configure only required server secrets in Cloudflare.
 4. Deploy the authenticated application to Cloudflare Workers.
 5. Record the final production `/app` URL.
@@ -98,7 +104,7 @@ Prioritize only what is required to accept Phase 5:
 - founder/investor persistence;
 - document upload/download/delete;
 - two-org cross-tenant row/storage denial;
-- `/app` deployed against the standalone FundMatch project;
+- `/app` deployed against `dkanoobzseckccbwnpyi`;
 - `/` + `/demo` still browser-only;
 - no service-role/database secret in source or public bundle;
 - `bun run typecheck`, relevant tests, `bun run build`, `bun run build:pages`.
@@ -114,8 +120,8 @@ Fix only mechanical/configuration defects directly inside this Phase 5 boundary.
 Return:
 
 - branch + PR;
-- exact standalone FundMatch Supabase project ref used;
-- explicit confirmation APEX was untouched;
+- exact confirmation that standalone FundMatch project `dkanoobzseckccbwnpyi` was used;
+- explicit confirmation APEX `fnmxlmjrkgojowpzrcwa` was untouched;
 - Lovable-removal files and dependencies removed;
 - Cloudflare deployment URL;
 - migrations actually applied;
