@@ -4,33 +4,24 @@
 
 **Roadmap Phase 5 — Authenticated deployment acceptance**
 
-**Primary builder:** Sonnet 5  
-**Architecture/security reviewer:** GPT-5.6 Sol  
-**Downstream refinement:** Opus  
-**Downstream product/visual polish:** Astra
+## Current state
 
-## Builder prompt
+- Active FundMatch backend: standalone Supabase project `dkanoobzseckccbwnpyi`.
+- APEX project `fnmxlmjrkgojowpzrcwa` is unrelated and must not be modified.
+- Live migrations `0000` through `0005` are applied.
+- The focused database/RLS sub-gate is accepted.
+- Lovable is retired from the active architecture.
+- Native TanStack Start + Cloudflare tooling is on `main` from PR #17 with green GitHub Actions.
 
-Run **Prompt 1 — Authenticated production deployment** from [`SONNET5_BUILD_PROMPTS.md`](SONNET5_BUILD_PROMPTS.md).
+## Intentionally deferred
 
-Before implementation, read:
+The maintainer has deferred production `/app` deployment for now. Therefore the following remain pending rather than failed:
 
-- `AGENTS.md`
-- `ROADMAP.md`
-- `README.md`
-- `docs/MATCHING_ARCHITECTURE.md`
-- `docs/IMPLEMENTATION_NEXT_STEPS.md`
-- `docs/BACKEND.md`
-- `docs/PHASE5_ACCEPTANCE_AUDIT.md`
-
-## Critical live-backend finding
-
-The intended FundMatch database is attached to the original Lovable FundMatch project and is reachable there. The directly connected standalone Supabase project is APEX and must not be used.
-
-The live FundMatch database still has the old permissive RLS policy set and is missing the newer Phase 5 tables/private-document layer from migration `0002_fundmatch_accounts_persistence.sql`.
-
-Do not treat `/app` as safe for real private data until migration reconciliation, deployment and two-organization acceptance all pass.
+- production hosting;
+- production Supabase Auth Site URL and redirect allow-list;
+- browser signup/email confirmation/login/logout/recovery;
+- deployment-level end-to-end acceptance.
 
 ## Stop condition
 
-Do **not** begin production candidate retrieval (Roadmap Phase 6) until GPT-5.6 Sol reviews and accepts Phase 5 evidence.
+Do not begin Roadmap Phase 6 until GPT-5.6 Sol explicitly accepts the full Phase 5 boundary or the roadmap is deliberately re-scoped.
