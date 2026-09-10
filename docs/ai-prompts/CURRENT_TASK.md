@@ -20,7 +20,7 @@ GPT-5.6 Sol remains the final Phase 5 acceptance authority after Copilot returns
 
 ## Critical facts
 
-- Dedicated FundMatch Supabase project now exists: `dkanoobzseckccbwnpyi`.
+- Dedicated FundMatch Supabase project exists: `dkanoobzseckccbwnpyi`.
 - FundMatch API URL: `https://dkanoobzseckccbwnpyi.supabase.co`.
 - Region: `us-east-1`.
 - APEX application Supabase project `fnmxlmjrkgojowpzrcwa` is not FundMatch and must not be modified.
