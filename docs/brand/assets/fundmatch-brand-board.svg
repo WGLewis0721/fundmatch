@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">FundMatch brand board</title>
+  <desc id="desc">A brand board showing FundMatch colors, messaging, audience promises, and interface motifs.</desc>
+  <rect width="1400" height="760" rx="44" fill="#f8f7f3"/>
+  <text x="76" y="98" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="54" font-weight="850" letter-spacing="-2.4">FundMatch</text>
+  <text x="78" y="140" fill="#727579" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24">Great companies. Right investors.</text>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <rect x="76" y="210" width="212" height="150" rx="28" fill="#24272b"/>
+    <text x="108" y="300" fill="#ffffff" font-size="20" font-weight="850">Ink</text>
+    <text x="108" y="326" fill="#c6efde" font-size="15">#24272b</text>
+
+    <rect x="316" y="210" width="212" height="150" rx="28" fill="#c6efde"/>
+    <text x="348" y="300" fill="#24272b" font-size="20" font-weight="850">Mint</text>
+    <text x="348" y="326" fill="#24272b" font-size="15">#c6efde</text>
+
+    <rect x="556" y="210" width="212" height="150" rx="28" fill="#9caafa"/>
+    <text x="588" y="300" fill="#ffffff" font-size="20" font-weight="850">Periwinkle</text>
+    <text x="588" y="326" fill="#ffffff" font-size="15">#9caafa</text>
+
+    <rect x="796" y="210" width="212" height="150" rx="28" fill="#ffffff" stroke="#e5e4df"/>
+    <text x="828" y="300" fill="#24272b" font-size="20" font-weight="850">Paper</text>
+    <text x="828" y="326" fill="#727579" font-size="15">#f8f7f3</text>
+
+    <rect x="1036" y="210" width="212" height="150" rx="28" fill="#e5e4df"/>
+    <text x="1068" y="300" fill="#24272b" font-size="20" font-weight="850">Line</text>
+    <text x="1068" y="326" fill="#727579" font-size="15">#e5e4df</text>
+  </g>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <rect x="76" y="430" width="374" height="180" rx="34" fill="#ffffff" stroke="#e5e4df"/>
+    <text x="116" y="488" fill="#24272b" font-size="24" font-weight="850">Founder promise</text>
+    <text x="116" y="532" fill="#727579" font-size="18">Tell your story once.</text>
+    <text x="116" y="562" fill="#727579" font-size="18">Get discovered by investors</text>
+    <text x="116" y="592" fill="#727579" font-size="18">who actually fit.</text>
+
+    <rect x="514" y="430" width="374" height="180" rx="34" fill="#24272b"/>
+    <text x="554" y="488" fill="#ffffff" font-size="24" font-weight="850">Investor promise</text>
+    <text x="554" y="532" fill="#c6efde" font-size="18">Find what fits.</text>
+    <text x="554" y="562" fill="#ffffff" opacity="0.82" font-size="18">Less weak-fit screening.</text>
+    <text x="554" y="592" fill="#ffffff" opacity="0.82" font-size="18">Clear reasons to act.</text>
+
+    <rect x="952" y="430" width="374" height="180" rx="34" fill="#ffffff" stroke="#e5e4df"/>
+    <text x="992" y="488" fill="#24272b" font-size="24" font-weight="850">Interface motifs</text>
+    <rect x="992" y="520" width="82" height="34" rx="17" fill="#f8f7f3" stroke="#e5e4df"/>
+    <text x="1018" y="542" fill="#24272b" font-size="13" font-weight="800">Pass</text>
+    <rect x="1088" y="520" width="82" height="34" rx="17" fill="#9caafa"/>
+    <text x="1112" y="542" fill="#ffffff" font-size="13" font-weight="800">Save</text>
+    <rect x="1184" y="520" width="112" height="34" rx="17" fill="#c6efde"/>
+    <text x="1208" y="542" fill="#24272b" font-size="13" font-weight="800">Interested</text>
+    <text x="992" y="590" fill="#727579" font-size="16">Cards · fit scores · source labels</text>
+  </g>
+
+  <text x="76" y="700" fill="#24272b" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="750">Design rule: simple discovery on the surface, serious data/provenance underneath.</text>
+</svg>
