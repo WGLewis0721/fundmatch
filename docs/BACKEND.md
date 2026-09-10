@@ -6,6 +6,19 @@ FundMatch no longer uses Lovable. The supported production path is:
 
 The public demo at `/` and `/demo` remains browser-only on GitHub Pages. The authenticated `/app` uses Supabase Auth, Postgres/RLS and private Storage.
 
+## Current standalone Supabase project
+
+FundMatch now has its own standalone Supabase project:
+
+- Project name: `FundMatch`
+- Project ref: `dkanoobzseckccbwnpyi`
+- API URL: `https://dkanoobzseckccbwnpyi.supabase.co`
+- Region: `us-east-1`
+- Organization: `Apex`
+- Provisioned: `2026-09-10`
+
+This is the only active FundMatch backend target. **Do not use the APEX application project `fnmxlmjrkgojowpzrcwa`.** The older Lovable-backed FundMatch project is retired and historical only.
+
 ## Two builds
 
 | Build | Command | Backend | Deployment |
@@ -33,17 +46,17 @@ See `.env.example`.
 
 ## Standalone Supabase provisioning
 
-FundMatch requires its own Supabase project. **Do not use the APEX project `fnmxlmjrkgojowpzrcwa`.**
+The dedicated project already exists as `dkanoobzseckccbwnpyi`.
 
-For the FundMatch project:
+Remaining Phase 5 backend setup:
 
-1. Enable email/password authentication and keep email confirmation enabled for production.
-2. Set the Auth Site URL to the deployed Cloudflare origin.
-3. Allow redirects for `/app/login` and `/app/reset` on that origin.
-4. Apply the repository migrations in journal order.
-5. Verify the private `documents` bucket remains private.
-6. Generate `src/integrations/supabase/types.ts` from the resulting schema.
-7. Supply the new project URL/publishable key to the Cloudflare build/runtime environment.
+1. Apply repository migrations `0000` → `0001` → `0002` → `0003` in journal order.
+2. Enable email/password authentication and keep email confirmation enabled for production.
+3. After Cloudflare deployment, set the Auth Site URL to that production origin.
+4. Add redirect URLs for `/app/login` and `/app/reset` on the production origin.
+5. Verify the private `documents` bucket exists and remains non-public after migration `0002`.
+6. Generate `src/integrations/supabase/types.ts` from this project.
+7. Supply this project's URL and publishable key to the Cloudflare build/runtime environment.
 
 ### Migrations
 
@@ -74,7 +87,7 @@ npx wrangler secret put SUPABASE_PUBLISHABLE_KEY
 npx wrangler deploy --config .output/server/wrangler.json
 ```
 
-Build-time `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` must point at the same standalone FundMatch project. Keep GitHub Pages on the browser-only demo build.
+Build-time `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` must point at `https://dkanoobzseckccbwnpyi.supabase.co`. Keep GitHub Pages on the browser-only demo build.
 
 ## Security model
 
