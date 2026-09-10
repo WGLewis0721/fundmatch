@@ -1,0 +1,51 @@
+name: Deploy FundMatch App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fundmatch-cloudflare-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Resolve Cloudflare credentials
+        env:
+          PRIMARY_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          LEGACY_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          PRIMARY_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          LEGACY_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          TOKEN="${PRIMARY_TOKEN:-${LEGACY_TOKEN:-}}"
+          ACCOUNT_ID="${PRIMARY_ACCOUNT_ID:-${LEGACY_ACCOUNT_ID:-}}"
+          if [ -z "$TOKEN" ]; then
+            echo "::error::No Cloudflare API token is available to this repository. Add CLOUDFLARE_API_TOKEN (preferred) or CF_API_TOKEN as a GitHub Actions secret."
+            exit 1
+          fi
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          if [ -n "$ACCOUNT_ID" ]; then
+            echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build authenticated app
+        env:
+          VITE_SUPABASE_URL: https://dkanoobzseckccbwnpyi.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_1UFQzS1rNIyeM80T7p6f-A_kTJIc6AW
+        run: bun run build
+
+      - name: Deploy to Cloudflare Workers
+        run: npx wrangler deploy
