@@ -147,7 +147,10 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 - Company profiles and provenance sections.
 - Pipeline stages.
 - Saved shortlist.
-- Founder profile editing for Dippi and Soapbox Caddie.
+- Guided founder profile editing for Dippi and Soapbox Caddie, with draft saves.
+- Profile essentials and missing-material indicators.
+- Investor packet preview, selected-link HTML export and browser print/save-PDF.
+- Literal PDF/text extraction and review in the demo (component memory only; no live AI).
 - VC and PE readiness templates.
 - Local persistence and reset.
 - Responsive UI and accessibility basics.
@@ -194,7 +197,7 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 
 **Build:** refreshed README, roadmap, brand docs, repo-native graphics, source/asset manifest, AI handoff guidance.
 
-**Status:** In progress in this documentation branch.
+**Status:** Complete; documentation and brand assets merged in PR #6.
 
 **Done when:** README, `ROADMAP.md`, `docs/brand/BRAND.md`, `docs/brand/ASSET_MANIFEST.md`, and repo graphics exist and point future agents in the same direction.
 
@@ -206,7 +209,11 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 
 **Tech:** existing React app + Supabase authenticated app where real data is used. AI worker runtime is TBD.
 
-**Status:** Partially represented by existing readiness templates; not yet a complete founder-readiness product.
+**Status:** Implemented in the public demo and authenticated app (2026-09-10); production acceptance remains pending.
+
+**Delivered:** shared three-step profile builder with draft saves, optional numeric values (unknown is not zero), profile-essential gap indicators, existing independent VC/PE checklists and materials workflow, and a standardized investor packet with selected external links, HTML download and browser print/save-PDF. The packet includes only company-supplied/confirmed fields and checklist statuses; it excludes internal notes, private uploads, storage paths and pending suggestions. Existing accept/dismiss controls for persisted suggestions remain; the separate literal deck parser remains explicitly local/in-memory.
+
+**Acceptance boundary:** typecheck, app/static builds and automated tests can verify this implementation. Real signup, persistence, upload and cross-organization acceptance must run against the authorized FundMatch backend before calling it production-ready. The configured Supabase project was not accessible through the connected Supabase account during this work. No replacement database was created.
 
 **Done when:** a founder can create a profile, see readiness gaps, attach/link materials, and generate a clean standardized investor-facing FundMatch packet.
 
@@ -252,9 +259,9 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 
 **Build:** generated profile/packet view with company summary, traction, raise details, team, market, materials, readiness status, risks/questions, and source labels.
 
-**Tech:** existing app; PDF/export tech TBD if needed.
+**Tech:** shared React packet renderer, standalone HTML export, browser print/save-PDF.
 
-**Status:** not implemented.
+**Status:** baseline delivered within Phase 3. A separate server-generated PDF, versioned packets, permissioned share links and richer field-level provenance are future work, not active capabilities.
 
 **Done when:** a founder can produce a clean standardized investor packet from confirmed profile/material data.
 
@@ -296,9 +303,11 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 
 ## Recommended next step
 
-Build **Phase 3 — Founder Readiness MVP** first.
+Complete **Phase 5 — Authenticated deployment acceptance** on the intended FundMatch backend, then build the remaining Phase 4 investor sourcing work (including manual company import).
 
-Reason: it creates immediate single-sided value, avoids the two-sided cold-start problem, strengthens the company profile data model, and supports the later investor matching story.
+Phase 3 now provides the connected preparation workflow in code. The critical next gap is proving that the private workspace works for real accounts and isolated organizations. Do not assume that the connected Supabase project for another product is FundMatch’s backend.
+
+See `docs/FOUNDER_READINESS.md` for the implementation, validation record and acceptance steps.
 
 ## AI agent rules
 

@@ -304,16 +304,18 @@ export function useSaveStartupProfile() {
     mutationFn: async (input: {
       id: string;
       patch: StartupPatch;
-      metrics?: { revenue?: number; growth?: number };
+      metrics?: { revenue?: number | null; growth?: number | null };
     }) => {
       const { error } = await supabase
         .from("startup_profiles")
         .update(input.patch)
-        .eq("id", input.id);
+        .eq("id", input.id)
+        .select("id")
+        .single();
       if (error) throw new Error(error.message);
       if (input.metrics) {
         const rows: Tables["company_metrics"]["Insert"][] = [];
-        if (input.metrics.revenue !== undefined)
+        if (input.metrics.revenue !== undefined && input.metrics.revenue !== null)
           rows.push({
             startup_id: input.id,
             metric_key: "arr",
@@ -323,7 +325,7 @@ export function useSaveStartupProfile() {
             period: "Founder reported",
             source_key: "founder_input",
           });
-        if (input.metrics.growth !== undefined)
+        if (input.metrics.growth !== undefined && input.metrics.growth !== null)
           rows.push({
             startup_id: input.id,
             metric_key: "growth",
@@ -333,16 +335,34 @@ export function useSaveStartupProfile() {
             period: "Founder reported",
             source_key: "founder_input",
           });
+        const cleared = [
+          input.metrics.revenue === null ? "arr" : null,
+          input.metrics.growth === null ? "growth" : null,
+        ].filter((key): key is string => Boolean(key));
+        if (cleared.length) {
+          const { error: clearError } = await supabase
+            .from("company_metrics")
+            .delete()
+            .eq("startup_id", input.id)
+            .in("metric_key", cleared);
+          if (clearError)
+            throw new Error(
+              "Profile saved, but blank metrics could not be cleared. Retry saving your profile.",
+            );
+        }
         if (rows.length) {
           const { error: mErr } = await supabase.from("company_metrics").upsert(
             rows.map((r) => ({ ...r, updated_at: new Date().toISOString() })),
             { onConflict: "startup_id,metric_key" },
           );
-          if (mErr) throw new Error(mErr.message);
+          if (mErr)
+            throw new Error(
+              "Profile saved, but metrics could not be saved. Retry saving your profile.",
+            );
         }
       }
     },
-    onSuccess: invalidate,
+    onSettled: invalidate,
   });
 }
 

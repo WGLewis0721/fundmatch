@@ -7,14 +7,15 @@ export const CompanySchema = z.object({
   name: z.string().min(1),
   tagline: z.string(),
   summary: z.string(),
+  story: z.string().max(4000).optional(),
   sector: z.string(),
   stage: z.string(),
   geography: z.string(),
   businessModel: z.string(),
-  revenue: z.number().nonnegative(),
-  growth: z.number(),
-  ask: z.number().nonnegative(),
-  team: z.number().nonnegative(),
+  revenue: z.number().nonnegative().nullable(),
+  growth: z.number().nullable(),
+  ask: z.number().nonnegative().nullable(),
+  team: z.number().nonnegative().nullable(),
   website: z.string(),
   tags: z.array(z.string()),
 });
@@ -216,13 +217,15 @@ export function initialState(): DemoState {
     tasks: {},
   };
 }
-export const money = (n: number) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(n);
+export const money = (n: number | null) =>
+  n === null
+    ? "Not provided"
+    : new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        notation: "compact",
+        maximumFractionDigits: 1,
+      }).format(n);
 export function fit(company: Company, thesis: Thesis) {
   const now = "2026-09-07T00:00:00Z";
   const startup: StartupWithData = {
@@ -231,7 +234,7 @@ export function fit(company: Company, thesis: Thesis) {
     name: company.name,
     tagline: company.tagline,
     summary: company.summary,
-    story: company.summary,
+    story: company.story ?? company.summary,
     sector: company.sector,
     stage: company.stage,
     geography: company.geography,
@@ -250,19 +253,22 @@ export function fit(company: Company, thesis: Thesis) {
     updated_at: now,
     materials: [],
     provenance: [],
-    metrics: [
-      {
-        id: company.id + "-growth",
-        startup_id: company.id,
-        metric_key: "growth",
-        label: "YoY growth",
-        value_numeric: company.growth,
-        value_display: company.growth + "%",
-        period: "Illustrative",
-        source_key: "demo",
-        updated_at: now,
-      },
-    ],
+    metrics:
+      company.growth === null
+        ? []
+        : [
+            {
+              id: company.id + "-growth",
+              startup_id: company.id,
+              metric_key: "growth",
+              label: "YoY growth",
+              value_numeric: company.growth,
+              value_display: company.growth + "%",
+              period: "Illustrative",
+              source_key: "demo",
+              updated_at: now,
+            },
+          ],
   };
   const investor: InvestorWithThesis = {
     id: "northstar",

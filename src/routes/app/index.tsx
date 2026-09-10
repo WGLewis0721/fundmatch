@@ -72,6 +72,10 @@ import type { PipelineStatus, StartupWithData, SwipeDecision } from "@/lib/domai
 import { money, safeUrl } from "@/lib/demo-data";
 import { timeAgo } from "@/lib/format";
 
+import { FounderBuilder } from "@/components/fundmatch/founder-builder";
+import { FounderJourney } from "@/components/fundmatch/founder-journey";
+import { InvestorPacket } from "@/components/fundmatch/investor-packet";
+import { fromStartup } from "@/lib/founder-readiness";
 const VIEWS = [
   "discover",
   "pipeline",
@@ -81,6 +85,7 @@ const VIEWS = [
   "profile",
   "readiness",
   "materials",
+  "packet",
   "team",
   "company",
 ] as const;
@@ -163,6 +168,7 @@ function WorkspaceShell() {
           ["profile", "Company profile", Users],
           ["readiness", "Readiness", ShieldCheck],
           ["materials", "Materials", FolderOpen],
+          ["packet", "Investor packet", FileText],
           ["team", "Team", Users],
         ] as const);
   const headings: Record<View, [string, string]> = {
@@ -173,6 +179,10 @@ function WorkspaceShell() {
     overview: ["Your next chapter.", "Your company, your preparation and the path ahead."],
     profile: ["Tell your company’s story.", "Investors see this when your company is listed."],
     readiness: ["Ready for the room.", "Know what’s ready, what’s missing and who’s on it."],
+    packet: [
+      "Your story. Ready to share.",
+      "Review your company profile before sharing it with investors.",
+    ],
     materials: ["Your story, supported.", "Private documents and links behind your profile."],
     team: ["Your team.", "Members share this workspace. Invitations go to a specific email."],
     company: ["Company", ""],
@@ -252,16 +262,17 @@ function WorkspaceShell() {
               {view === "thesis" && <Thesis {...props} />}
               {view === "company" && <CompanyDetail {...props} companyId={search.company ?? ""} />}
               {view === "team" && <Team {...props} />}
-              {["overview", "profile", "readiness", "materials"].includes(view) && (
+              {["overview", "profile", "readiness", "materials", "packet"].includes(view) && (
                 <WrongWorkspace persona={persona} />
               )}
             </>
           ) : (
             <>
               {view === "overview" && <Overview {...props} />}
-              {view === "profile" && <CompanyProfile {...props} />}
+              {view === "profile" && <CompanyProfile key={data.startup?.id} {...props} />}
               {view === "readiness" && <Readiness {...props} />}
               {view === "materials" && <Materials {...props} />}
+              {view === "packet" && <FounderPacket {...props} />}
               {view === "team" && <Team {...props} />}
               {["discover", "pipeline", "insights", "thesis", "company"].includes(view) && (
                 <WrongWorkspace persona={persona} />
@@ -1033,6 +1044,7 @@ function CompanyDetail({ ws, toast, companyId }: ViewProps & { companyId: string
 // Founder views
 // ---------------------------------------------------------------------------
 function Overview({ ws, toast }: ViewProps) {
+  const navigate = useNavigate();
   const startup = ws.startup;
   const readiness = useReadiness(startup?.id, "vc");
   const documents = useDocuments(ws.org?.id);
@@ -1048,6 +1060,15 @@ function Overview({ ws, toast }: ViewProps) {
   const total = readiness.data?.length ?? 0;
   return (
     <>
+      {readiness.isSuccess && documents.isSuccess && (
+        <FounderJourney
+          profile={fromStartup(startup)}
+          materials={startup.materials.map((m) => ({ id: m.id, title: m.title, url: m.url ?? "" }))}
+          documentCount={documents.data.filter((d) => d.startup_id === startup.id).length}
+          tasks={readiness.data}
+          onOpen={(view) => void navigate({ to: "/app", search: { view } })}
+        />
+      )}
       <div className="demo-stat-grid">
         <article>
           <strong>{profileCompleteness(startup)}%</strong>
@@ -1123,6 +1144,7 @@ function Overview({ ws, toast }: ViewProps) {
 }
 
 function CompanyProfile({ ws, toast }: ViewProps) {
+  const navigate = useNavigate();
   const startup = ws.startup;
   const save = useSaveStartupProfile();
   const suggestions = useProfileSuggestions(startup?.id);
@@ -1133,8 +1155,6 @@ function CompanyProfile({ ws, toast }: ViewProps) {
         <h2>No company profile yet.</h2>
       </div>
     );
-  const revenue = startup.metrics.find((m) => m.metric_key === "arr")?.value_numeric ?? "";
-  const growth = startup.metrics.find((m) => m.metric_key === "growth")?.value_numeric ?? "";
   return (
     <>
       {(suggestions.data?.length ?? 0) > 0 && (
@@ -1151,6 +1171,11 @@ function CompanyProfile({ ws, toast }: ViewProps) {
                   {Math.round(Number(s.confidence) * 100)}% confidence
                 </p>
                 {s.rationale && <p className="fm-micro">{s.rationale}</p>}
+                <p className="fm-micro">
+                  Source: {s.source_key} ·{" "}
+                  {s.document_id ? "Linked private document" : "No document reference"} · Awaiting
+                  your review
+                </p>
               </div>
               <div className="app-inline-actions">
                 <button
@@ -1185,154 +1210,69 @@ function CompanyProfile({ ws, toast }: ViewProps) {
           ))}
         </article>
       )}
-      <div className="demo-card">
-        <form
-          key={startup.updated_at}
-          className="demo-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const f = new FormData(e.currentTarget);
-            const website = String(f.get("website") || "").trim();
-            if (website && !safeUrl(website)) {
-              toast("Enter a full http or https website URL.");
-              return;
-            }
-            const name = String(f.get("name")).trim();
-            if (!name) {
-              toast("Company name is required.");
-              return;
-            }
-            save.mutate(
-              {
-                id: startup.id,
-                patch: {
-                  name,
-                  tagline: String(f.get("tagline")).trim(),
-                  summary: String(f.get("summary")).trim(),
-                  story: String(f.get("story") || "").trim() || null,
-                  sector: String(f.get("sector")),
-                  stage: String(f.get("stage")),
-                  geography: String(f.get("geography")),
-                  business_model: String(f.get("business_model")),
-                  funding_ask: Number(f.get("ask")),
-                  team_size: Number(f.get("team")),
-                  website: website || null,
-                  tags: split(f.get("tags")),
-                },
-                metrics: { revenue: Number(f.get("revenue")), growth: Number(f.get("growth")) },
+      <FounderBuilder
+        key={startup.id}
+        profile={fromStartup(startup)}
+        onSave={async (profile) => {
+          const { revenue, growth, ask, team, businessModel, ...fields } = profile;
+          try {
+            await save.mutateAsync({
+              id: startup.id,
+              patch: {
+                ...fields,
+                website: fields.website || null,
+                story: fields.story || null,
+                funding_ask: ask,
+                team_size: team,
+                business_model: businessModel || null,
               },
-              {
-                onSuccess: () => toast("Company profile saved."),
-                onError: (err) => toast(describeError(err)),
-              },
-            );
-          }}
-        >
-          <label>
-            Company name
-            <input name="name" required defaultValue={startup.name} maxLength={120} />
-          </label>
-          <label>
-            One-line story
-            <input name="tagline" required defaultValue={startup.tagline ?? ""} maxLength={160} />
-          </label>
-          <label className="full">
-            Company overview
-            <textarea
-              name="summary"
-              required
-              defaultValue={startup.summary ?? ""}
-              maxLength={2000}
-            />
-          </label>
-          <label className="full">
-            Founder story (optional)
-            <textarea name="story" defaultValue={startup.story ?? ""} maxLength={4000} />
-          </label>
-          <label>
-            Sector
-            <select name="sector" defaultValue={startup.sector}>
-              {SECTORS.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Stage
-            <select name="stage" defaultValue={startup.stage}>
-              {STAGES.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Geography
-            <select name="geography" defaultValue={startup.geography}>
-              {GEOGRAPHIES.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Business model
-            <select name="business_model" defaultValue={startup.business_model ?? "SaaS"}>
-              {BUSINESS_MODELS.map((x) => (
-                <option key={x}>{x}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Annual revenue (USD)
-            <input type="number" min={0} name="revenue" required defaultValue={revenue} />
-          </label>
-          <label>
-            YoY growth (%)
-            <input type="number" name="growth" required defaultValue={growth} />
-          </label>
-          <label>
-            Funding ask (USD)
-            <input
-              type="number"
-              min={0}
-              name="ask"
-              required
-              defaultValue={startup.funding_ask ?? ""}
-            />
-          </label>
-          <label>
-            Team size
-            <input
-              type="number"
-              min={0}
-              name="team"
-              required
-              defaultValue={startup.team_size ?? ""}
-            />
-          </label>
-          <label className="full">
-            Tags (comma separated)
-            <input name="tags" defaultValue={startup.tags.join(", ")} />
-          </label>
-          <label className="full">
-            Company website
-            <input
-              name="website"
-              type="url"
-              defaultValue={startup.website ?? ""}
-              placeholder="https://your-company.com"
-            />
-          </label>
-          <div className="full demo-controls">
-            <button className="fm-button" type="submit" disabled={save.isPending}>
-              {save.isPending ? "Saving…" : "Save profile"} <Check size={15} />
-            </button>
-            <span className="fm-micro">
-              {startup.visibility === "public" ? "Listed for investors." : "Private to your team."}{" "}
-              Change this from Overview.
-            </span>
-          </div>
-        </form>
+              metrics: { revenue, growth },
+            });
+          } catch (err) {
+            throw new Error(describeError(err));
+          }
+        }}
+        onContinue={() => void navigate({ to: "/app", search: { view: "materials" } })}
+      />
+    </>
+  );
+}
+
+function FounderPacket({ ws }: ViewProps) {
+  const [template, setTemplate] = useState<"vc" | "pe">("vc");
+  const navigate = useNavigate();
+  const readiness = useReadiness(ws.startup?.id, template);
+  if (!ws.startup) return <div className="demo-card">Create a company profile first.</div>;
+  return (
+    <>
+      <div className="demo-toolbar fm-packet-controls">
+        <label>
+          Packet checklist{" "}
+          <select
+            aria-label="Packet checklist"
+            value={template}
+            onChange={(e) => setTemplate(e.target.value as "vc" | "pe")}
+          >
+            <option value="vc">VC / angel fundraising</option>
+            <option value="pe">PE acquisition preparation</option>
+          </select>
+        </label>
       </div>
+      <QueryState query={readiness}>{null}</QueryState>
+      {readiness.isSuccess && (
+        <InvestorPacket
+          key={`${ws.startup.id}:${template}`}
+          profile={fromStartup(ws.startup)}
+          materials={ws.startup.materials.map((m) => ({
+            id: m.id,
+            title: m.title,
+            url: m.url ?? "",
+          }))}
+          tasks={readiness.data}
+          template={template}
+          onEdit={() => void navigate({ to: "/app", search: { view: "profile" } })}
+        />
+      )}
     </>
   );
 }
@@ -1565,10 +1505,13 @@ function Materials({ ws, toast }: ViewProps) {
     <>
       <div className="demo-card">
         <h2>Private documents</h2>
+        <Link to="/app" search={{ view: "packet" }} className="fm-button secondary">
+          Preview investor packet <ArrowRight size={15} />
+        </Link>
         <p>
           Decks, financials and legal documents are stored privately for {ws.org?.name}. They are
-          never listed publicly; only your team can download them. Analysis of uploaded documents
-          produces suggestions you review before anything changes.
+          never listed publicly; only your team can download them. Uploading stores the document;
+          automatic analysis is not connected yet. Any future suggestions require your review.
         </p>
         <form
           className="demo-form"

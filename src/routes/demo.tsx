@@ -27,6 +27,10 @@ import { StateSchema, initialState, fit, money, makeTasks, safeUrl } from "@/lib
 import type { Company, DemoState, Task } from "@/lib/demo-data";
 import "../fundmatch.css";
 import { ProfileIntelligence } from "@/components/intelligence/profile-intelligence";
+import { FounderBuilder } from "@/components/fundmatch/founder-builder";
+import { FounderJourney } from "@/components/fundmatch/founder-journey";
+import { InvestorPacket } from "@/components/fundmatch/investor-packet";
+import { fromDemoCompany } from "@/lib/founder-readiness";
 const VIEWS = [
   "discover",
   "pipeline",
@@ -35,6 +39,7 @@ const VIEWS = [
   "profile",
   "readiness",
   "materials",
+  "packet",
   "intelligence",
   "interest",
   "company",
@@ -150,6 +155,7 @@ export function Demo() {
           ["profile", "Company profile", Users],
           ["readiness", "Readiness", ShieldCheck],
           ["materials", "Materials", FolderOpen],
+          ["packet", "Investor packet", FileText],
           ["intelligence", "Build from deck", Sparkles],
           ["integrations", "Integrations", Link2],
         ] as const);
@@ -172,6 +178,10 @@ export function Demo() {
     intelligence: [
       "From evidence to understanding.",
       "Build a sourced profile you can stand behind.",
+    ],
+    packet: [
+      "Your story. Ready to share.",
+      "A consistent company profile for your next investor conversation.",
     ],
     materials: ["Your story, supported.", "Organize links to the materials behind your profile."],
     interest: ["Your next chapter.", "Your company, your preparation and the path ahead."],
@@ -608,121 +618,25 @@ export function Demo() {
                     </form>
                   </div>
                 ) : (
-                  <div className="demo-card">
-                    <form
-                      key={JSON.stringify(company)}
-                      className="demo-form"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        const f = new FormData(e.currentTarget);
-                        const website = String(f.get("website") || "");
-                        if (website && !safeUrl(website)) {
-                          setToast("Enter a full http or https website URL.");
-                          return;
-                        }
-                        const patch = {
-                          name: String(f.get("name")).trim(),
-                          tagline: String(f.get("tagline")).trim(),
-                          summary: String(f.get("summary")).trim(),
-                          sector: String(f.get("sector")),
-                          stage: String(f.get("stage")),
-                          revenue: Number(f.get("revenue")),
-                          growth: Number(f.get("growth")),
-                          ask: Number(f.get("ask")),
-                          team: Number(f.get("team")),
-                          website,
-                        };
-                        if (!patch.name) {
-                          setToast("Company name is required.");
-                          return;
-                        }
-                        setState((s) => ({
-                          ...s,
-                          companies: s.companies.map((c) =>
-                            c.id === company.id ? { ...c, ...patch } : c,
-                          ),
-                        }));
-                        setToast("Company profile saved on this device.");
-                      }}
-                    >
-                      <label>
-                        Company name
-                        <input name="name" required defaultValue={company.name} />
-                      </label>
-                      <label>
-                        One-line story
-                        <input name="tagline" required defaultValue={company.tagline} />
-                      </label>
-                      <label className="full">
-                        Company overview
-                        <textarea name="summary" required defaultValue={company.summary} />
-                      </label>
-                      <label>
-                        Sector
-                        <select name="sector" defaultValue={company.sector}>
-                          {[
-                            "Consumer",
-                            "AI",
-                            "B2B SaaS",
-                            "Climate",
-                            "Fintech",
-                            "Healthcare",
-                            "Logistics",
-                          ].map((x) => (
-                            <option key={x}>{x}</option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        Stage
-                        <select name="stage" defaultValue={company.stage}>
-                          {["Pre-Seed", "Seed", "Series A", "Series B"].map((x) => (
-                            <option key={x}>{x}</option>
-                          ))}
-                        </select>
-                      </label>
-                      {(["revenue", "growth", "ask", "team"] as const).map((key) => (
-                        <label key={key}>
-                          {
-                            {
-                              revenue: "Annual revenue (USD)",
-                              growth: "YoY growth (%)",
-                              ask: "Funding ask (USD)",
-                              team: "Team size",
-                            }[key]
-                          }
-                          <input
-                            type="number"
-                            min={key === "growth" ? undefined : 0}
-                            name={key}
-                            required
-                            defaultValue={company[key]}
-                          />
-                        </label>
-                      ))}
-                      <label className="full">
-                        Company website
-                        <input
-                          name="website"
-                          type="url"
-                          defaultValue={company.website}
-                          placeholder="https://your-company.com"
-                        />
-                      </label>
-                      <div className="full demo-controls">
-                        <button className="fm-button" type="submit">
-                          Save profile <Check size={15} />
-                        </button>
-                        <Link
-                          to="/demo"
-                          search={navigate("company")}
-                          className="fm-button secondary"
-                        >
-                          Preview investor view <ArrowUpRight size={15} />
-                        </Link>
-                      </div>
-                    </form>
-                  </div>
+                  <FounderBuilder
+                    key={company.id}
+                    profile={fromDemoCompany(company)}
+                    demo
+                    onSave={async (patch) => {
+                      setState((current) => ({
+                        ...current,
+                        companies: current.companies.map((c) =>
+                          c.id === company.id ? { ...c, ...patch } : c,
+                        ),
+                      }));
+                      setToast(
+                        storageOk
+                          ? "Demo profile saved on this device."
+                          : "Profile saved for this session only.",
+                      );
+                    }}
+                    onContinue={() => void go({ search: navigate("materials") })}
+                  />
                 ))}
               {view === "company" && (
                 <div className="demo-grid">
@@ -737,7 +651,10 @@ export function Demo() {
                       <Metrics company={company} />
                       <h3>Team & business model</h3>
                       <p>
-                        {company.team} people · {company.businessModel}
+                        {company.team === null
+                          ? "Team size not provided"
+                          : `${company.team} people`}{" "}
+                        · {company.businessModel}
                       </p>
                       <h3>Source transparency</h3>
                       <p>
@@ -866,6 +783,12 @@ export function Demo() {
               )}
               {view === "interest" && (
                 <>
+                  <FounderJourney
+                    profile={fromDemoCompany(company)}
+                    materials={state.materials.filter((m) => m.company === company.id)}
+                    tasks={tasks}
+                    onOpen={(next) => void go({ search: navigate(next) })}
+                  />
                   <div className="demo-stat-grid">
                     <article>
                       <strong>{company.name}</strong>
@@ -918,6 +841,32 @@ export function Demo() {
                       </p>
                     </article>
                   </div>
+                </>
+              )}
+              {view === "packet" && (
+                <>
+                  <div className="demo-toolbar fm-packet-controls">
+                    <label>
+                      Packet checklist{" "}
+                      <select
+                        aria-label="Packet checklist"
+                        value={template}
+                        onChange={(e) => setTemplate(e.target.value)}
+                      >
+                        <option value="vc">VC / angel fundraising</option>
+                        <option value="pe">PE acquisition preparation</option>
+                      </select>
+                    </label>
+                  </div>
+                  <InvestorPacket
+                    key={`${company.id}:${template}`}
+                    profile={fromDemoCompany(company)}
+                    materials={state.materials.filter((m) => m.company === company.id)}
+                    tasks={tasks}
+                    template={template === "pe" ? "pe" : "vc"}
+                    demo
+                    onEdit={() => void go({ search: navigate("profile") })}
+                  />
                 </>
               )}
               {view === "intelligence" && (
@@ -1038,9 +987,12 @@ export function Demo() {
               {view === "materials" && (
                 <div className="demo-card">
                   <h2>Materials for {company.name}</h2>
+                  <Link to="/demo" search={navigate("packet")} className="fm-button secondary">
+                    Preview investor packet <ArrowRight size={15} />
+                  </Link>
                   <p>
-                    Add links to your deck, financial model or supporting documents. The demo stores
-                    link metadata only; it does not upload files or change sharing permissions.
+                    Use fictional or public example links to try the workflow. The demo stores link
+                    metadata only; it does not upload files or change sharing permissions.
                   </p>
                   {state.materials
                     .filter((m) => m.company === company.id)
@@ -1288,7 +1240,7 @@ function Metrics({ company }: { company: Company }) {
         <span>Annual revenue · demo</span>
       </div>
       <div>
-        <strong>{company.growth}%</strong>
+        <strong>{company.growth === null ? "Not provided" : `${company.growth}%`}</strong>
         <span>YoY growth · demo</span>
       </div>
       <div>
