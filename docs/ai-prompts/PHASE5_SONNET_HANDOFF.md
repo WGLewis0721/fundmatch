@@ -21,6 +21,7 @@ Read these files first:
 7. `docs/PHASE5_ACCEPTANCE_AUDIT.md`
 8. `docs/TEST_EVIDENCE.md`
 9. `docs/ai-prompts/SONNET5_BUILD_PROMPTS.md`
+10. `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`
 
 Use Prompt 1 from the Sonnet prompt file as the implementation contract.
 
@@ -143,5 +144,9 @@ Return a PR-ready implementation and report:
 - auth-flow evidence;
 - remaining blockers;
 - explicit statement whether Phase 5 is ready for GPT-5.6 Sol acceptance review.
+
+Then **always include a complete ready-to-paste GPT-5.6 Sol follow-up prompt** using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`. Fill it with the actual implementation context, branch/PR/SHA, backend identity, deployment state, migrations, verification evidence, security notes, blockers, files to inspect first, and the exact acceptance task for Sol.
+
+The handoff prompt must tell Sol to independently review the PR, rerun the Phase 5 gate, return an explicit ACCEPT/REJECT decision, and either identify the next roadmap phase or generate the corrective Sonnet prompt. The user should never need to reconstruct context manually.
 
 Stop after Phase 5. Do not merge unless explicitly instructed.
