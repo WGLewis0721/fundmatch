@@ -18,13 +18,14 @@ Read these files in this order before editing anything:
 3. `docs/ai-prompts/PHASE5_ACCEPTANCE_RESULT_2026-09-10.md`
 4. `docs/ai-prompts/PHASE5_SONNET_HANDOFF.md`
 5. Prompt 1 in `docs/ai-prompts/SONNET5_BUILD_PROMPTS.md`
-6. `ROADMAP.md`
-7. `docs/MATCHING_ARCHITECTURE.md`
-8. `docs/IMPLEMENTATION_NEXT_STEPS.md`
-9. `docs/BACKEND.md`
-10. `docs/TEST_EVIDENCE.md`
-11. `drizzle/migrations/0002_fundmatch_accounts_persistence.sql`
-12. `drizzle/migrations/0003_phase5_function_privileges.sql`
+6. `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`
+7. `ROADMAP.md`
+8. `docs/MATCHING_ARCHITECTURE.md`
+9. `docs/IMPLEMENTATION_NEXT_STEPS.md`
+10. `docs/BACKEND.md`
+11. `docs/TEST_EVIDENCE.md`
+12. `drizzle/migrations/0002_fundmatch_accounts_persistence.sql`
+13. `drizzle/migrations/0003_phase5_function_privileges.sql`
 
 ## Mission
 
@@ -125,6 +126,14 @@ Return:
 - files changed;
 - remaining blockers, if any;
 - explicit statement: `READY FOR GPT-5.6 SOL PHASE 5 ACCEPTANCE REVIEW` or `NOT READY`, with reason.
+
+## Mandatory GPT-5.6 Sol follow-up prompt
+
+After the report above, **you must also output a complete ready-to-paste prompt for GPT-5.6 Sol** using `docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`.
+
+Fill the template with the actual Phase 5 results from this session. Include the exact branch, PR, head SHA, FundMatch backend identity, deployment URL, migrations actually applied, auth/RLS/Storage evidence, tests/builds run, known blockers, and the files/subsystems Sol should inspect first.
+
+The Sol prompt must explicitly ask Sol to rerun the Phase 5 acceptance gate and return `ACCEPT Phase 5` or `REJECT Phase 5`. If Sol accepts, it should identify the exact next roadmap phase and write/point to the next scoped Sonnet prompt. If Sol rejects, it should produce the exact corrective Sonnet prompt. Do not leave this handoff for the user to reconstruct.
 
 Do not continue beyond Phase 5.
 

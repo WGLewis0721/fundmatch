@@ -35,7 +35,13 @@ Start here:
 
 That prompt contains the verified backend identity, live schema/RLS findings, migration order, deployment requirements, tests, hard boundaries and required final report.
 
-Use it as the implementation contract. Branch from the latest `main`, complete Phase 5 only, open a PR, and stop for Sol review. **Before starting, confirm the session actually has credentialed access to FundMatch project `ejzizfvjnpzieigviglc`** (Supabase MCP scoped to that project, or the `LOVABLE_DB_MIGRATION_URL` secret) and a way to deploy `/app` — otherwise the live-backend blockers cannot be closed and the session will land in the same blocked state recorded above.
+Also read:
+
+`docs/ai-prompts/SONNET_TO_SOL_HANDOFF_TEMPLATE.md`
+
+**Every Sonnet 5 turn must end with a filled, ready-to-paste GPT-5.6 Sol follow-up prompt.** The handoff must preserve the exact phase, branch, PR, head SHA, backend/deployment state, migrations/external changes, tests and security evidence, blockers, files Sol should review first, and the exact acceptance task. The user should not have to reconstruct context between models.
+
+Use the Phase 5 continuation prompt as the implementation contract. Branch from the latest `main`, complete Phase 5 only, open a PR, and stop for Sol review. **Before starting, confirm the session actually has credentialed access to FundMatch project `ejzizfvjnpzieigviglc`** (Supabase MCP scoped to that project, or the `LOVABLE_DB_MIGRATION_URL` secret) and a way to deploy `/app` — otherwise the live-backend blockers cannot be closed and the session will land in the same blocked state recorded above.
 
 The key pending migrations are:
 
@@ -46,7 +52,9 @@ Do **not** touch the separate APEX Supabase project `fnmxlmjrkgojowpzrcwa`.
 
 ## GPT-5.6 Sol — after Sonnet's PR
 
-Run:
+Sonnet's final response should already contain a self-contained GPT-5.6 Sol follow-up prompt generated from `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`. Give that prompt to Sol.
+
+Sol should then run:
 
 1. `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md`
 2. `docs/ai-prompts/PHASE5_ACCEPTANCE_RESULT_2026-09-10.md` as the previous-gate baseline
@@ -54,4 +62,4 @@ Run:
 
 Verify the actual deployed `/app`, live FundMatch schema/RLS/storage, auth flows and two-organization isolation before accepting Phase 5.
 
-Phase 6 must not begin until Sol explicitly accepts Phase 5.
+If Sol accepts the phase, Sol should identify the exact next roadmap phase and provide the next scoped Sonnet prompt. If Sol rejects it, Sol should provide the exact corrective Sonnet prompt. Phase 6 must not begin until Sol explicitly accepts Phase 5.
