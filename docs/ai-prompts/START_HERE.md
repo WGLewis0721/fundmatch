@@ -25,11 +25,29 @@ That document records exactly what was verified without live-backend access
 both builds succeed, no backend secrets in the public bundle) and exactly
 what a future session needs (real credentials/access to FundMatch project
 `ejzizfvjnpzieigviglc` and a deployment path for `/app`) before the
-remaining live blockers can be closed out.
+remaining live blockers can be closed out. This was merged to `main` as
+docs only — no schema, RLS, storage, or deployment state changed.
 
-## Sonnet 5 — next action
+## GPT-5.6 Sol — next action (2026-09-10)
 
 Start here:
+
+`docs/ai-prompts/GPT56_SOL_CONTINUE_AFTER_BLOCK_2026-09-10.md`
+
+Sol previously inspected the live FundMatch database directly to write the
+2026-09-10 rejection, so Sol may have live access Sonnet's session did not.
+This prompt asks Sol to check that first: if Sol can reach the live
+FundMatch backend/deployment path, close the live blockers (or hand off
+precise access details) directly rather than sending another Sonnet 5
+session into the same wall; if Sol also cannot reach it, confirm the
+environment gap plainly for the human maintainer instead of looping further
+AI attempts.
+
+## Sonnet 5 — next action (after Sol's turn)
+
+Once Sol's turn above lands, re-read `docs/ai-prompts/START_HERE.md` for the
+current pointer. If Sol determines live access is available and hands back
+implementation work, use:
 
 `docs/ai-prompts/SONNET5_PHASE5_CONTINUE_AFTER_GATE.md`
 
@@ -50,7 +68,7 @@ The key pending migrations are:
 
 Do **not** touch the separate APEX Supabase project `fnmxlmjrkgojowpzrcwa`.
 
-## GPT-5.6 Sol — after Sonnet's PR
+## GPT-5.6 Sol — after a future Sonnet PR
 
 Sonnet's final response should already contain a self-contained GPT-5.6 Sol follow-up prompt generated from `SONNET_TO_SOL_HANDOFF_TEMPLATE.md`. Give that prompt to Sol.
 
