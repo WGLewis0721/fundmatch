@@ -1,5 +1,5 @@
-// An optional static build of the same UI for GitHub Pages. The original
-// TanStack Start/Lovable build remains in vite.config.ts, unchanged.
+// Static browser-only build for GitHub Pages. The authenticated TanStack Start
+// application remains separate in vite.config.ts.
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
