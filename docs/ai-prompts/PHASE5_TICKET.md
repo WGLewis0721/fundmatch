@@ -8,14 +8,18 @@
 - Supabase API URL: `https://dkanoobzseckccbwnpyi.supabase.co`.
 - APEX project `fnmxlmjrkgojowpzrcwa` is unrelated and must not be modified.
 - Lovable is retired from the active architecture.
-- Live FundMatch migrations `0000` through `0004` are applied.
-- Repo migration `0004_phase5_has_role_privilege_hardening.sql` mirrors the live privilege fix.
+- Live FundMatch migrations `0000` through `0005` are applied.
+- Repo migrations `0004` and `0005` mirror the live Phase 5 hardening fixes.
 - Production Cloudflare deployment is intentionally deferred by the maintainer for now.
 
-## Current task
+## Current result
 
-Gather focused evidence for the standalone backend boundary: schema/RLS state, helper privileges, two-organization row isolation, private-document authorization, auth/org workflow behavior, and founder/investor persistence. Use GitHub Copilot for the extended mechanical validation.
+The standalone backend/RLS sub-gate is accepted: focused live checks confirmed organization isolation, private document/readiness boundaries, authenticated organization creation, invitation/role protections, persistence, helper privilege restrictions, and cleanup of test fixtures.
 
-## Acceptance gate
+## Remaining work before full production Phase 5 acceptance
 
-Use `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md`. GPT-5.6 Sol owns the final decision. Full production acceptance remains pending while `/app` deployment and deployment-dependent Auth redirects/browser testing are deferred.
+- Deploy current `/app` to the chosen production host.
+- Configure the production Supabase Auth Site URL and `/app/login` + `/app/reset` redirects.
+- Validate real browser signup/email confirmation/login/logout/recovery and deployment-level end-to-end behavior.
+
+These items are intentionally deferred. Phase 6 remains blocked until GPT-5.6 Sol explicitly accepts the completed Phase 5 boundary or the roadmap is deliberately re-scoped.
