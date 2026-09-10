@@ -8,6 +8,7 @@ These assets are lightweight, editable text/SVG files stored in the repo.
 
 | Asset | Path | Purpose |
 | --- | --- | --- |
+| Brand board | `docs/brand/assets/fundmatch-brand-board.svg` | Color/copy/interface reference board for future builders. |
 | Product story | `docs/brand/assets/fundmatch-product-story.svg` | README hero graphic explaining founder/investor matching. |
 | Founder readiness | `docs/brand/assets/fundmatch-founder-readiness.svg` | Shows the founder-readiness wedge and investor packet direction. |
 | Investor feed | `docs/brand/assets/fundmatch-investor-feed.svg` | Shows the Pass / Save / Interested investor workflow. |
