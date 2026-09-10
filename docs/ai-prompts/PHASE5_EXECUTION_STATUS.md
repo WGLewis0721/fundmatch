@@ -1,31 +1,23 @@
 # Phase 5 execution status
 
-**Status:** Ready for Sonnet 5 implementation; GPT-5.6 Sol preflight complete.
+**Status:** Standalone backend provisioned and migrated; production `/app` deployment intentionally deferred.
 
-## GPT-5.6 Sol preflight completed
+## Completed on 2026-09-10
 
-Verified on 2026-09-10:
+- Dedicated FundMatch Supabase project: `dkanoobzseckccbwnpyi` (`us-east-1`).
+- APEX project `fnmxlmjrkgojowpzrcwa` remained untouched.
+- Live migrations applied in order: `0000`, `0001`, `0002`, `0003`, `0004`.
+- Phase 5 tables and private-document model are installed with RLS enabled.
+- The anonymous `has_role()` execution defect found by the Supabase advisor was hardened live and is now represented by repo migration `0004`.
+- PR #17 removed the Lovable Vite/runtime dependency and restored green GitHub Actions with native TanStack Start + Cloudflare tooling.
+- Active repository configuration is being reconciled to the standalone FundMatch project and FundMatch-specific cron secret names.
 
-- The repository points to intended FundMatch Supabase project `ejzizfvjnpzieigviglc`.
-- The original Lovable FundMatch project `34443a2f-0671-4404-94db-fe807d4a7448` has its Supabase database enabled and reachable through Lovable.
-- The directly connected Supabase project `fnmxlmjrkgojowpzrcwa` contains APEX schema/data and must not be used for FundMatch.
-- The live FundMatch database still contains the original FundMatch schema/policy set.
-- Newer Phase 5 tables `organization_invitations`, `readiness_items`, `documents`, and `profile_suggestions` were not present during preflight.
-- Old permissive policies such as `orgs read`, `orgs write`, `startups read`, `startups write`, `matches read`, and `matches write` were still present.
-- Therefore the authenticated FundMatch backend is **not approved for real private data yet**.
+## Remaining acceptance work
 
-## Next actor
+GitHub Copilot should gather focused evidence for the non-deployment Phase 5 boundary: old-policy removal, organization-scoped RLS, privileged helper grants, two-org isolation, private document authorization, auth/org workflows, and persistence.
 
-**Sonnet 5** should execute:
+Production `/app` deployment and production Auth redirect configuration are intentionally deferred by the maintainer. Those items remain pending and prevent a full production Phase 5 ACCEPT until resumed or the roadmap is deliberately re-scoped.
 
-- `docs/ai-prompts/PHASE5_SONNET_HANDOFF.md`
-- Prompt 1 in `docs/ai-prompts/SONNET5_BUILD_PROMPTS.md`
+## Final authority
 
-## Review gate
-
-When the implementation PR is ready, GPT-5.6 Sol must run the checks in:
-
-- `docs/ai-prompts/PHASE5_ACCEPTANCE_CHECKLIST.md`
-- `docs/ai-prompts/GPT56_SOL_REVIEW_PROMPTS.md`
-
-Phase 6 must not begin until that review passes.
+GPT-5.6 Sol makes the final Phase 5 acceptance decision after the evidence handoff. Phase 6 remains blocked until explicit acceptance.
