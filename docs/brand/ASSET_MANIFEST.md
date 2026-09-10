@@ -2,6 +2,15 @@
 
 This manifest records the repo-native graphics and the prior concept assets gathered for FundMatch.
 
+## Live visual identity
+
+| Asset | Path | Purpose |
+| --- | --- | --- |
+| Founders and investors arch | `public/media/fundmatch-arch.webp` | Original Create Image ceramic/glass sculpture. Hero and decorative workspace signature. 1536 × 1024, approximately 33 KB WebP. |
+| Instrument Serif regular / italic | `public/fonts/instrument-serif-regular.ttf`, `public/fonts/instrument-serif-italic.ttf` | Self-hosted editorial headings. License: `public/fonts/InstrumentSerif-OFL.txt`. |
+
+The raster is original generated art, not a screenshot or copied reference. See [VISUAL_REFRESH.md](VISUAL_REFRESH.md) for its prompt and generation record. The companion Higgsfield generation was rejected by its plan requirement; no Higgsfield output is included.
+
 ## Repo-native SVG graphics
 
 These assets are lightweight, editable text/SVG files stored in the repo.
@@ -30,12 +39,12 @@ These were identified in the FundMatch context consolidation and indexed in the 
 Defined in `src/fundmatch.css`:
 
 ```css
---fm-ink: #24272b;
---fm-paper: #f8f7f3;
---fm-mint: #c6efde;
---fm-peri: #9caafa;
---fm-muted: #727579;
---fm-line: #e5e4df;
+--fm-ink: #28352e;
+--fm-paper: #f8f7f2;
+--fm-mint: #a5b89c;
+--fm-peri: #909be8;
+--fm-muted: #626a61;
+--fm-line: #d8ddd1;
 ```
 
 ## Image usage guidance

@@ -301,6 +301,18 @@ Connect data → Build profiles → Infer thesis → Score fit → Surface oppor
 
 **Done when:** real pilot users complete the chosen workflow and produce evidence around time saved, readiness improvement, match quality, or meeting conversion.
 
+## Visual identity milestone — September 2026
+
+**Status:** implemented and locally validated.
+
+- User-directed 60/30/10 off-white, sage and periwinkle surface hierarchy.
+- Original generated arch artwork, self-hosted editorial type, asymmetric homepage and sage-framed film.
+- Shared workspace styling, layered discovery cards, accessible thesis-fit rings and founder-readiness panels.
+- Responsive layouts, focus states and reduced-motion support; existing matching, preparation and packet behavior preserved.
+- Typecheck, full app build, Pages build and all 40 local unit tests pass. Database checks run separately in CI. Browser visual QA was not performed in this pass.
+
+This is a visual milestone; it does not change Phase 5 backend deployment acceptance. See `docs/brand/VISUAL_REFRESH.md`.
+
 ## Recommended next step
 
 Complete **Phase 5 — Authenticated deployment acceptance** on the intended FundMatch backend, then build the remaining Phase 4 investor sourcing work (including manual company import).

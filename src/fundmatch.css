@@ -1,11 +1,11 @@
 .fm-site,
 .fm-demo {
-  --fm-ink: #24272b;
-  --fm-paper: #f8f7f3;
-  --fm-mint: #c6efde;
-  --fm-peri: #9caafa;
-  --fm-muted: #727579;
-  --fm-line: #e5e4df;
+  --fm-ink: #28352e;
+  --fm-paper: #f8f7f2;
+  --fm-mint: #a5b89c;
+  --fm-peri: #909be8;
+  --fm-muted: #626a61;
+  --fm-line: #d8ddd1;
   color: var(--fm-ink);
   background: var(--fm-paper);
   font-family:

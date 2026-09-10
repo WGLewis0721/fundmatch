@@ -10,6 +10,8 @@ The simple surface is a modern discovery feed: investors can **Pass**, **Save**,
 
 ![FundMatch product story](docs/brand/assets/fundmatch-product-story.svg)
 
+The current interface uses a 60/30/10 off-white, sage and periwinkle identity, original sculptural artwork and editorial typography across the homepage and workspace. See the [visual refresh notes](docs/brand/VISUAL_REFRESH.md).
+
 ## Product thesis
 
 Private-market discovery is fragmented.

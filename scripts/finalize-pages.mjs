@@ -13,7 +13,10 @@ for (const path of [
   "media/fundmatch-film.mp4",
   "media/fundmatch-poster.jpg",
   "media/fundmatch-film.vtt",
+  "media/fundmatch-arch.webp",
+  "fonts/instrument-serif-regular.ttf",
+  "fonts/instrument-serif-italic.ttf",
   "favicon.svg",
 ])
   await stat("dist/" + path);
-console.log("Static Pages build validated: homepage, demo route, film, poster and captions.");
+console.log("Static Pages build validated: homepage, demo route, film, brand artwork and fonts.");
