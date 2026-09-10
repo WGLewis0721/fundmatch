@@ -68,6 +68,8 @@ The current stack is intentionally a **modular monolith**, not a premature micro
 | Semantic retrieval | Postgres + `pgvector` | Thesis/company semantic candidate recall |
 | Billing | Stripe later | Commercialization |
 
+**Production backend:** dedicated standalone Supabase project `dkanoobzseckccbwnpyi` (`us-east-1`). The separate APEX application project `fnmxlmjrkgojowpzrcwa` is not FundMatch and must not be used by this repository. See [`docs/BACKEND.md`](docs/BACKEND.md) for environment and migration details.
+
 This direction borrows the **candidate retrieval → ranking → decision → outcome feedback** structure used by mature recommendation products while keeping the deployment complexity appropriate for an early marketplace.
 
 Do **not** add Redis, Kafka, Elasticsearch/OpenSearch, Kubernetes or a microservice fleet until measured production load justifies them. See [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md).
