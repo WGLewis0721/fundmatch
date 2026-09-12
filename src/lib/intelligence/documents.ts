@@ -55,6 +55,14 @@ export async function readDocument(
     pages = text.split("\f").map((text, i) => ({ number: i + 1, text }));
   }
   signal?.throwIfAborted();
+  if (pages.length > LIMITS.pages)
+    throw new IntelligenceError("PAGE_LIMIT", "Decks may contain up to 60 pages.");
+  const totalCharacters = pages.reduce((total, page) => total + page.text.length, 0);
+  if (totalCharacters > LIMITS.characters)
+    throw new IntelligenceError(
+      "TEXT_LIMIT",
+      "Too much text. Split this deck into smaller files.",
+    );
   if (pages.every((p) => !p.text.trim()))
     throw new IntelligenceError(
       "OCR_REQUIRED",
