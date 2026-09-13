@@ -120,7 +120,7 @@ export function DiscoveryCard({
           "--drag": `${offset}px`,
           "--tilt": `${offset / 28}deg`,
           touchAction: "pan-y",
-          transitionDuration: "0.205s",
+          transitionDuration: "0.226s",
         } as CSSProperties
       }
       onKeyDown={(e) => {
