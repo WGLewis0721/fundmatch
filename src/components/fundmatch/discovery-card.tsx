@@ -115,7 +115,13 @@ export function DiscoveryCard({
       className="fm-opportunity-card"
       tabIndex={0}
       aria-label={`${company.name}. Arrow left to pass, S to save, arrow right for interested.`}
-      style={{ "--drag": `${offset}px`, "--tilt": `${offset / 28}deg` } as CSSProperties}
+      style={
+        {
+          "--drag": `${offset}px`,
+          "--tilt": `${offset / 28}deg`,
+          touchAction: "pan-y",
+        } as CSSProperties
+      }
       onKeyDown={(e) => {
         if (e.target !== e.currentTarget) return;
         const decision =
@@ -140,13 +146,17 @@ export function DiscoveryCard({
         )
           return;
         start.current = { x: e.clientX, y: e.clientY };
+        // Capture immediately. Waiting until after movement lets mobile browsers
+        // cancel the pointer before FundMatch can classify a horizontal swipe.
+        if (!e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        }
       }}
       onPointerMove={(e) => {
         if (!start.current) return;
         const dx = e.clientX - start.current.x,
           dy = e.clientY - start.current.y;
         if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.3) {
-          e.currentTarget.setPointerCapture(e.pointerId);
           setOffset(Math.max(-180, Math.min(180, dx)));
         }
       }}
@@ -162,10 +172,11 @@ export function DiscoveryCard({
         if (!start.current) return;
         const decision = swipeDecision(e.clientX - start.current.x, e.clientY - start.current.y);
         start.current = null;
-        if (e.currentTarget.hasPointerCapture(e.pointerId))
-          e.currentTarget.releasePointerCapture(e.pointerId);
         if (decision) commit(decision);
         setOffset(0);
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }
       }}
     >
       <CompanyVisual company={company} demo={demo} />
