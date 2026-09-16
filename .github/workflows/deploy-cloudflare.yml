@@ -16,14 +16,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Resolve Cloudflare credentials
+      - name: Detect Cloudflare credentials
+        id: cloudflare-auth
         env:
           PRIMARY_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           LEGACY_TOKEN: ${{ secrets.CF_API_TOKEN }}
@@ -32,20 +26,45 @@ jobs:
         run: |
           TOKEN="${PRIMARY_TOKEN:-${LEGACY_TOKEN:-}}"
           ACCOUNT_ID="${PRIMARY_ACCOUNT_ID:-${LEGACY_ACCOUNT_ID:-}}"
+
           if [ -z "$TOKEN" ]; then
-            echo "::error::No Cloudflare API token is available to this repository. Add CLOUDFLARE_API_TOKEN (preferred) or CF_API_TOKEN as a GitHub Actions secret."
-            exit 1
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare production deployment skipped because no repository Cloudflare API token is configured. GitHub Pages and CI are unaffected."
+            exit 0
           fi
+
+          echo "available=true" >> "$GITHUB_OUTPUT"
+          echo "::add-mask::$TOKEN"
           echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
           if [ -n "$ACCOUNT_ID" ]; then
+            echo "::add-mask::$ACCOUNT_ID"
             echo "CLOUDFLARE_ACCOUNT_ID=$ACCOUNT_ID" >> "$GITHUB_ENV"
           fi
 
+      - name: Cloudflare deployment not configured
+        if: steps.cloudflare-auth.outputs.available != 'true'
+        run: |
+          echo "Cloudflare production deploy is intentionally skipped until CLOUDFLARE_API_TOKEN (or CF_API_TOKEN) is configured."
+          echo "This is not a code/build failure."
+
+      - uses: actions/checkout@v4
+        if: steps.cloudflare-auth.outputs.available == 'true'
+
+      - uses: oven-sh/setup-bun@v2
+        if: steps.cloudflare-auth.outputs.available == 'true'
+
+      - name: Install dependencies
+        if: steps.cloudflare-auth.outputs.available == 'true'
+        run: bun install --frozen-lockfile
+
       - name: Build authenticated app
+        if: steps.cloudflare-auth.outputs.available == 'true'
         env:
           VITE_SUPABASE_URL: https://dkanoobzseckccbwnpyi.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_1UFQzS1rNIyeM80T7p6f-A_kTJIc6AW
         run: bun run build
 
       - name: Deploy to Cloudflare Workers
+        if: steps.cloudflare-auth.outputs.available == 'true'
         run: npx wrangler deploy
