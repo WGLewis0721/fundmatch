@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as WireframesRouteImport } from './routes/wireframes'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as AppInviteRouteImport } from './routes/app/invite'
 import { Route as AppLoginRouteImport } from './routes/app/login'
@@ -33,6 +34,11 @@ const AppRoute = AppRouteImport.update({
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WireframesRoute = WireframesRouteImport.update({
+  id: '/wireframes',
+  path: '/wireframes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/demo': typeof DemoRoute
+  '/wireframes': typeof WireframesRoute
   '/app/invite': typeof AppInviteRoute
   '/app/login': typeof AppLoginRoute
   '/app/onboarding': typeof AppOnboardingRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demo': typeof DemoRoute
+  '/wireframes': typeof WireframesRoute
   '/app/invite': typeof AppInviteRoute
   '/app/login': typeof AppLoginRoute
   '/app/onboarding': typeof AppOnboardingRoute
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/demo': typeof DemoRoute
+  '/wireframes': typeof WireframesRoute
   '/app/invite': typeof AppInviteRoute
   '/app/login': typeof AppLoginRoute
   '/app/onboarding': typeof AppOnboardingRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/demo'
+    | '/wireframes'
     | '/app/invite'
     | '/app/login'
     | '/app/onboarding'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/demo'
+    | '/wireframes'
     | '/app/invite'
     | '/app/login'
     | '/app/onboarding'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/demo'
+    | '/wireframes'
     | '/app/invite'
     | '/app/login'
     | '/app/onboarding'
@@ -149,6 +161,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   DemoRoute: typeof DemoRoute
+  WireframesRoute: typeof WireframesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +185,13 @@ declare module '@tanstack/react-router' {
       path: '/demo'
       fullPath: '/demo'
       preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wireframes': {
+      id: '/wireframes'
+      path: '/wireframes'
+      fullPath: '/wireframes'
+      preLoaderRoute: typeof WireframesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -252,6 +272,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   DemoRoute: DemoRoute,
+  WireframesRoute: WireframesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
