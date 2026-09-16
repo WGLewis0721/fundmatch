@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { Home } from "./routes/index";
 import { Demo, Route as demoRoute } from "./routes/demo";
+import { Route as wireframeRoute } from "./routes/wireframes";
 import "./styles.css";
 // Same route IDs as TanStack Start so the shared route search hooks work in
 // both builds. This static demo intentionally never loads the auth backend.
@@ -36,8 +37,13 @@ const demo = createRoute({
   validateSearch: demoRoute.options.validateSearch!,
   component: Demo,
 });
+const wireframes = createRoute({
+  getParentRoute: () => root,
+  path: "/wireframes",
+  component: wireframeRoute.options.component!,
+});
 const router = createRouter({
-  routeTree: root.addChildren([index, demo]),
+  routeTree: root.addChildren([index, demo, wireframes]),
   basepath: import.meta.env.BASE_URL,
   scrollRestoration: true,
 });
