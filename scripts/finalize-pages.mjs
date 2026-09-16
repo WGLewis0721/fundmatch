@@ -1,9 +1,11 @@
 import { copyFile, mkdir, readFile, writeFile, stat } from "node:fs/promises";
-// Emit real entrypoints for the app route, so refreshing /fundmatch/demo/
-// doesn't depend on a custom server or a GitHub Pages redirect workaround.
+// Emit real entrypoints for static browser routes, so refreshing them does not
+// depend on a custom server or a GitHub Pages redirect workaround.
 await copyFile("dist/pages/index.html", "dist/index.html");
-await mkdir("dist/demo", { recursive: true });
-await copyFile("dist/index.html", "dist/demo/index.html");
+for (const route of ["demo", "wireframes"]) {
+  await mkdir(`dist/${route}`, { recursive: true });
+  await copyFile("dist/index.html", `dist/${route}/index.html`);
+}
 await copyFile("dist/index.html", "dist/404.html");
 await writeFile("dist/.nojekyll", "");
 const html = await readFile("dist/index.html", "utf8");
@@ -22,4 +24,5 @@ for (const path of [
   "favicon.svg",
 ])
   await stat("dist/" + path);
-console.log("Static Pages build validated: homepage, demo route, film, brand artwork and fonts.");
+await stat("dist/wireframes/index.html");
+console.log("Static Pages build validated: homepage, demo, wireframes, film, brand artwork and fonts.");
