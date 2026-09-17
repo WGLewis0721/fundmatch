@@ -77,6 +77,7 @@ import { FounderBuilder } from "@/components/fundmatch/founder-builder";
 import { FounderJourney } from "@/components/fundmatch/founder-journey";
 import { InvestorPacket } from "@/components/fundmatch/investor-packet";
 import { fromStartup } from "@/lib/founder-readiness";
+import "../../app-workspace-scaffold.css";
 const VIEWS = [
   "discover",
   "pipeline",
