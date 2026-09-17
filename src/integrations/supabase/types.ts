@@ -1307,10 +1307,138 @@ export type Database = {
         Relationships: []
       }
     }
+      discovery_sessions: {
+        Row: {
+          id: string
+          org_id: string
+          investor_id: string
+          user_id: string
+          thesis_updated_at: string | null
+          eligibility_version: string
+          score_version: string
+          filters: Json
+          created_at: string
+          last_seen_at: string
+          closed_at: string | null
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          investor_id: string
+          user_id: string
+          thesis_updated_at?: string | null
+          eligibility_version?: string
+          score_version?: string
+          filters?: Json
+          created_at?: string
+          last_seen_at?: string
+          closed_at?: string | null
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          investor_id?: string
+          user_id?: string
+          thesis_updated_at?: string | null
+          eligibility_version?: string
+          score_version?: string
+          filters?: Json
+          created_at?: string
+          last_seen_at?: string
+          closed_at?: string | null
+        }
+        Relationships: []
+      }
+      marketplace_events: {
+        Row: {
+          id: string
+          org_id: string
+          investor_id: string | null
+          startup_id: string | null
+          actor_id: string | null
+          event_type: string
+          session_id: string | null
+          score: number | null
+          score_version: string | null
+          rank_position: number | null
+          eligibility_version: string | null
+          idempotency_key: string | null
+          metadata: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          investor_id?: string | null
+          startup_id?: string | null
+          actor_id?: string | null
+          event_type: string
+          session_id?: string | null
+          score?: number | null
+          score_version?: string | null
+          rank_position?: number | null
+          eligibility_version?: string | null
+          idempotency_key?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          investor_id?: string | null
+          startup_id?: string | null
+          actor_id?: string | null
+          event_type?: string
+          session_id?: string | null
+          score?: number | null
+          score_version?: string | null
+          rank_position?: number | null
+          eligibility_version?: string | null
+          idempotency_key?: string | null
+          metadata?: Json
+          created_at?: string
+        }
+        Relationships: []
+      }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      start_discovery_session: {
+        Args: { _investor_id: string; _filters?: Json }
+        Returns: string
+      }
+      get_eligible_discovery_candidates: {
+        Args: { _investor_id: string; _session_id: string; _limit?: number }
+        Returns: { startup_id: string }[]
+      }
+      record_discovery_impression: {
+        Args: {
+          _session_id: string
+          _startup_id: string
+          _score: number
+          _score_version: string
+          _rank_position: number
+          _eligibility_version?: string
+        }
+        Returns: string
+      }
+      record_discovery_profile_open: {
+        Args: { _session_id: string; _startup_id: string }
+        Returns: string
+      }
+      record_discovery_decision: {
+        Args: {
+          _session_id: string
+          _startup_id: string
+          _decision: Database["public"]["Enums"]["swipe_decision"]
+        }
+        Returns: string
+      }
+      reset_discovery_decisions: {
+        Args: { _investor_id: string }
+        Returns: number
+      }
       accept_invitation: {
         Args: { _token: string }
         Returns: string
