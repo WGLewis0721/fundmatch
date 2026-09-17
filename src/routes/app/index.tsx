@@ -72,6 +72,14 @@ import {
 import type { PipelineStatus, StartupWithData, SwipeDecision } from "@/lib/domain";
 import { money, safeUrl } from "@/lib/demo-data";
 import { timeAgo } from "@/lib/format";
+import {
+  useProductionDiscoveryFeed,
+  useRecordDiscoveryDecision,
+  useRecordProfileOpen,
+  useRecordSurfacedImpression,
+  useResetDiscoveryDecisions,
+} from "@/lib/marketplace/hooks";
+import { filterRankedFeed } from "@/lib/marketplace/discovery-feed";
 
 import { FounderBuilder } from "@/components/fundmatch/founder-builder";
 import { FounderJourney } from "@/components/fundmatch/founder-journey";
@@ -379,22 +387,32 @@ function useRanked(ws: Workspace) {
 }
 
 function Discover({ ws, toast }: ViewProps) {
-  const { listed, ranked } = useRanked(ws);
-  const decisions = useMyDecisions(true);
-  const record = useRecordDecision(ws);
-  const reset = useResetDecisions();
+  const navigate = useNavigate();
+  const feed = useProductionDiscoveryFeed(ws);
+  const sessionId = feed.data?.sessionId;
+  const record = useRecordDiscoveryDecision(ws, sessionId);
+  const reset = useResetDiscoveryDecisions();
+  const impression = useRecordSurfacedImpression(sessionId);
   const [sector, setSector] = useState("All sectors");
   const [stage, setStage] = useState("All stages");
   const [query, setQuery] = useState("");
-  const decided = new Map((decisions.data ?? []).map((d) => [d.startup_id, d.decision]));
-  const available = ranked.filter(
-    ({ startup: c }) =>
-      !decided.has(c.id) &&
-      (sector === "All sectors" || c.sector === sector) &&
-      (stage === "All stages" || c.stage === stage) &&
-      [c.name, c.summary ?? ""].join(" ").toLowerCase().includes(query.toLowerCase()),
-  );
+
+  const available = filterRankedFeed(feed.data?.ranked ?? [], { sector, stage, query });
   const active = available[0];
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !sessionId) return;
+    window.sessionStorage.setItem("fm-discovery-session", sessionId);
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (!active || !sessionId) return;
+    impression.mutate(active);
+    // Impression writes are idempotent for session + startup. Re-running this
+    // effect cannot duplicate the audit row.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active?.startup.id, sessionId]);
+
   function decide(id: string, decision: SwipeDecision) {
     record.mutate(
       { startupId: id, decision },
@@ -411,6 +429,24 @@ function Discover({ ws, toast }: ViewProps) {
       },
     );
   }
+
+  function openProfile() {
+    if (!active || !sessionId) return;
+    void impression
+      .mutateAsync(active)
+      .then(async () => {
+        if (typeof window !== "undefined") {
+          window.sessionStorage.setItem("fm-discovery-session", sessionId);
+          window.sessionStorage.setItem("fm-discovery-startup", active.startup.id);
+        }
+        await navigate({
+          to: "/app",
+          search: { view: "company", company: active.startup.id },
+        });
+      })
+      .catch((err) => toast(describeError(err)));
+  }
+
   return (
     <>
       <div className="demo-toolbar">
@@ -439,75 +475,80 @@ function Discover({ ws, toast }: ViewProps) {
           ))}
         </select>
       </div>
-      <QueryState query={listed}>
-        <QueryState query={decisions}>
-          {active ? (
-            <div className="demo-grid fm-discovery-grid">
-              <DiscoveryCard
-                key={active.startup.id}
-                company={active.startup}
-                score={active.match.score}
-                metrics={<Metrics company={active.startup} />}
-                disabled={record.isPending}
-                onDecide={(decision) => decide(active.startup.id, decision)}
-              >
-                <Link
-                  to="/app"
-                  search={{ view: "company", company: active.startup.id }}
-                  className="demo-link"
-                >
-                  View full profile <ArrowUpRight size={15} />
+
+      <QueryState query={feed}>
+        {active ? (
+          <div className="demo-grid fm-discovery-grid">
+            <DiscoveryCard
+              key={active.startup.id}
+              company={active.startup}
+              score={active.match.score}
+              metrics={<Metrics company={active.startup} />}
+              disabled={record.isPending}
+              onDecide={(decision) => decide(active.startup.id, decision)}
+            >
+              <button className="demo-link" onClick={openProfile} disabled={impression.isPending}>
+                View full profile <ArrowUpRight size={15} />
+              </button>
+            </DiscoveryCard>
+            <aside>
+              <article className="demo-card">
+                <span className="fm-kicker">YOUR THESIS, IN FOCUS</span>
+                <h3>Here’s the connection.</h3>
+                {active.match.strengths.map((x) => (
+                  <div className="demo-check" key={x}>
+                    <Check size={16} />
+                    {x}
+                  </div>
+                ))}
+                <h3 className="fm-diligence-heading">Worth a conversation</h3>
+                {active.match.risks.map((x) => (
+                  <p key={x}>{x}</p>
+                ))}
+                <p className="demo-note">
+                  Transparent rules-based score against founder-reported data. Not due diligence
+                  or a probability of investment.
+                </p>
+                <Link to="/app" search={{ view: "thesis" }} className="demo-link">
+                  Adjust your investment thesis →
                 </Link>
-              </DiscoveryCard>
-              <aside>
-                <article className="demo-card">
-                  <span className="fm-kicker">YOUR THESIS, IN FOCUS</span>
-                  <h3>Here’s the connection.</h3>
-                  {active.match.strengths.map((x) => (
-                    <div className="demo-check" key={x}>
-                      <Check size={16} />
-                      {x}
-                    </div>
-                  ))}
-                  <h3 className="fm-diligence-heading">Worth a conversation</h3>
-                  {active.match.risks.map((x) => (
-                    <p key={x}>{x}</p>
-                  ))}
-                  <p className="demo-note">
-                    Transparent rules-based score against founder-reported data. Not due diligence
-                    or a probability of investment.
-                  </p>
-                  <Link to="/app" search={{ view: "thesis" }} className="demo-link">
-                    Adjust your investment thesis →
-                  </Link>
-                </article>
-                <p className="fm-micro">{available.length} companies left in this view.</p>
-              </aside>
-            </div>
-          ) : (listed.data?.length ?? 0) === 0 ? (
-            <div className="demo-card demo-empty">
-              <h2>No listed companies yet.</h2>
-              <p>
-                Companies appear here once founders list their profiles. Set your thesis in the
-                meantime.
-              </p>
+              </article>
+              <p className="fm-micro">{available.length} companies left in this view.</p>
+            </aside>
+          </div>
+        ) : (feed.data?.ranked.length ?? 0) > 0 ? (
+          <div className="demo-card demo-empty">
+            <h2>No companies match these filters.</h2>
+            <p>Your production eligibility set is intact. Clear the local filters to see it.</p>
+            <button
+              className="fm-button secondary"
+              onClick={() => {
+                setSector("All sectors");
+                setStage("All stages");
+                setQuery("");
+              }}
+            >
+              Clear filters
+            </button>
+          </div>
+        ) : (
+          <div className="demo-card demo-empty">
+            <h2>You’re all caught up.</h2>
+            <p>No currently eligible, undecided companies remain for this thesis.</p>
+            <div className="demo-controls">
               <Link to="/app" search={{ view: "thesis" }} className="fm-button secondary">
-                Set your thesis
+                Review thesis
               </Link>
-            </div>
-          ) : (
-            <div className="demo-card demo-empty">
-              <h2>You’re all caught up.</h2>
-              <p>Try different filters or revisit your discovery decisions.</p>
               <button
                 className="fm-button secondary"
-                disabled={reset.isPending}
+                disabled={reset.isPending || !ws.investor}
                 onClick={() => {
+                  if (!ws.investor) return;
                   setSector("All sectors");
                   setStage("All stages");
                   setQuery("");
-                  reset.mutate(undefined, {
-                    onSuccess: () => toast("Decisions reset."),
+                  reset.mutate(ws.investor.id, {
+                    onSuccess: () => toast("Current decisions reset. Event history was preserved."),
                     onError: (err) => toast(describeError(err)),
                   });
                 }}
@@ -515,8 +556,8 @@ function Discover({ ws, toast }: ViewProps) {
                 Revisit companies
               </button>
             </div>
-          )}
-        </QueryState>
+          </div>
+        )}
       </QueryState>
     </>
   );
@@ -831,7 +872,44 @@ function CompanyDetail({ ws, toast, companyId }: ViewProps & { companyId: string
   const pipeline = usePipeline(ws.org?.id);
   const notes = useTeamNotes(ws.org?.id, companyId);
   const addNote = useAddTeamNote(ws);
-  const record = useRecordDecision(ws);
+  const legacyRecord = useRecordDecision(ws);
+  const [discoverySessionId, setDiscoverySessionId] = useState<string>();
+  const [openedFromDiscovery, setOpenedFromDiscovery] = useState(false);
+  const discoveryRecord = useRecordDiscoveryDecision(ws, discoverySessionId);
+  const profileOpen = useRecordProfileOpen(discoverySessionId);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const sourceStartup = window.sessionStorage.getItem("fm-discovery-startup");
+    const session = window.sessionStorage.getItem("fm-discovery-session");
+    const fromDiscovery = sourceStartup === companyId && Boolean(session);
+    setOpenedFromDiscovery(fromDiscovery);
+    setDiscoverySessionId(fromDiscovery ? session ?? undefined : undefined);
+    if (fromDiscovery) window.sessionStorage.removeItem("fm-discovery-startup");
+  }, [companyId]);
+
+  useEffect(() => {
+    if (!openedFromDiscovery || !discoverySessionId) return;
+    profileOpen.mutate(companyId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openedFromDiscovery, discoverySessionId, companyId]);
+
+  function decideFromCompany(decision: SwipeDecision) {
+    const options = {
+      onSuccess: () =>
+        toast(
+          decision === "interested"
+            ? "Added to your firm’s pipeline. No introduction was sent."
+            : "Saved to your shortlist.",
+        ),
+      onError: (err: Error) => toast(describeError(err)),
+    };
+    if (openedFromDiscovery && discoverySessionId) {
+      discoveryRecord.mutate({ startupId: companyId, decision }, options);
+      return;
+    }
+    legacyRecord.mutate({ startupId: companyId, decision }, options);
+  }
   const company =
     listed.data?.find((s) => s.id === companyId) ??
     pipeline.data?.find((p) => p.startup?.id === companyId)?.startup ??
@@ -898,31 +976,15 @@ function CompanyDetail({ ws, toast, companyId }: ViewProps & { companyId: string
             <div className="demo-controls">
               <button
                 className="fm-button secondary"
-                disabled={record.isPending}
-                onClick={() =>
-                  record.mutate(
-                    { startupId: company.id, decision: "save" },
-                    {
-                      onSuccess: () => toast("Saved to your shortlist."),
-                      onError: (err) => toast(describeError(err)),
-                    },
-                  )
-                }
+                disabled={legacyRecord.isPending || discoveryRecord.isPending}
+                onClick={() => decideFromCompany("save")}
               >
                 Save <Bookmark size={14} />
               </button>
               <button
                 className="fm-button"
-                disabled={record.isPending}
-                onClick={() =>
-                  record.mutate(
-                    { startupId: company.id, decision: "interested" },
-                    {
-                      onSuccess: () => toast("Added to your pipeline."),
-                      onError: (err) => toast(describeError(err)),
-                    },
-                  )
-                }
+                disabled={legacyRecord.isPending || discoveryRecord.isPending}
+                onClick={() => decideFromCompany("interested")}
               >
                 Move to pipeline <ArrowRight size={14} />
               </button>
