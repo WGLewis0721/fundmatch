@@ -46,17 +46,17 @@ while still applying the Phase 8 `0008`/`0009` migrations.
 
 ## Running the drain
 
-Two entry points, both in `src/lib/agentic/processing.functions.ts`:
+The upload path and recovery path share the same durable drain:
 
-- `requestDocumentAnalysis({ documentId })` — called by the workspace right after
+- `requestDocumentAnalysis({ documentId })` in `src/lib/agentic/processing.functions.ts` — called by the workspace right after
   an upload. Verifies the caller is a member of the document's organization,
   starts the run, then drains a small amount of work inline. The browser may
   disconnect immediately; the run survives.
-- `runAgenticWorker()` — operational drain, authenticated with the cron bearer
-  secret. Schedule this (any scheduler that can send an authenticated POST) so
-  that work nobody triggered still gets done.
+- `runAgenticWorker()` remains available as a cron-secret-authenticated server-function drain for controlled callers.
+- `/api/agentic-worker` is the stable GET transport used by Vercel Cron. It authenticates the request and invokes the same
+  `drainAgenticWork` implementation rather than duplicating queue logic.
 
-The production activation branch registers a stable `/api/agentic-worker` HTTP route and
+The production activation branch registers the stable `/api/agentic-worker` HTTP route and
 Vercel Cron configuration for a daily **08:00 UTC** recovery sweep. Normal uploads still
 request analysis immediately; the scheduled drain is the safety net for missed callbacks
 or stalled `uploaded` documents. Vercel supplies `Authorization: Bearer <CRON_SECRET>`.
