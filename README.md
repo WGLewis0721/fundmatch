@@ -4,17 +4,15 @@
 
 FundMatch is an AI-assisted capital discovery and fundraising-readiness platform for startup teams and investment teams.
 
-The simple surface is a modern discovery feed: investors can **Pass**, **Save**, or mark a company **Interested**. The serious product underneath is a structured profile, readiness, provenance, matching and workflow system that turns messy founder and investor data into cleaner capital conversations.
+The simple surface is a modern discovery feed: investors can **Pass**, **Save**, or mark a company **Interested**. The serious product underneath is a structured profile, readiness, provenance, matching, diligence, workflow, and agentic intelligence system that turns messy founder and investor data into cleaner capital conversations.
 
-> FundMatch is not just “Tinder for VC.” The swipe/feed interaction is the consumption layer. The core value is profile standardization, investment-thesis understanding, explainable matching, fundraising readiness, diligence workflow, and learning from real outcomes.
-
-The interface uses a 60/30/10 off-white, sage and periwinkle identity with original editorial artwork and a shared founder/investor workspace.
+> FundMatch is not just “Tinder for VC.” The swipe/feed interaction is the consumption layer. The core value is profile standardization, investment-thesis understanding, explainable matching, fundraising readiness, evidence-backed diligence, introductions, and learning from real outcomes.
 
 ## Product thesis
 
 Private-market discovery is fragmented.
 
-Founders repeatedly package the same story, deck, traction, metrics and raise details for different investors. Investors review too many weak-fit companies across CRMs, email, pitch decks, warm introductions, public websites, databases and notes.
+Founders repeatedly package the same story, deck, traction, metrics, and raise details for different investors. Investors review too many weak-fit companies across CRMs, email, pitch decks, warm introductions, public websites, databases, and notes.
 
 FundMatch's core loop is:
 
@@ -34,9 +32,7 @@ Connect data
 
 ### Founders
 
-FundMatch helps startup teams prepare a clear investor-facing profile, understand readiness gaps, standardize materials and become discoverable to investors whose thesis actually fits.
-
-Founder promise:
+FundMatch helps startup teams prepare a clear investor-facing profile, understand readiness gaps, standardize materials, and become discoverable to investors whose thesis actually fits.
 
 > Tell your story once. Get ready to be discovered by investors who fit.
 
@@ -44,58 +40,135 @@ Founder promise:
 
 FundMatch helps investment teams confirm an investment thesis, review standardized company cards, understand why a company fits, and move promising companies into pipeline and diligence.
 
-Investor promise:
-
 > Find companies that match your thesis before your team wastes time on weak-fit deals.
 
 ## Architecture direction
 
-The current stack is intentionally a **modular monolith**, not a premature microservice platform.
-
-### Current foundation
+FundMatch remains a **modular monolith backed by managed services**. The project deliberately avoids a premature microservice/search/streaming stack.
 
 | Layer | Technology | Purpose |
 | --- | --- | --- |
 | Public site/demo | React + TanStack + Vite, GitHub Pages | Product story and fictional no-signup demo |
 | Authenticated web app | React 19 + TanStack Start/Router + TypeScript | Founder and investor production workspace |
-| App hosting | Cloudflare Workers/Nitro target | Authenticated web delivery |
-| System of record | Supabase Postgres | Profiles, theses, decisions, pipeline, workflow |
+| Production host | Vercel + Nitro | Authenticated web/server runtime |
+| System of record | Supabase Postgres | Profiles, theses, decisions, workflow, audit records |
 | Auth / authorization | Supabase Auth + Row-Level Security | Identity and organization isolation |
 | Private documents | Supabase Storage | Founder/investor materials |
-| Realtime | Supabase Realtime Broadcast | Interest, workflow and processing updates |
-| Background jobs | Supabase Queues (`pgmq`) | AI extraction, embeddings, email and imports |
-| Privileged compute | Supabase Edge Functions / server workers | Service-role operations and external APIs |
-| Semantic retrieval | Postgres + `pgvector` | Thesis/company semantic candidate recall |
+| Durable background jobs | Supabase Queues (`pgmq`) | Agent runs, embeddings, later email/import work |
+| Semantic retrieval | Postgres + `pgvector` | First-party RAG and thesis/company semantic recall |
+| Initial model API | OpenAI Responses + Embeddings APIs | Structured extraction, analysis, embeddings |
+| Agent runtime | FundMatch TypeScript contracts/orchestrator | Bounded workers, delegation, validation, audit hooks |
+| Full agent SDK adapter | OpenAI Agents SDK, planned | Handoffs/tools/guardrails/tracing behind FundMatch interfaces |
+| Durable workflow graph | LangGraph, when justified | Checkpoints, interrupts, resumable multi-step workflows |
+| Interoperability | MCP, planned | Bounded FundMatch tools/resources for AI hosts |
+| External automation | Make/n8n, optional | CRM, notifications, pilot integrations, operations |
 | Billing | Stripe later | Commercialization |
 
-This direction borrows the **candidate retrieval → ranking → decision → outcome feedback** structure used by mature recommendation products while keeping the deployment complexity appropriate for an early marketplace.
+Do **not** add Redis, Kafka, Elasticsearch/OpenSearch, Kubernetes, a separate vector database, or a microservice fleet until measured production load creates a problem the current stack cannot solve economically.
 
-Do **not** add Redis, Kafka, Elasticsearch/OpenSearch, Kubernetes or a microservice fleet until measured production load justifies them. See [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md).
+See [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md) and [`docs/AGENTIC_RAG_ARCHITECTURE.md`](docs/AGENTIC_RAG_ARCHITECTURE.md).
+
+## Agentic intelligence layer
+
+FundMatch now has a version-controlled foundation for the technology pattern:
+
+```text
+LLM
++ authorized search/vector retrieval
++ workflow/orchestration
++ prompts
++ API calls
++ validation
++ controlled actions
+```
+
+The intelligence layer is server-side infrastructure, not a generic chatbot.
+
+```text
+product event / request
+        ↓
+FundMatch authorization + hard rules
+        ↓
+pgmq durable job
+        ↓
+authorized retrieval from Postgres + pgvector
+        ↓
+TypeScript orchestrator
+        ↓
+specialized worker(s)
+        ↓
+validation
+        ↓
+pass / retry / human review / fail
+        ↓
+canonical Postgres action + event
+```
+
+The first logical worker roles are:
+
+- `document` — extract/organize sourced company claims;
+- `thesis` — normalize investor-supplied thesis information;
+- `match` — explain fit for already-eligible candidates;
+- `readiness` — identify fundraising-readiness gaps;
+- `diligence` — identify sourced inconsistencies/open questions;
+- `evidence` — validate another worker's claims against supplied evidence.
+
+Sub-agent delegation is intentionally bounded to one level in the initial runtime. FundMatch does not run an open-ended autonomous swarm.
+
+### AI authority boundary
+
+AI may propose, extract, normalize, summarize, compare, and flag. AI does **not** own:
+
+- organization authorization or RLS;
+- hard investor eligibility/exclusions;
+- canonical company facts;
+- private contact exposure;
+- final human acceptance of material founder-profile changes;
+- claims about probability of funding or investment advice.
+
+The source-of-truth hierarchy is:
+
+```text
+source material
+→ AI proposal / interpretation
+→ validated + authorized human/system confirmation
+→ canonical FundMatch state
+```
+
+## Agentic RAG database foundation
+
+Migration `0006_agentic_rag_foundation.sql` introduces the production foundation for:
+
+- `vector` / pgvector;
+- `pgmq` queues;
+- `agent_runs` and `agent_steps` audit records;
+- private `document_chunks`;
+- versioned `chunk_embeddings` using a 1536-dimension schema;
+- a server-only semantic retrieval function;
+- durable `agent_runs` and `embeddings` queues.
+
+Private chunk text and vectors are server-only. Browser clients do not receive generic vector-search access.
 
 ## Matching model
 
-FundMatch matching should evolve in layers:
+FundMatch matching evolves in layers:
 
 ```text
 Hard eligibility filters
 → deterministic rules baseline
 → semantic thesis/company similarity
 → business/diversity rules
-→ explainable result
+→ evidence-backed explanation
 → behavioral/outcome learning later
 ```
 
-The current `MatchEngine` remains the baseline. It scores sector, stage, geography, funding ask/check-range approximation, growth and business model, with penalties for exclusions.
+The current `MatchEngine` remains the baseline. Semantic retrieval augments recall and explanation; it does not override hard constraints.
 
-That score is not a probability of investment and is not investment advice.
-
-Production ranking weights, prompts, model parameters and proprietary feature engineering should remain server-side/private once they become a competitive advantage.
+A FundMatch fit score is not a probability of investment and is not investment advice.
 
 ## Interest is a workflow, not an automatic dating-style match
 
-FundMatch should not literally copy Tinder's mutual-like behavior.
-
-Recommended flow:
+FundMatch does not literally copy Tinder's mutual-like behavior.
 
 ```text
 Investor marks Interested
@@ -105,138 +178,107 @@ Investor marks Interested
 → meeting / diligence / outcome events are tracked
 ```
 
-This creates the marketplace loop FundMatch needs without automatically exposing private contact information.
+Private contact information is not automatically exposed.
 
 ## Two products in one repository
 
 | Surface | Routes | Purpose | Backend | Status |
 | --- | --- | --- | --- | --- |
-| Public demo | `/`, `/demo` | No-signup product story, founder/investor demo and product film | Browser storage only | Working demo |
-| Authenticated app | `/app` | Real accounts, organizations, persistence and private documents | Supabase Auth, Postgres/RLS, Storage | Implemented in code; deployment acceptance required |
+| Public demo | `/`, `/demo` | No-signup product story and fictional product demo | Browser storage only | Working |
+| Authenticated app | `/app` | Real accounts, organizations, persistence, private documents | Supabase Auth/Postgres/RLS/Storage | Implemented; production acceptance still required |
+| Wireframe prototype | `/wireframes` on Pages | Fictional/local UI review surface | None | Working |
 
-The public demo and authenticated app are intentionally separate. Keep GitHub Pages pointed at the demo build only. The Pages bundle must not contain production secrets or privileged backend code.
+The public demo and authenticated app remain logically separate. The Pages bundle must not contain production secrets or privileged backend code.
 
 ## What works today
 
 ### Public demo
 
-- Home page and full-screen product film player.
-- Founder/investor preview in the hero.
-- No-signup founder and investor demo workspaces.
-- Company discovery with search, filters and **Pass / Save / Interested** actions.
-- Horizontal decision gestures and keyboard alternatives.
+- Homepage and product film.
+- Founder/investor preview and no-signup demo workspaces.
+- Company discovery, search, filters, Pass / Save / Interested, and horizontal gestures.
 - Deterministic rules-based `MatchEngine` with explanations.
-- Editable investor thesis and ranked insights.
-- Company profiles, source transparency, supporting-material links and review notes.
-- Pipeline stages and saved shortlist.
-- Three-step founder profile builder for Dippi and Soapbox Caddie.
-- Missing-profile/material indicators connected to preparation workflow.
-- Standardized investor packet with checklist status, source labels, selected external links, HTML download and print/save-PDF.
-- Literal PDF/text extraction and human review under Build from deck (in-memory demo, not live AI).
-- Fundraising Readiness templates for VC and PE preparation.
-- Local persistence with schema validation and reset.
-- Responsive layouts, focus states, dialogs and empty states.
+- Editable investor thesis.
+- Company profiles, source transparency, materials, notes, pipeline, and saved shortlist.
+- Guided founder profile builder and fundraising-readiness flow.
+- Standardized investor packet with safe export/print flow.
+- Literal PDF/text extraction and human review in the demo.
+- Responsive/accessibility basics and interactive web/mobile wireframes.
 
 ### Authenticated app implemented in code
 
-- Signup, login, logout and password recovery.
-- Organization creation and roles: owner, admin, member.
+- Signup/login/logout/password recovery.
+- Organizations and owner/admin/member roles.
 - Email-bound invitations.
-- Server-side persistence for company profiles, metrics, theses, decisions, pipeline stages, team notes, materials and readiness checklists.
-- Guided founder builder and investor packet backed by the authenticated data layer.
-- Private document upload model with validation, authorized downloads and deletion.
-- Supabase RLS policies scoped to authorized organizations.
+- Organization-scoped persistence.
+- Guided founder builder and investor packet.
+- Private document metadata/storage model, authorized download/delete behavior, and RLS policies.
+- Vercel/Nitro deployment configuration with Supabase as backend.
 
-See [`docs/BACKEND.md`](docs/BACKEND.md).
+### Agentic intelligence foundation implemented in code
+
+- Framework-neutral TypeScript worker/task/result contracts.
+- Bounded orchestration with retries and one-level delegation.
+- Evidence validation that rejects citations outside the authorized task evidence.
+- Review escalation for conflicting/low-confidence claims.
+- Server-only structured OpenAI worker adapter.
+- Server-only OpenAI embedding adapter pinned to the agentic-v1 1536-dimension contract.
+- Version-controlled pgvector/pgmq/audit/retrieval migration.
+- Technology research and assembled architecture docs.
+
+This foundation does **not** mean every AI workflow is production-wired yet.
 
 ## What is still not production-real
 
-Do **not** present these as live features yet:
+Do not present these as live customer capabilities yet:
 
-- Completed authenticated production deployment acceptance.
-- Live AI extraction from uploaded documents.
-- Live LLM summaries and semantic production matching.
-- Real investor introductions or founder acceptance workflow.
-- Investor/founder messaging.
-- Transactional email delivery.
-- Real Affinity, PitchBook, DocSend, Stripe, HubSpot, Google or Microsoft integrations.
-- Licensed market-data ingestion.
-- Secure data-room workflows beyond the private-document foundation.
-- Outcome-trained recommendation models.
-- Production billing.
+- completed Phase 5 authenticated browser acceptance;
+- queue consumer wired end-to-end in production;
+- live chunking/embedding of every private upload;
+- live multi-agent document/readiness pipeline;
+- production semantic candidate matching;
+- live investor-interest/founder-response workflow;
+- transactional email;
+- full realtime marketplace notification layer;
+- real CRM/data-provider integrations;
+- licensed private-market data ingestion;
+- outcome-trained recommendation models;
+- production billing;
 - SSO.
 
-The `/demo` workspace is fictional browser data. Do not put confidential documents, financial data, credentials or real fundraising material into the public demo.
+The `/demo` workspace is fictional browser data. Never put confidential fundraising materials, financial data, or credentials into it.
 
 ## Marketplace event model
 
-FundMatch should eventually preserve both **current state** and **event history**.
+FundMatch preserves current state and will add append-only event history for meaningful marketplace behavior:
 
-Examples of events worth retaining:
+- candidate impression;
+- profile opened;
+- passed;
+- saved;
+- interested;
+- intro requested / accepted / declined;
+- meeting scheduled;
+- diligence started;
+- funded / no-deal;
+- readiness changed.
 
-- candidate impression
-- profile opened
-- passed
-- saved
-- interested
-- intro requested / accepted / declined
-- meeting scheduled
-- diligence started
-- funded / no-deal
-- readiness changed
+That history is eventually used to improve recommendation quality against real outcomes instead of optimizing only for clicks/swipes.
 
-That history is what eventually lets FundMatch learn which recommendations actually create useful conversations rather than optimizing only for swipes.
+## Research behind the agentic stack
 
-## AI role
+Each technology was researched separately before assembly:
 
-FundMatch is mostly conventional software with an AI intelligence layer.
+- [`docs/research/agentic-rag/OPENAI_AGENTS_SDK.md`](docs/research/agentic-rag/OPENAI_AGENTS_SDK.md)
+- [`docs/research/agentic-rag/LANGGRAPH.md`](docs/research/agentic-rag/LANGGRAPH.md)
+- [`docs/research/agentic-rag/CLAUDE_TOOLING.md`](docs/research/agentic-rag/CLAUDE_TOOLING.md)
+- [`docs/research/agentic-rag/SUPABASE_PGVECTOR_PGMQ.md`](docs/research/agentic-rag/SUPABASE_PGVECTOR_PGMQ.md)
+- [`docs/research/agentic-rag/MCP.md`](docs/research/agentic-rag/MCP.md)
+- [`docs/research/agentic-rag/N8N.md`](docs/research/agentic-rag/N8N.md)
+- [`docs/research/agentic-rag/MAKE.md`](docs/research/agentic-rag/MAKE.md)
+- [`docs/research/agentic-rag/TYPESCRIPT_PYTHON.md`](docs/research/agentic-rag/TYPESCRIPT_PYTHON.md)
 
-AI should help with:
-
-- company profile generation and normalization
-- deck/document summarization
-- investment-thesis inference
-- embeddings / semantic retrieval
-- match-ranking augmentation
-- “why this fits” explanations
-- strengths, risks and open questions
-- readiness suggestions
-- profile suggestions that humans accept or reject
-
-AI should **not** silently overwrite founder profiles, invent traction, invent investor preferences, bypass hard eligibility constraints, or turn an LLM score into a claim about funding probability.
-
-Important claims need provenance and human confirmation.
-
-See [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md).
-
-## Fundraising readiness
-
-A major single-sided value proposition is helping founders know whether they have their ducks in a row before raising.
-
-Readiness covers:
-
-- company basics
-- pitch deck
-- team/founder background
-- market/problem clarity
-- business model and pricing
-- traction and customer proof
-- financials and revenue evidence
-- legal/corporate basics
-- fundraising ask and use of funds
-- investor materials/data-room preparation
-- risks and open questions
-
-The early version does not need to perfectly analyze every document. It creates value by collecting the right materials, showing what is missing, and standardizing the company into a clean FundMatch investor packet.
-
-## Product examples
-
-FundMatch uses fictional startups to demonstrate the workflow:
-
-- **Dippi** — on-demand liquor delivery connecting local stores and consumers.
-- **Soapbox Caddie** — pickup-and-delivery laundry service for busy households.
-
-These are demo examples, not real fundraising opportunities.
+See the research index at [`docs/research/agentic-rag/README.md`](docs/research/agentic-rag/README.md).
 
 ## Run locally
 
@@ -250,76 +292,72 @@ bun run dev
 Useful commands:
 
 ```sh
-bun run build       # full TanStack Start/Nitro app including /app
+bun run build
 bun run typecheck
 bun test
-bun run build:pages # static GitHub Pages build in dist/
+bun run build:pages
 bun run lint
 ```
 
-The authenticated app at `/app` needs the Supabase values from `.env.example`. Without them, it should show a backend-not-configured screen instead of failing.
+The authenticated app needs the Supabase values from `.env.example`. Agentic model/embedding work additionally requires server-only `OPENAI_API_KEY` and an explicitly configured `FUNDMATCH_AGENT_MODEL`.
 
-## Deploy the public demo with GitHub Pages
+## Production deployment
 
-The workflow `.github/workflows/pages.yml` builds and deploys the static Pages output.
+The authenticated application is hosted on Vercel using TanStack Start + Nitro. Supabase remains the backend for Auth/Postgres/RLS/Storage.
 
-Expected public demo URL:
+See [`docs/VERCEL_DEPLOYMENT.md`](docs/VERCEL_DEPLOYMENT.md).
+
+The static product demo can continue to use GitHub Pages:
 
 `https://wglewis0721.github.io/fundmatch/`
 
-The Pages build handles the `/fundmatch/` base path and emits a real `/demo/index.html` so direct links and refreshes work.
+A successful Vercel deployment alone is not Phase 5 acceptance. Signup/login, organization creation, invitations, private document operations, and cross-organization isolation still need browser-level acceptance evidence.
 
 ## Security / IP boundary
 
-The public demo should show enough to understand FundMatch without exposing the future moat.
-
-Public is appropriate for:
-
-- marketing copy
-- fictional demo companies
-- interaction patterns
-- high-level architecture
-- screenshots / product film
-- generic explanation of fit
+Public material may include fictional demo data, interaction patterns, high-level architecture, and generic explanations.
 
 Keep private once commercially meaningful:
 
-- production source code
-- ranking weights and proprietary feature engineering
-- prompts/model configuration
-- investor/company proprietary datasets
-- sourcing methods
-- outcome-training data
-- internal roadmap details that create competitive advantage
-- production credentials and service-role access
+- ranking weights and proprietary features;
+- production prompts/model configuration;
+- investor/company proprietary datasets;
+- sourcing methods;
+- outcome-training data;
+- service-role/database credentials;
+- internal data that creates a competitive advantage.
+
+Agent runs should store structured summaries and audit metadata, not hidden chain-of-thought.
 
 ## Current documentation
 
 - [`ROADMAP.md`](ROADMAP.md) — product and implementation source of truth.
-- [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md) — discovery/recommendation architecture and scale strategy.
-- [`docs/IMPLEMENTATION_NEXT_STEPS.md`](docs/IMPLEMENTATION_NEXT_STEPS.md) — executable sequence from current build to controlled pilot.
-- [`docs/BACKEND.md`](docs/BACKEND.md) — authenticated app, Supabase setup, RLS, private documents and deployment.
-- [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md) — upload processing, profile suggestions, readiness suggestions and AI worker boundaries.
-- [`docs/FOUNDER_READINESS.md`](docs/FOUNDER_READINESS.md) — founder-readiness implementation and acceptance gap.
-- [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md) — backend testing/security evidence.
-- [`docs/brand/BRAND.md`](docs/brand/BRAND.md) — positioning, tokens, graphics and copy rules.
-- [`docs/brand/ASSET_MANIFEST.md`](docs/brand/ASSET_MANIFEST.md) — graphics/source index.
+- [`docs/AGENTIC_RAG_ARCHITECTURE.md`](docs/AGENTIC_RAG_ARCHITECTURE.md) — assembled agentic runtime architecture.
+- [`docs/research/agentic-rag/README.md`](docs/research/agentic-rag/README.md) — technology research index.
+- [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md) — recommendation architecture and scale strategy.
+- [`docs/IMPLEMENTATION_NEXT_STEPS.md`](docs/IMPLEMENTATION_NEXT_STEPS.md) — build sequence toward pilot.
+- [`docs/BACKEND.md`](docs/BACKEND.md) — Supabase/RLS/private-document backend.
+- [`docs/VERCEL_DEPLOYMENT.md`](docs/VERCEL_DEPLOYMENT.md) — authenticated deployment.
+- [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md) — prior document-processing interface and worker boundaries.
+- [`docs/FOUNDER_READINESS.md`](docs/FOUNDER_READINESS.md) — readiness implementation.
+- [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md) — backend/security evidence.
+- [`docs/brand/BRAND.md`](docs/brand/BRAND.md) — positioning and brand system.
 
 ## Best next product move
 
-Do **not** redesign the interface again before proving the private marketplace loop.
-
-The next order is:
+The new intelligence foundation does not replace the ordered marketplace work.
 
 ```text
 1. Complete authenticated deployment acceptance
-2. Production candidate retrieval + persistent decisions
+2. Production candidate retrieval + persistent decisions/event history
 3. Investor interest → founder response workflow
-4. Append-only discovery/outcome events
-5. Queued AI document processing
-6. Semantic matching augmentation with pgvector
-7. Realtime + email notifications
-8. Controlled founder / angel / small-VC pilot
+4. Wire agent_runs/embeddings queue consumers
+5. Chunk + embed private documents with provenance
+6. Run document/readiness workers with validation + human review
+7. Add semantic matching augmentation with pgvector
+8. Add realtime/email notification layer
+9. Controlled founder / angel / small-VC pilot
+10. Learn from real marketplace outcomes before training a learned ranker
 ```
 
-See [`docs/IMPLEMENTATION_NEXT_STEPS.md`](docs/IMPLEMENTATION_NEXT_STEPS.md) before starting the next implementation phase.
+Do not redesign the interface again before proving the private marketplace and intelligence loops.
