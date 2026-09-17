@@ -37,28 +37,30 @@ keyed so redelivery converges rather than duplicating:
 | `OPENAI_API_KEY` | pipeline still runs: deterministic labelled-line extraction, no embeddings, no document agent |
 | `FUNDMATCH_AGENT_MODEL` | defaults to `gpt-4.1-mini` |
 | `FUNDMATCH_EMBEDDING_MODEL` | defaults to `text-embedding-3-small` (1536 dimensions, enforced) |
-| `FUNDMATCH_CRON_SECRET` | the scheduled drain refuses every request |
+| `CRON_SECRET` | Vercel Cron bearer secret; the scheduled drain refuses every request when neither this nor the compatibility fallback is configured |
+| `FUNDMATCH_CRON_SECRET` | compatibility fallback for manual/non-Vercel drains |
 
-Migrations `0006`, `0007` and `0008` must be applied to the project. `0006`/`0007`
-need the `vector` and `pgmq` extensions, which is why plain-PostgreSQL CI applies
-`0008` but not those two.
+Production project `dkanoobzseckccbwnpyi` has migrations `0006`–`0009` applied. `0006`/`0007`
+need the `vector` and `pgmq` extensions, which is why plain-PostgreSQL CI skips those two
+while still applying the Phase 8 `0008`/`0009` migrations.
 
 ## Running the drain
 
-Two entry points, both in `src/lib/agentic/processing.functions.ts`:
+The upload path and recovery path share the same durable drain:
 
-- `requestDocumentAnalysis({ documentId })` — called by the workspace right after
+- `requestDocumentAnalysis({ documentId })` in `src/lib/agentic/processing.functions.ts` — called by the workspace right after
   an upload. Verifies the caller is a member of the document's organization,
   starts the run, then drains a small amount of work inline. The browser may
   disconnect immediately; the run survives.
-- `runAgenticWorker()` — operational drain, authenticated with the cron bearer
-  secret. Schedule this (any scheduler that can send an authenticated POST) so
-  that work nobody triggered still gets done.
+- `runAgenticWorker()` remains available as a cron-secret-authenticated server-function drain for controlled callers.
+- `/api/agentic-worker` is the stable GET transport used by Vercel Cron. It authenticates the request and invokes the same
+  `drainAgenticWork` implementation rather than duplicating queue logic.
 
-**Nothing schedules `runAgenticWorker` yet.** Until something does, documents are
-processed by the upload-time trigger and by whatever calls the drain. The sweeper
-inside each drain picks up documents still sitting at `uploaded`, so a missed
-callback is recovered on the next run rather than lost.
+The production activation branch registers the stable `/api/agentic-worker` HTTP route and
+Vercel Cron configuration for a daily **08:00 UTC** recovery sweep. Normal uploads still
+request analysis immediately; the scheduled drain is the safety net for missed callbacks
+or stalled `uploaded` documents. Vercel supplies `Authorization: Bearer <CRON_SECRET>`.
+The route fails closed when the secret is absent or incorrect.
 
 ## Supported input
 
