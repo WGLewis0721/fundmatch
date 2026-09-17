@@ -11,5 +11,17 @@ export default defineConfig({
       "@": resolve(import.meta.dirname, "src"),
     },
   },
-  plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact()],
+  plugins: [
+    tailwindcss(),
+    tanstackStart(),
+    nitro({
+      handlers: [
+        {
+          route: "/api/agentic-worker",
+          handler: "./src/server/agentic-worker.handler.ts",
+        },
+      ],
+    }),
+    viteReact(),
+  ],
 });
