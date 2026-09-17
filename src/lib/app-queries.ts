@@ -141,8 +141,8 @@ export function useCreateOrganization() {
       const { data, error } = await supabase.rpc("create_organization", {
         _name: input.name,
         _type: input.type,
-        _website: input.website ?? null,
-        _description: input.description ?? null,
+        _website: input.website,
+        _description: input.description,
       });
       if (error) throw new Error(error.message);
       return data as string;
