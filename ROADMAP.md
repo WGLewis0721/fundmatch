@@ -383,7 +383,7 @@ Production agentic orchestration remains TypeScript-first. Introduce Python late
 
 **Build:** technology research, architecture, worker contracts, bounded orchestrator, validators, model/embedding adapters, pgvector/pgmq migration, private chunk/embedding schema, server-only semantic retrieval, agent run/step audit records.
 
-**Status:** implemented in repository code. Migration `0006_agentic_rag_foundation.sql` must be applied to the live FundMatch project after CI/merge. Queue consumers and product wiring belong to Phase 8/9 work.
+**Status:** implemented and applied to the live FundMatch project. Migrations `0006`/`0007` are live; Phase 8 migrations `0008`/`0009` are also live. Product-specific queue consumers are Phase 8/9 work.
 
 **Done when:** repository tests/builds pass, migration is live, extensions/queues exist, and no browser/client receives privileged retrieval access.
 
@@ -447,8 +447,8 @@ Implemented (steps 1–9 above, for the supported formats):
 Not yet done in this phase:
 
 - a model-backed `readiness` worker (the slice uses deterministic rules);
-- scheduled execution of the operational drain in production (the server function exists and is cron-secret authenticated; no schedule is configured);
-- migrations `0006`–`0008` applied to the live FundMatch project, and end-to-end verification against it with a real provider key;
+- deployment/acceptance of the scheduled operational drain: the repository now has a stable cron-authenticated HTTP route plus a daily 08:00 UTC Vercel Cron definition, but the production deployment still needs to be updated and exercised;
+- live provider-backed end-to-end verification: production Supabase migrations `0006`–`0009` are applied and hardened, but the document loop still needs acceptance against the deployed app with a real provider key;
 - formats beyond selectable-text PDF and UTF-8 text.
 
 **Done when:** an uploaded private deck produces founder-reviewable suggestions and readiness updates with provenance, conflicts survive as conflicts, and failures are auditable/retryable — verified on the live project, not only in repository tests.
