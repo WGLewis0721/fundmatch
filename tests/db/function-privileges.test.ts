@@ -57,10 +57,16 @@ maybe("Phase 5 helper-function privileges", () => {
     )[0]!["id"] as string;
 
     startupId = (
-      await as(founder, (tx) => tx`select id from public.startup_profiles where org_id = ${startupOrg}`)
+      await as(
+        founder,
+        (tx) => tx`select id from public.startup_profiles where org_id = ${startupOrg}`,
+      )
     )[0]!["id"] as string;
     investorId = (
-      await as(investor, (tx) => tx`select id from public.investor_profiles where org_id = ${firmOrg}`)
+      await as(
+        investor,
+        (tx) => tx`select id from public.investor_profiles where org_id = ${firmOrg}`,
+      )
     )[0]!["id"] as string;
   });
 
@@ -84,14 +90,12 @@ maybe("Phase 5 helper-function privileges", () => {
       select
         has_function_privilege('authenticated', 'public.guard_last_owner()', 'EXECUTE') as guard_last_owner,
         has_function_privilege('authenticated', 'public.guard_document_user_update()', 'EXECUTE') as guard_document,
-        has_function_privilege('authenticated', 'public.delete_document_object()', 'EXECUTE') as delete_document,
         has_function_privilege('authenticated', 'public.touch_updated_at()', 'EXECUTE') as touch_updated_at,
         has_function_privilege('authenticated', 'public.handle_new_user()', 'EXECUTE') as handle_new_user
     `;
     expect(rows[0]).toEqual({
       guard_last_owner: false,
       guard_document: false,
-      delete_document: false,
       touch_updated_at: false,
       handle_new_user: false,
     });

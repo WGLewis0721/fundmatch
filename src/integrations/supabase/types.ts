@@ -976,7 +976,10 @@ export type Database = {
           rationale: string | null
           resolved_at: string | null
           resolved_by: string | null
+          run_id: string | null
+          source_excerpt: string | null
           source_key: string
+          source_locator: string | null
           startup_id: string
           status: Database["public"]["Enums"]["suggestion_status"]
           suggested_value: string
@@ -992,7 +995,10 @@ export type Database = {
           rationale?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
+          run_id?: string | null
+          source_excerpt?: string | null
           source_key?: string
+          source_locator?: string | null
           startup_id: string
           status?: Database["public"]["Enums"]["suggestion_status"]
           suggested_value: string
@@ -1008,7 +1014,10 @@ export type Database = {
           rationale?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
+          run_id?: string | null
+          source_excerpt?: string | null
           source_key?: string
+          source_locator?: string | null
           startup_id?: string
           status?: Database["public"]["Enums"]["suggestion_status"]
           suggested_value?: string
@@ -1102,6 +1111,201 @@ export type Database = {
           },
         ]
       }
+      agent_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_code: string | null
+          id: string
+          metadata: Json
+          model_name: string | null
+          model_provider: string | null
+          org_id: string
+          started_at: string | null
+          status: string
+          subject_id: string
+          subject_type: string
+          trigger: string
+          triggered_by: string | null
+          updated_at: string
+          workflow_version: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id: string
+          started_at?: string | null
+          status?: string
+          subject_id: string
+          subject_type: string
+          trigger: string
+          triggered_by?: string | null
+          updated_at?: string
+          workflow_version: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id?: string
+          started_at?: string | null
+          status?: string
+          subject_id?: string
+          subject_type?: string
+          trigger?: string
+          triggered_by?: string | null
+          updated_at?: string
+          workflow_version?: string
+        }
+        Relationships: []
+      }
+      agent_steps: {
+        Row: {
+          agent_type: string
+          attempt: number
+          completed_at: string | null
+          created_at: string
+          error_code: string | null
+          id: string
+          input_summary: Json
+          metadata: Json
+          model_name: string | null
+          model_provider: string | null
+          org_id: string
+          output_summary: Json
+          parent_step_id: string | null
+          prompt_version: string | null
+          run_id: string
+          sequence: number
+          started_at: string | null
+          status: string
+          validation_status: string | null
+        }
+        Insert: {
+          agent_type: string
+          attempt?: number
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          input_summary?: Json
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id: string
+          output_summary?: Json
+          parent_step_id?: string | null
+          prompt_version?: string | null
+          run_id: string
+          sequence: number
+          started_at?: string | null
+          status?: string
+          validation_status?: string | null
+        }
+        Update: {
+          agent_type?: string
+          attempt?: number
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          input_summary?: Json
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id?: string
+          output_summary?: Json
+          parent_step_id?: string | null
+          prompt_version?: string | null
+          run_id?: string
+          sequence?: number
+          started_at?: string | null
+          status?: string
+          validation_status?: string | null
+        }
+        Relationships: []
+      }
+      document_chunks: {
+        Row: {
+          content: string
+          content_sha256: string
+          created_at: string
+          document_id: string | null
+          id: string
+          investor_id: string | null
+          metadata: Json
+          org_id: string
+          source_locator: string
+          source_type: string
+          startup_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          content_sha256: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          investor_id?: string | null
+          metadata?: Json
+          org_id: string
+          source_locator: string
+          source_type: string
+          startup_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          content_sha256?: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          investor_id?: string | null
+          metadata?: Json
+          org_id?: string
+          source_locator?: string
+          source_type?: string
+          startup_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      chunk_embeddings: {
+        Row: {
+          chunk_id: string
+          embedded_at: string
+          embedding: string
+          embedding_dimensions: number
+          embedding_model: string
+          org_id: string
+        }
+        Insert: {
+          chunk_id: string
+          embedded_at?: string
+          embedding: string
+          embedding_dimensions?: number
+          embedding_model: string
+          org_id: string
+        }
+        Update: {
+          chunk_id?: string
+          embedded_at?: string
+          embedding?: string
+          embedding_dimensions?: number
+          embedding_model?: string
+          org_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1110,6 +1314,39 @@ export type Database = {
       accept_invitation: {
         Args: { _token: string }
         Returns: string
+      }
+      agentic_queue_available: {
+        Args: Record<string, never>
+        Returns: boolean
+      }
+      agentic_queue_send: {
+        Args: { _queue: string; _message: Json }
+        Returns: number | null
+      }
+      agentic_queue_read: {
+        Args: { _queue: string; _visibility_seconds?: number; _quantity?: number }
+        Returns: {
+          msg_id: number
+          read_ct: number
+          enqueued_at: string
+          message: Json
+        }[]
+      }
+      agentic_queue_release: {
+        Args: { _queue: string; _msg_id: number }
+        Returns: boolean
+      }
+      agentic_queue_archive: {
+        Args: { _queue: string; _msg_id: number }
+        Returns: boolean
+      }
+      start_document_run: {
+        Args: { _document_id: string; _triggered_by?: string | null }
+        Returns: string
+      }
+      record_document_suggestions: {
+        Args: { _document_id: string; _run_id: string; _items: Json }
+        Returns: number
       }
       create_organization: {
         Args: {
@@ -1137,7 +1374,7 @@ export type Database = {
         Returns: Database["public"]["Enums"]["document_status"]
       }
       resolve_profile_suggestion: {
-        Args: { _suggestion_id: string; _accept: boolean }
+        Args: { _suggestion_id: string; _accept: boolean; _corrected_value?: string | null }
         Returns: undefined
       }
       set_document_processing: {

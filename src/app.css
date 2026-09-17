@@ -95,6 +95,15 @@
   flex-wrap: wrap;
   align-items: center;
 }
+/* Verbatim document text behind a suggestion. Untrusted content: never rendered as markup. */
+.app-suggestion-quote {
+  margin: 6px 0 0;
+  padding: 6px 0 6px 12px;
+  border-left: 2px solid #cfd6c9;
+  color: #5d6157;
+  font-style: italic;
+  overflow-wrap: anywhere;
+}
 .app-skeleton {
   display: grid;
   gap: 10px;
