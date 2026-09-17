@@ -1,5 +1,3 @@
-// Supabase types, extended by hand for migration 0002 (see docs/BACKEND.md).
-// Regenerate with the Supabase CLI (`supabase gen types typescript`) after future schema changes.
 export type Json =
   | string
   | number
@@ -24,8 +22,8 @@ export type Database = {
           id: string
           investor_id: string | null
           kind: string
-          startup_id: string | null
           org_id: string | null
+          startup_id: string | null
         }
         Insert: {
           actor_id?: string | null
@@ -34,8 +32,8 @@ export type Database = {
           id?: string
           investor_id?: string | null
           kind: string
-          startup_id?: string | null
           org_id?: string | null
+          startup_id?: string | null
         }
         Update: {
           actor_id?: string | null
@@ -44,8 +42,8 @@ export type Database = {
           id?: string
           investor_id?: string | null
           kind?: string
-          startup_id?: string | null
           org_id?: string | null
+          startup_id?: string | null
         }
         Relationships: [
           {
@@ -56,10 +54,212 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "activity_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "activity_events_startup_id_fkey"
             columns: ["startup_id"]
             isOneToOne: false
             referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_code: string | null
+          id: string
+          metadata: Json
+          model_name: string | null
+          model_provider: string | null
+          org_id: string
+          started_at: string | null
+          status: string
+          subject_id: string
+          subject_type: string
+          trigger: string
+          triggered_by: string | null
+          updated_at: string
+          workflow_version: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id: string
+          started_at?: string | null
+          status?: string
+          subject_id: string
+          subject_type: string
+          trigger: string
+          triggered_by?: string | null
+          updated_at?: string
+          workflow_version: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id?: string
+          started_at?: string | null
+          status?: string
+          subject_id?: string
+          subject_type?: string
+          trigger?: string
+          triggered_by?: string | null
+          updated_at?: string
+          workflow_version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_runs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_steps: {
+        Row: {
+          agent_type: string
+          attempt: number
+          completed_at: string | null
+          created_at: string
+          error_code: string | null
+          id: string
+          input_summary: Json
+          metadata: Json
+          model_name: string | null
+          model_provider: string | null
+          org_id: string
+          output_summary: Json
+          parent_step_id: string | null
+          prompt_version: string | null
+          run_id: string
+          sequence: number
+          started_at: string | null
+          status: string
+          validation_status: string | null
+        }
+        Insert: {
+          agent_type: string
+          attempt?: number
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          input_summary?: Json
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id: string
+          output_summary?: Json
+          parent_step_id?: string | null
+          prompt_version?: string | null
+          run_id: string
+          sequence: number
+          started_at?: string | null
+          status?: string
+          validation_status?: string | null
+        }
+        Update: {
+          agent_type?: string
+          attempt?: number
+          completed_at?: string | null
+          created_at?: string
+          error_code?: string | null
+          id?: string
+          input_summary?: Json
+          metadata?: Json
+          model_name?: string | null
+          model_provider?: string | null
+          org_id?: string
+          output_summary?: Json
+          parent_step_id?: string | null
+          prompt_version?: string | null
+          run_id?: string
+          sequence?: number
+          started_at?: string | null
+          status?: string
+          validation_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_steps_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_steps_parent_step_id_fkey"
+            columns: ["parent_step_id"]
+            isOneToOne: false
+            referencedRelation: "agent_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_steps_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "agent_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chunk_embeddings: {
+        Row: {
+          chunk_id: string
+          embedded_at: string
+          embedding: string
+          embedding_dimensions: number
+          embedding_model: string
+          org_id: string
+        }
+        Insert: {
+          chunk_id: string
+          embedded_at?: string
+          embedding: string
+          embedding_dimensions?: number
+          embedding_model: string
+          org_id: string
+        }
+        Update: {
+          chunk_id?: string
+          embedded_at?: string
+          embedding?: string
+          embedding_dimensions?: number
+          embedding_model?: string
+          org_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chunk_embeddings_chunk_id_fkey"
+            columns: ["chunk_id"]
+            isOneToOne: true
+            referencedRelation: "document_chunks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chunk_embeddings_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -141,8 +341,213 @@ export type Database = {
         }
         Relationships: []
       }
+      discovery_sessions: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          eligibility_version: string
+          filters: Json
+          id: string
+          investor_id: string
+          last_seen_at: string
+          org_id: string
+          score_version: string
+          thesis_updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          eligibility_version?: string
+          filters?: Json
+          id?: string
+          investor_id: string
+          last_seen_at?: string
+          org_id: string
+          score_version?: string
+          thesis_updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          eligibility_version?: string
+          filters?: Json
+          id?: string
+          investor_id?: string
+          last_seen_at?: string
+          org_id?: string
+          score_version?: string
+          thesis_updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discovery_sessions_investor_id_fkey"
+            columns: ["investor_id"]
+            isOneToOne: false
+            referencedRelation: "investor_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "discovery_sessions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_chunks: {
+        Row: {
+          content: string
+          content_sha256: string
+          created_at: string
+          document_id: string | null
+          id: string
+          investor_id: string | null
+          metadata: Json
+          org_id: string
+          source_locator: string
+          source_type: string
+          startup_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          content_sha256: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          investor_id?: string | null
+          metadata?: Json
+          org_id: string
+          source_locator: string
+          source_type: string
+          startup_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          content_sha256?: string
+          created_at?: string
+          document_id?: string | null
+          id?: string
+          investor_id?: string | null
+          metadata?: Json
+          org_id?: string
+          source_locator?: string
+          source_type?: string
+          startup_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_chunks_investor_id_fkey"
+            columns: ["investor_id"]
+            isOneToOne: false
+            referencedRelation: "investor_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_chunks_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_chunks_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          bucket: string
+          created_at: string
+          extraction: Json | null
+          file_name: string
+          id: string
+          kind: string
+          mime_type: string
+          org_id: string
+          processed_at: string | null
+          processing_error: string | null
+          size_bytes: number
+          startup_id: string | null
+          status: Database["public"]["Enums"]["document_status"]
+          storage_path: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          bucket?: string
+          created_at?: string
+          extraction?: Json | null
+          file_name: string
+          id?: string
+          kind?: string
+          mime_type: string
+          org_id: string
+          processed_at?: string | null
+          processing_error?: string | null
+          size_bytes: number
+          startup_id?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          storage_path: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          bucket?: string
+          created_at?: string
+          extraction?: Json | null
+          file_name?: string
+          id?: string
+          kind?: string
+          mime_type?: string
+          org_id?: string
+          processed_at?: string | null
+          processing_error?: string | null
+          size_bytes?: number
+          startup_id?: string | null
+          status?: Database["public"]["Enums"]["document_status"]
+          storage_path?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       founder_materials: {
         Row: {
+          created_by: string | null
+          document_id: string | null
           id: string
           kind: string
           size_label: string | null
@@ -151,10 +556,10 @@ export type Database = {
           title: string
           updated_at: string
           url: string | null
-          document_id: string | null
-          created_by: string | null
         }
         Insert: {
+          created_by?: string | null
+          document_id?: string | null
           id?: string
           kind: string
           size_label?: string | null
@@ -163,10 +568,10 @@ export type Database = {
           title: string
           updated_at?: string
           url?: string | null
-          document_id?: string | null
-          created_by?: string | null
         }
         Update: {
+          created_by?: string | null
+          document_id?: string | null
           id?: string
           kind?: string
           size_label?: string | null
@@ -175,10 +580,15 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string | null
-          document_id?: string | null
-          created_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "founder_materials_document_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "founder_materials_startup_id_fkey"
             columns: ["startup_id"]
@@ -384,6 +794,86 @@ export type Database = {
           },
         ]
       }
+      marketplace_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          eligibility_version: string | null
+          event_type: string
+          id: string
+          idempotency_key: string | null
+          investor_id: string | null
+          metadata: Json
+          org_id: string
+          rank_position: number | null
+          score: number | null
+          score_version: string | null
+          session_id: string | null
+          startup_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          eligibility_version?: string | null
+          event_type: string
+          id?: string
+          idempotency_key?: string | null
+          investor_id?: string | null
+          metadata?: Json
+          org_id: string
+          rank_position?: number | null
+          score?: number | null
+          score_version?: string | null
+          session_id?: string | null
+          startup_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          eligibility_version?: string | null
+          event_type?: string
+          id?: string
+          idempotency_key?: string | null
+          investor_id?: string | null
+          metadata?: Json
+          org_id?: string
+          rank_position?: number | null
+          score?: number | null
+          score_version?: string | null
+          session_id?: string | null
+          startup_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_events_investor_id_fkey"
+            columns: ["investor_id"]
+            isOneToOne: false
+            referencedRelation: "investor_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_events_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_events_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "discovery_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_events_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matches: {
         Row: {
           created_at: string
@@ -438,30 +928,77 @@ export type Database = {
           },
         ]
       }
+      organization_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          member_role: Database["public"]["Enums"]["member_role"]
+          org_id: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          member_role?: Database["public"]["Enums"]["member_role"]
+          org_id: string
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          member_role?: Database["public"]["Enums"]["member_role"]
+          org_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_members: {
         Row: {
           created_at: string
           id: string
+          member_role: Database["public"]["Enums"]["member_role"]
           org_id: string
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
-          member_role: Database["public"]["Enums"]["member_role"]
         }
         Insert: {
           created_at?: string
           id?: string
+          member_role?: Database["public"]["Enums"]["member_role"]
           org_id: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id: string
-          member_role?: Database["public"]["Enums"]["member_role"]
         }
         Update: {
           created_at?: string
           id?: string
+          member_role?: Database["public"]["Enums"]["member_role"]
           org_id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
-          member_role?: Database["public"]["Enums"]["member_role"]
         }
         Relationships: [
           {
@@ -476,39 +1013,39 @@ export type Database = {
       organizations: {
         Row: {
           created_at: string
+          created_by: string | null
           description: string | null
           id: string
           is_demo: boolean
           logo_emoji: string | null
           name: string
           type: Database["public"]["Enums"]["org_type"]
-          website: string | null
-          created_by: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           created_at?: string
+          created_by?: string | null
           description?: string | null
           id?: string
           is_demo?: boolean
           logo_emoji?: string | null
           name: string
           type: Database["public"]["Enums"]["org_type"]
-          website?: string | null
-          created_by?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           created_at?: string
+          created_by?: string | null
           description?: string | null
           id?: string
           is_demo?: boolean
           logo_emoji?: string | null
           name?: string
           type?: Database["public"]["Enums"]["org_type"]
-          website?: string | null
-          created_by?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
@@ -518,33 +1055,33 @@ export type Database = {
           id: string
           investor_id: string | null
           last_note: string | null
+          org_id: string | null
           owner_id: string | null
           startup_id: string
           status: Database["public"]["Enums"]["pipeline_status"]
           updated_at: string
-          org_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           investor_id?: string | null
           last_note?: string | null
+          org_id?: string | null
           owner_id?: string | null
           startup_id: string
           status?: Database["public"]["Enums"]["pipeline_status"]
           updated_at?: string
-          org_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           investor_id?: string | null
           last_note?: string | null
+          org_id?: string | null
           owner_id?: string | null
           startup_id?: string
           status?: Database["public"]["Enums"]["pipeline_status"]
           updated_at?: string
-          org_id?: string | null
         }
         Relationships: [
           {
@@ -555,7 +1092,89 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "pipeline_items_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "pipeline_items_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_suggestions: {
+        Row: {
+          confidence: number
+          created_at: string
+          current_value: string | null
+          document_id: string | null
+          field_key: string
+          id: string
+          label: string
+          rationale: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          run_id: string | null
+          source_excerpt: string | null
+          source_key: string
+          source_locator: string | null
+          startup_id: string
+          status: Database["public"]["Enums"]["suggestion_status"]
+          suggested_value: string
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          current_value?: string | null
+          document_id?: string | null
+          field_key: string
+          id?: string
+          label: string
+          rationale?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          run_id?: string | null
+          source_excerpt?: string | null
+          source_key?: string
+          source_locator?: string | null
+          startup_id: string
+          status?: Database["public"]["Enums"]["suggestion_status"]
+          suggested_value: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          current_value?: string | null
+          document_id?: string | null
+          field_key?: string
+          id?: string
+          label?: string
+          rationale?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          run_id?: string | null
+          source_excerpt?: string | null
+          source_key?: string
+          source_locator?: string | null
+          startup_id?: string
+          status?: Database["public"]["Enums"]["suggestion_status"]
+          suggested_value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_suggestions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profile_suggestions_startup_id_fkey"
             columns: ["startup_id"]
             isOneToOne: false
             referencedRelation: "startup_profiles"
@@ -595,6 +1214,78 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      readiness_items: {
+        Row: {
+          category: string
+          created_at: string
+          due_date: string | null
+          evidence_url: string
+          id: string
+          item_key: string
+          notes: string
+          org_id: string
+          owner: string
+          startup_id: string
+          status: Database["public"]["Enums"]["readiness_status"]
+          suggested_by: string | null
+          template: string
+          title: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          due_date?: string | null
+          evidence_url?: string
+          id?: string
+          item_key: string
+          notes?: string
+          org_id: string
+          owner?: string
+          startup_id: string
+          status?: Database["public"]["Enums"]["readiness_status"]
+          suggested_by?: string | null
+          template: string
+          title: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          due_date?: string | null
+          evidence_url?: string
+          id?: string
+          item_key?: string
+          notes?: string
+          org_id?: string
+          owner?: string
+          startup_id?: string
+          status?: Database["public"]["Enums"]["readiness_status"]
+          suggested_by?: string | null
+          template?: string
+          title?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "readiness_items_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "readiness_items_startup_id_fkey"
+            columns: ["startup_id"]
+            isOneToOne: false
+            referencedRelation: "startup_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       saved_companies: {
         Row: {
@@ -800,8 +1491,8 @@ export type Database = {
           id: string
           investor_id: string | null
           likes: number
-          startup_id: string
           org_id: string | null
+          startup_id: string
           updated_at: string
         }
         Insert: {
@@ -812,8 +1503,8 @@ export type Database = {
           id?: string
           investor_id?: string | null
           likes?: number
-          startup_id: string
           org_id?: string | null
+          startup_id: string
           updated_at?: string
         }
         Update: {
@@ -824,8 +1515,8 @@ export type Database = {
           id?: string
           investor_id?: string | null
           likes?: number
-          startup_id?: string
           org_id?: string | null
+          startup_id?: string
           updated_at?: string
         }
         Relationships: [
@@ -837,6 +1528,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "team_notes_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "team_notes_startup_id_fkey"
             columns: ["startup_id"]
             isOneToOne: false
@@ -845,674 +1543,60 @@ export type Database = {
           },
         ]
       }
-      documents: {
-        Row: {
-          bucket: string
-          created_at: string
-          extraction: Json | null
-          file_name: string
-          id: string
-          kind: string
-          mime_type: string
-          org_id: string
-          processed_at: string | null
-          processing_error: string | null
-          size_bytes: number
-          startup_id: string | null
-          status: Database["public"]["Enums"]["document_status"]
-          storage_path: string
-          updated_at: string
-          uploaded_by: string
-        }
-        Insert: {
-          bucket?: string
-          created_at?: string
-          extraction?: Json | null
-          file_name: string
-          id?: string
-          kind?: string
-          mime_type: string
-          org_id: string
-          processed_at?: string | null
-          processing_error?: string | null
-          size_bytes: number
-          startup_id?: string | null
-          status?: Database["public"]["Enums"]["document_status"]
-          storage_path: string
-          updated_at?: string
-          uploaded_by: string
-        }
-        Update: {
-          bucket?: string
-          created_at?: string
-          extraction?: Json | null
-          file_name?: string
-          id?: string
-          kind?: string
-          mime_type?: string
-          org_id?: string
-          processed_at?: string | null
-          processing_error?: string | null
-          size_bytes?: number
-          startup_id?: string | null
-          status?: Database["public"]["Enums"]["document_status"]
-          storage_path?: string
-          updated_at?: string
-          uploaded_by?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "documents_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "documents_startup_id_fkey"
-            columns: ["startup_id"]
-            isOneToOne: false
-            referencedRelation: "startup_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      organization_invitations: {
-        Row: {
-          accepted_at: string | null
-          accepted_by: string | null
-          created_at: string
-          email: string
-          expires_at: string
-          id: string
-          invited_by: string
-          member_role: Database["public"]["Enums"]["member_role"]
-          org_id: string
-          token: string
-        }
-        Insert: {
-          accepted_at?: string | null
-          accepted_by?: string | null
-          created_at?: string
-          email: string
-          expires_at?: string
-          id?: string
-          invited_by: string
-          member_role?: Database["public"]["Enums"]["member_role"]
-          org_id: string
-          token?: string
-        }
-        Update: {
-          accepted_at?: string | null
-          accepted_by?: string | null
-          created_at?: string
-          email?: string
-          expires_at?: string
-          id?: string
-          invited_by?: string
-          member_role?: Database["public"]["Enums"]["member_role"]
-          org_id?: string
-          token?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "organization_invitations_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profile_suggestions: {
-        Row: {
-          confidence: number
-          created_at: string
-          current_value: string | null
-          document_id: string | null
-          field_key: string
-          id: string
-          label: string
-          rationale: string | null
-          resolved_at: string | null
-          resolved_by: string | null
-          run_id: string | null
-          source_excerpt: string | null
-          source_key: string
-          source_locator: string | null
-          startup_id: string
-          status: Database["public"]["Enums"]["suggestion_status"]
-          suggested_value: string
-        }
-        Insert: {
-          confidence?: number
-          created_at?: string
-          current_value?: string | null
-          document_id?: string | null
-          field_key: string
-          id?: string
-          label: string
-          rationale?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          run_id?: string | null
-          source_excerpt?: string | null
-          source_key?: string
-          source_locator?: string | null
-          startup_id: string
-          status?: Database["public"]["Enums"]["suggestion_status"]
-          suggested_value: string
-        }
-        Update: {
-          confidence?: number
-          created_at?: string
-          current_value?: string | null
-          document_id?: string | null
-          field_key?: string
-          id?: string
-          label?: string
-          rationale?: string | null
-          resolved_at?: string | null
-          resolved_by?: string | null
-          run_id?: string | null
-          source_excerpt?: string | null
-          source_key?: string
-          source_locator?: string | null
-          startup_id?: string
-          status?: Database["public"]["Enums"]["suggestion_status"]
-          suggested_value?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profile_suggestions_document_id_fkey"
-            columns: ["document_id"]
-            isOneToOne: false
-            referencedRelation: "documents"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profile_suggestions_startup_id_fkey"
-            columns: ["startup_id"]
-            isOneToOne: false
-            referencedRelation: "startup_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      readiness_items: {
-        Row: {
-          category: string
-          created_at: string
-          due_date: string | null
-          evidence_url: string
-          id: string
-          item_key: string
-          notes: string
-          org_id: string
-          owner: string
-          startup_id: string
-          status: Database["public"]["Enums"]["readiness_status"]
-          suggested_by: string | null
-          template: string
-          title: string
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          due_date?: string | null
-          evidence_url?: string
-          id?: string
-          item_key: string
-          notes?: string
-          org_id: string
-          owner?: string
-          startup_id: string
-          status?: Database["public"]["Enums"]["readiness_status"]
-          suggested_by?: string | null
-          template: string
-          title: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          due_date?: string | null
-          evidence_url?: string
-          id?: string
-          item_key?: string
-          notes?: string
-          org_id?: string
-          owner?: string
-          startup_id?: string
-          status?: Database["public"]["Enums"]["readiness_status"]
-          suggested_by?: string | null
-          template?: string
-          title?: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "readiness_items_org_id_fkey"
-            columns: ["org_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "readiness_items_startup_id_fkey"
-            columns: ["startup_id"]
-            isOneToOne: false
-            referencedRelation: "startup_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      agent_runs: {
-        Row: {
-          completed_at: string | null
-          created_at: string
-          error_code: string | null
-          id: string
-          metadata: Json
-          model_name: string | null
-          model_provider: string | null
-          org_id: string
-          started_at: string | null
-          status: string
-          subject_id: string
-          subject_type: string
-          trigger: string
-          triggered_by: string | null
-          updated_at: string
-          workflow_version: string
-        }
-        Insert: {
-          completed_at?: string | null
-          created_at?: string
-          error_code?: string | null
-          id?: string
-          metadata?: Json
-          model_name?: string | null
-          model_provider?: string | null
-          org_id: string
-          started_at?: string | null
-          status?: string
-          subject_id: string
-          subject_type: string
-          trigger: string
-          triggered_by?: string | null
-          updated_at?: string
-          workflow_version: string
-        }
-        Update: {
-          completed_at?: string | null
-          created_at?: string
-          error_code?: string | null
-          id?: string
-          metadata?: Json
-          model_name?: string | null
-          model_provider?: string | null
-          org_id?: string
-          started_at?: string | null
-          status?: string
-          subject_id?: string
-          subject_type?: string
-          trigger?: string
-          triggered_by?: string | null
-          updated_at?: string
-          workflow_version?: string
-        }
-        Relationships: []
-      }
-      agent_steps: {
-        Row: {
-          agent_type: string
-          attempt: number
-          completed_at: string | null
-          created_at: string
-          error_code: string | null
-          id: string
-          input_summary: Json
-          metadata: Json
-          model_name: string | null
-          model_provider: string | null
-          org_id: string
-          output_summary: Json
-          parent_step_id: string | null
-          prompt_version: string | null
-          run_id: string
-          sequence: number
-          started_at: string | null
-          status: string
-          validation_status: string | null
-        }
-        Insert: {
-          agent_type: string
-          attempt?: number
-          completed_at?: string | null
-          created_at?: string
-          error_code?: string | null
-          id?: string
-          input_summary?: Json
-          metadata?: Json
-          model_name?: string | null
-          model_provider?: string | null
-          org_id: string
-          output_summary?: Json
-          parent_step_id?: string | null
-          prompt_version?: string | null
-          run_id: string
-          sequence: number
-          started_at?: string | null
-          status?: string
-          validation_status?: string | null
-        }
-        Update: {
-          agent_type?: string
-          attempt?: number
-          completed_at?: string | null
-          created_at?: string
-          error_code?: string | null
-          id?: string
-          input_summary?: Json
-          metadata?: Json
-          model_name?: string | null
-          model_provider?: string | null
-          org_id?: string
-          output_summary?: Json
-          parent_step_id?: string | null
-          prompt_version?: string | null
-          run_id?: string
-          sequence?: number
-          started_at?: string | null
-          status?: string
-          validation_status?: string | null
-        }
-        Relationships: []
-      }
-      document_chunks: {
-        Row: {
-          content: string
-          content_sha256: string
-          created_at: string
-          document_id: string | null
-          id: string
-          investor_id: string | null
-          metadata: Json
-          org_id: string
-          source_locator: string
-          source_type: string
-          startup_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          content: string
-          content_sha256: string
-          created_at?: string
-          document_id?: string | null
-          id?: string
-          investor_id?: string | null
-          metadata?: Json
-          org_id: string
-          source_locator: string
-          source_type: string
-          startup_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          content?: string
-          content_sha256?: string
-          created_at?: string
-          document_id?: string | null
-          id?: string
-          investor_id?: string | null
-          metadata?: Json
-          org_id?: string
-          source_locator?: string
-          source_type?: string
-          startup_id?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      chunk_embeddings: {
-        Row: {
-          chunk_id: string
-          embedded_at: string
-          embedding: string
-          embedding_dimensions: number
-          embedding_model: string
-          org_id: string
-        }
-        Insert: {
-          chunk_id: string
-          embedded_at?: string
-          embedding: string
-          embedding_dimensions?: number
-          embedding_model: string
-          org_id: string
-        }
-        Update: {
-          chunk_id?: string
-          embedded_at?: string
-          embedding?: string
-          embedding_dimensions?: number
-          embedding_model?: string
-          org_id?: string
-        }
-        Relationships: []
-      }
     }
-      discovery_sessions: {
-        Row: {
-          id: string
-          org_id: string
-          investor_id: string
-          user_id: string
-          thesis_updated_at: string | null
-          eligibility_version: string
-          score_version: string
-          filters: Json
-          created_at: string
-          last_seen_at: string
-          closed_at: string | null
-        }
-        Insert: {
-          id?: string
-          org_id: string
-          investor_id: string
-          user_id: string
-          thesis_updated_at?: string | null
-          eligibility_version?: string
-          score_version?: string
-          filters?: Json
-          created_at?: string
-          last_seen_at?: string
-          closed_at?: string | null
-        }
-        Update: {
-          id?: string
-          org_id?: string
-          investor_id?: string
-          user_id?: string
-          thesis_updated_at?: string | null
-          eligibility_version?: string
-          score_version?: string
-          filters?: Json
-          created_at?: string
-          last_seen_at?: string
-          closed_at?: string | null
-        }
-        Relationships: []
-      }
-      marketplace_events: {
-        Row: {
-          id: string
-          org_id: string
-          investor_id: string | null
-          startup_id: string | null
-          actor_id: string | null
-          event_type: string
-          session_id: string | null
-          score: number | null
-          score_version: string | null
-          rank_position: number | null
-          eligibility_version: string | null
-          idempotency_key: string | null
-          metadata: Json
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          org_id: string
-          investor_id?: string | null
-          startup_id?: string | null
-          actor_id?: string | null
-          event_type: string
-          session_id?: string | null
-          score?: number | null
-          score_version?: string | null
-          rank_position?: number | null
-          eligibility_version?: string | null
-          idempotency_key?: string | null
-          metadata?: Json
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          org_id?: string
-          investor_id?: string | null
-          startup_id?: string | null
-          actor_id?: string | null
-          event_type?: string
-          session_id?: string | null
-          score?: number | null
-          score_version?: string | null
-          rank_position?: number | null
-          eligibility_version?: string | null
-          idempotency_key?: string | null
-          metadata?: Json
-          created_at?: string
-        }
-        Relationships: []
-      }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      start_discovery_session: {
-        Args: { _investor_id: string; _filters?: Json }
-        Returns: string
-      }
-      get_eligible_discovery_candidates: {
-        Args: { _investor_id: string; _session_id: string; _limit?: number }
-        Returns: { startup_id: string }[]
-      }
-      record_discovery_impression: {
-        Args: {
-          _session_id: string
-          _startup_id: string
-          _score: number
-          _score_version: string
-          _rank_position: number
-          _eligibility_version?: string
-        }
-        Returns: string
-      }
-      record_discovery_profile_open: {
-        Args: { _session_id: string; _startup_id: string }
-        Returns: string
-      }
-      record_discovery_decision: {
-        Args: {
-          _session_id: string
-          _startup_id: string
-          _decision: Database["public"]["Enums"]["swipe_decision"]
-        }
-        Returns: string
-      }
-      reset_discovery_decisions: {
-        Args: { _investor_id: string }
-        Returns: number
-      }
-      accept_invitation: {
-        Args: { _token: string }
-        Returns: string
-      }
-      agentic_queue_available: {
-        Args: Record<string, never>
+      accept_invitation: { Args: { _token: string }; Returns: string }
+      agentic_queue_archive: {
+        Args: { _msg_id: number; _queue: string }
         Returns: boolean
       }
-      agentic_queue_send: {
-        Args: { _queue: string; _message: Json }
-        Returns: number | null
-      }
+      agentic_queue_available: { Args: never; Returns: boolean }
       agentic_queue_read: {
-        Args: { _queue: string; _visibility_seconds?: number; _quantity?: number }
+        Args: {
+          _quantity?: number
+          _queue: string
+          _visibility_seconds?: number
+        }
         Returns: {
-          msg_id: number
-          read_ct: number
           enqueued_at: string
           message: Json
+          msg_id: number
+          read_ct: number
         }[]
       }
       agentic_queue_release: {
-        Args: { _queue: string; _msg_id: number }
+        Args: { _msg_id: number; _queue: string }
         Returns: boolean
       }
-      agentic_queue_archive: {
-        Args: { _queue: string; _msg_id: number }
-        Returns: boolean
-      }
-      start_document_run: {
-        Args: { _document_id: string; _triggered_by?: string | null }
-        Returns: string
-      }
-      record_document_suggestions: {
-        Args: { _document_id: string; _run_id: string; _items: Json }
+      agentic_queue_send: {
+        Args: { _message: Json; _queue: string }
         Returns: number
       }
+      can_edit_investor: { Args: { _investor_id: string }; Returns: boolean }
+      can_edit_startup: { Args: { _startup_id: string }; Returns: boolean }
+      can_view_startup: { Args: { _startup_id: string }; Returns: boolean }
       create_organization: {
         Args: {
+          _description?: string
           _name: string
           _type: Database["public"]["Enums"]["org_type"]
-          _website?: string | null
-          _description?: string | null
+          _website?: string
         }
         Returns: string
       }
+      document_path_org: { Args: { _name: string }; Returns: string }
       ensure_readiness_items: {
         Args: { _startup_id: string; _template: string }
         Returns: number
       }
-      invite_member: {
-        Args: {
-          _org_id: string
-          _email: string
-          _member_role?: Database["public"]["Enums"]["member_role"]
-        }
-        Returns: string
-      }
-      mark_document_uploaded: {
-        Args: { _document_id: string }
-        Returns: Database["public"]["Enums"]["document_status"]
-      }
-      resolve_profile_suggestion: {
-        Args: { _suggestion_id: string; _accept: boolean; _corrected_value?: string | null }
-        Returns: undefined
-      }
-      set_document_processing: {
-        Args: {
-          _document_id: string
-          _status: Database["public"]["Enums"]["document_status"]
-          _error?: string | null
-          _extraction?: Json | null
-        }
-        Returns: undefined
+      get_eligible_discovery_candidates: {
+        Args: { _investor_id: string; _limit?: number; _session_id: string }
+        Returns: {
+          startup_id: string
+        }[]
       }
       has_role: {
         Args: {
@@ -1521,10 +1605,108 @@ export type Database = {
         }
         Returns: boolean
       }
+      investor_org: { Args: { _investor_id: string }; Returns: string }
+      invite_member: {
+        Args: {
+          _email: string
+          _member_role?: Database["public"]["Enums"]["member_role"]
+          _org_id: string
+        }
+        Returns: string
+      }
+      is_org_admin: { Args: { _org_id: string }; Returns: boolean }
+      is_org_member: { Args: { _org_id: string }; Returns: boolean }
+      is_org_owner: { Args: { _org_id: string }; Returns: boolean }
+      mark_document_uploaded: {
+        Args: { _document_id: string }
+        Returns: Database["public"]["Enums"]["document_status"]
+      }
+      match_document_chunks: {
+        Args: {
+          _document_id?: string
+          _investor_id?: string
+          _match_count?: number
+          _match_threshold?: number
+          _org_id: string
+          _query_embedding: string
+          _startup_id?: string
+        }
+        Returns: {
+          chunk_id: string
+          content: string
+          metadata: Json
+          similarity: number
+          source_locator: string
+          source_type: string
+        }[]
+      }
+      record_discovery_decision: {
+        Args: {
+          _decision: Database["public"]["Enums"]["swipe_decision"]
+          _session_id: string
+          _startup_id: string
+        }
+        Returns: string
+      }
+      record_discovery_impression: {
+        Args: {
+          _eligibility_version?: string
+          _rank_position: number
+          _score: number
+          _score_version: string
+          _session_id: string
+          _startup_id: string
+        }
+        Returns: string
+      }
+      record_discovery_profile_open: {
+        Args: { _session_id: string; _startup_id: string }
+        Returns: string
+      }
+      record_document_suggestions: {
+        Args: { _document_id: string; _items: Json; _run_id: string }
+        Returns: number
+      }
+      reset_discovery_decisions: {
+        Args: { _investor_id: string }
+        Returns: number
+      }
+      resolve_profile_suggestion: {
+        Args: {
+          _accept: boolean
+          _corrected_value?: string
+          _suggestion_id: string
+        }
+        Returns: undefined
+      }
+      set_document_processing: {
+        Args: {
+          _document_id: string
+          _error?: string
+          _extraction?: Json
+          _status: Database["public"]["Enums"]["document_status"]
+        }
+        Returns: undefined
+      }
+      shares_org_with: { Args: { _user_id: string }; Returns: boolean }
+      start_discovery_session: {
+        Args: { _filters?: Json; _investor_id: string }
+        Returns: string
+      }
+      start_document_run: {
+        Args: { _document_id: string; _triggered_by?: string }
+        Returns: string
+      }
+      startup_org: { Args: { _startup_id: string }; Returns: string }
     }
     Enums: {
       app_role: "founder" | "investor" | "admin"
-      document_status: "pending" | "uploaded" | "processing" | "processed" | "failed"
+      document_status:
+        | "pending"
+        | "uploaded"
+        | "processing"
+        | "processed"
+        | "failed"
       member_role: "owner" | "admin" | "member"
       org_type: "startup" | "investment_firm"
       pipeline_status: "new" | "reviewing" | "meeting" | "passed"
@@ -1659,12 +1841,18 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["founder", "investor", "admin"],
-      document_status: ["pending", "uploaded", "processing", "processed", "failed"],
+      document_status: [
+        "pending",
+        "uploaded",
+        "processing",
+        "processed",
+        "failed",
+      ],
       member_role: ["owner", "admin", "member"],
       org_type: ["startup", "investment_firm"],
+      pipeline_status: ["new", "reviewing", "meeting", "passed"],
       readiness_status: ["Missing", "In progress", "Complete", "Needs update"],
       suggestion_status: ["pending", "accepted", "rejected"],
-      pipeline_status: ["new", "reviewing", "meeting", "passed"],
       swipe_decision: ["pass", "save", "interested"],
     },
   },
