@@ -1,6 +1,6 @@
 # Phase 6 — production discovery + marketplace event scaffold
 
-Status: **UI cutover implemented on this branch; not production-accepted.** Deployed browser evidence is still outstanding, so Phase 6 is not marked complete in the roadmap.
+Status: **implementation and hosted schema activation complete; authenticated production acceptance still outstanding.** The branch preview builds successfully and the Phase 6 migrations are live in the FundMatch Supabase project, but Phase 6 is not marked complete until the signed-in investor flow is exercised end to end.
 
 This slice is intentionally net-new roadmap work. It does not restyle an existing screen.
 
@@ -66,10 +66,16 @@ The investor Discover view now:
 
 Client sector/stage/search filters hide already-eligible ranked cards. They do not replace SQL eligibility.
 
+## Hosted activation evidence — 2026-09-17
+
+- `0010_phase6_marketplace_events.sql` is applied to the FundMatch Supabase project.
+- `0011_phase6_marketplace_privilege_hardening.sql` is applied after live privilege verification found Supabase default table grants. Authenticated clients now have SELECT but no direct INSERT/UPDATE/DELETE on `discovery_sessions` or `marketplace_events`; anonymous clients have no event-ledger INSERT privilege.
+- Supabase advisor re-check shows no Phase 6 unindexed-foreign-key or auth-initplan warning after 0011. New Phase 6 indexes are reported only as unused because no live discovery traffic exists yet.
+- Vercel preview for the completed Discover splice built successfully and serves `/app/` with HTTP 200.
+
 ## Still outstanding
 
-- deployed authenticated browser acceptance / resume evidence against production data;
-- hosted migration `0010` applied to the standalone Supabase project if not already applied;
+- authenticated browser acceptance against production data: eligible-only feed, surfaced-card impression, profile-open event, Pass/Save/Interested, refresh/resume without duplicates, and reset while preserving `marketplace_events`;
 - Phase 6 roadmap status remains incomplete until that evidence exists.
 
 See `docs/ai-prompts/GROK_PHASE6_FINISH_25.md`.
