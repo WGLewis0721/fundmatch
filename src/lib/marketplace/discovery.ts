@@ -37,6 +37,34 @@ export async function startDiscoverySession(
 }
 
 /**
+ * Resume the caller's open session when the thesis snapshot still matches.
+ * A new session is started if none exists or the thesis has changed.
+ */
+export async function resumeOrStartDiscoverySession(
+  investorId: string,
+  thesisUpdatedAt?: string | null,
+  filters: Json = {},
+): Promise<string> {
+  const existing = await supabase
+    .from("discovery_sessions")
+    .select("id, thesis_updated_at")
+    .eq("investor_id", investorId)
+    .is("closed_at", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (existing.error) throw new Error(existing.error.message);
+  const open = existing.data;
+  if (
+    open &&
+    (!thesisUpdatedAt || !open.thesis_updated_at || open.thesis_updated_at === thesisUpdatedAt)
+  ) {
+    return open.id;
+  }
+  return startDiscoverySession(investorId, filters);
+}
+
+/**
  * Returns only hard-eligible, undecided production startup ids.
  *
  * The database owns hard eligibility (privacy, stage, geography, conservative

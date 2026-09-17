@@ -1,8 +1,8 @@
 # Phase 6 — production discovery + marketplace event scaffold
 
-Status: **75% implementation scaffold; not production-accepted.**
+Status: **UI cutover implemented on this branch; not production-accepted.** Deployed browser evidence is still outstanding, so Phase 6 is not marked complete in the roadmap.
 
-This slice is intentionally net-new roadmap work. It does not restyle an existing screen and it does not claim Phase 6 complete.
+This slice is intentionally net-new roadmap work. It does not restyle an existing screen.
 
 ## What this branch adds
 
@@ -16,6 +16,7 @@ Migration `0010_phase6_marketplace_events.sql` adds:
 - browser users receive SELECT on the ledger, not arbitrary INSERT/UPDATE/DELETE.
 
 The TypeScript boundary lives in `src/lib/marketplace/discovery.ts`.
+The authenticated Discover feed lives in `src/lib/marketplace/discovery-feed.ts` and `useProductionDiscoveryFeed`.
 
 ## Eligibility v1
 
@@ -51,17 +52,24 @@ An `interested` decision may create the existing private investor pipeline item.
 
 Reset deletes current swipe/saved state for feed replay but never deletes the append-only event ledger.
 
-## Remaining 25%
+## Authenticated Discover cutover (Grok 25%)
 
-The branch deliberately stops before production UI cutover:
+The investor Discover view now:
 
-- replace `useListedStartups` as the source of the Discover feed with session → eligible ids → authorized startup fetch → `rules-v1` ranking;
-- record only candidates actually surfaced as impressions;
-- record profile opens;
-- replace the multi-write browser decision mutation with `record_discovery_decision`;
-- replace destructive reset with `reset_discovery_decisions`;
-- prove resume/no-duplicate behavior through the deployed browser;
-- add UI loading/error behavior for session/RPC failure;
-- capture acceptance evidence before updating Phase 6 to complete.
+1. resumes an open `discovery_sessions` row when the thesis snapshot still matches, otherwise starts a new session;
+2. loads candidate ids only through `get_eligible_discovery_candidates`;
+3. fetches those authorized startup rows and ranks them with existing `rules-v1`;
+4. records an impression for the card actually shown (not every SQL-eligible id);
+5. records `profile_open` when a company profile is opened from a live discovery session;
+6. writes Pass / Save / Interested through `record_discovery_decision`;
+7. resets current decisions through `reset_discovery_decisions`.
+
+Client sector/stage/search filters hide already-eligible ranked cards. They do not replace SQL eligibility.
+
+## Still outstanding
+
+- deployed authenticated browser acceptance / resume evidence against production data;
+- hosted migration `0010` applied to the standalone Supabase project if not already applied;
+- Phase 6 roadmap status remains incomplete until that evidence exists.
 
 See `docs/ai-prompts/GROK_PHASE6_FINISH_25.md`.
