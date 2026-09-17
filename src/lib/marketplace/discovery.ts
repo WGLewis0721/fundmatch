@@ -55,10 +55,7 @@ export async function resumeOrStartDiscoverySession(
     .maybeSingle();
   if (existing.error) throw new Error(existing.error.message);
   const open = existing.data;
-  if (
-    open &&
-    (!thesisUpdatedAt || !open.thesis_updated_at || open.thesis_updated_at === thesisUpdatedAt)
-  ) {
+  if (open && (open.thesis_updated_at ?? null) === (thesisUpdatedAt ?? null)) {
     return open.id;
   }
   return startDiscoverySession(investorId, filters);
