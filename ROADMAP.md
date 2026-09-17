@@ -395,7 +395,9 @@ Production agentic orchestration remains TypeScript-first. Introduce Python late
 
 **Tech:** Postgres/RLS + server/domain matching layer.
 
-**Status:** not complete.
+**Status:** implementation complete on the Phase 6 branch; production acceptance pending. Discovery sessions, hard-eligibility retrieval, append-only marketplace events, score/version/rank audit metadata, atomic decision/reset RPCs, authenticated Discover cutover, profile-open/impression wiring, hosted migrations and database tests are implemented. The branch preview builds successfully. Phase 6 remains open until the signed-in investor flow is exercised end to end against production data.
+
+See `docs/PHASE6_MARKETPLACE_EVENTS.md`.
 
 **Done when:** every surfaced candidate/decision is auditable and the feed resumes predictably without duplicate/invalid candidates.
 

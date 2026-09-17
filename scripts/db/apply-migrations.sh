@@ -19,7 +19,9 @@ for f in drizzle/migrations/0000_fundmatch_core_schema.sql \
          drizzle/migrations/0004_phase5_has_role_privilege_hardening.sql \
          drizzle/migrations/0005_phase5_storage_delete_and_search_path_hardening.sql \
          drizzle/migrations/0008_phase8_document_processing.sql \
-         drizzle/migrations/0009_phase8_ledger_and_search_path_hardening.sql; do
+         drizzle/migrations/0009_phase8_ledger_and_search_path_hardening.sql \
+         drizzle/migrations/0010_phase6_marketplace_events.sql \
+         drizzle/migrations/0011_phase6_marketplace_privilege_hardening.sql; do
   echo "applying $f"
   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q --single-transaction -f "$f"
 done
