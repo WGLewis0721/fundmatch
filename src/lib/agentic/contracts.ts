@@ -29,6 +29,7 @@ export const EvidenceRefSchema = z
     sourceType: z.string().min(1).max(80),
     sourceId: z.string().min(1),
     locator: z.string().min(1).max(500),
+    excerpt: z.string().min(1).max(12000).optional(),
     contentSha256: z
       .string()
       .regex(/^[a-f0-9]{64}$/)
