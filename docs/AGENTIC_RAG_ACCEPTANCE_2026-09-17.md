@@ -93,3 +93,11 @@ The foundation is live infrastructure, but these product workflows are still int
 - Make/n8n external integration workflows.
 
 Those build on this foundation in later roadmap work. The important result of this change is that FundMatch now has the durable, authorized, evidence-oriented substrate required to implement those workflows without another architecture rewrite.
+
+
+## Phase 8 production activation follow-up
+
+- PR #28 merged to `main` as `9dfa90a5093944f18e5022e54c85f0edaf4f57f6`.
+- Production Supabase migrations `0000`–`0009` are applied.
+- The existing Vercel FundMatch project was connected to the GitHub repository after the merge.
+- A post-link Git push is required to trigger the first Git-integrated deployment; live route and provider-backed workflow acceptance remain pending until that deployment is READY.
