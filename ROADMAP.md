@@ -395,7 +395,9 @@ Production agentic orchestration remains TypeScript-first. Introduce Python late
 
 **Tech:** Postgres/RLS + server/domain matching layer.
 
-**Status:** not complete.
+**Status:** 75% production scaffold implemented on the Phase 6 branch. Discovery sessions, hard-eligibility retrieval, append-only marketplace events, score/version/rank audit metadata, atomic decision RPCs, reset-with-history, typed client boundary and database tests are implemented. The authenticated Discover UI still needs to cut over from the legacy all-listed-startups/multi-write path and receive deployed browser acceptance.
+
+See `docs/PHASE6_MARKETPLACE_EVENTS.md`.
 
 **Done when:** every surfaced candidate/decision is auditable and the feed resumes predictably without duplicate/invalid candidates.
 
