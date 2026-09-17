@@ -22,8 +22,9 @@ FundMatch now uses a standalone backend. Lovable is retired from the active arch
 | `SUPABASE_SERVICE_ROLE_KEY` | backend workers only | **yes** | Bypasses RLS; never expose to browser/Pages |
 | `FUNDMATCH_DB_MIGRATION_URL` | migrations | **yes** | Direct Postgres migration connection |
 | `FUNDMATCH_TEST_DATABASE_URL` | tests | local only | Policy-test database |
-| `FUNDMATCH_CRON_SECRET` | scheduled server actions | **yes** | Current cron bearer secret |
-| `FUNDMATCH_CRON_SECRET_PREVIOUS` | scheduled server actions | **yes** | Optional rotation fallback |
+| `CRON_SECRET` | Vercel scheduled server actions | **yes** | Native Vercel Cron bearer secret |
+| `FUNDMATCH_CRON_SECRET` | scheduled server actions | compatibility | Manual/non-Vercel fallback |
+| `FUNDMATCH_CRON_SECRET_PREVIOUS` | scheduled server actions | compatibility | Optional fallback rotation value |
 | `OPENAI_API_KEY` | document worker/embeddings | **yes** | Server-only. Without it the pipeline still runs using deterministic labelled-line extraction and skips embeddings |
 | `FUNDMATCH_AGENT_MODEL` | document worker | no | Model id for the agentic workers; defaults to `gpt-4.1-mini` |
 
