@@ -104,8 +104,8 @@ async function setDocumentStatus(
   const { error } = await supabaseAdmin.rpc("set_document_processing", {
     _document_id: documentId,
     _status: status,
-    _error: options.error ?? null,
-    _extraction: options.extraction ?? null,
+    _error: options.error,
+    _extraction: options.extraction,
   });
   if (error) throw new Error(`Could not set document status: ${error.message}`);
 }
