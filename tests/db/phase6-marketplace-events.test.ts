@@ -82,6 +82,28 @@ maybe("Phase 6 production discovery + marketplace events", () => {
     await sql.end();
   });
 
+  test("browser roles cannot mutate session or event ledger tables directly", async () => {
+    const rows = await sql`
+      select
+        has_table_privilege('authenticated','public.discovery_sessions','INSERT') as ds_insert,
+        has_table_privilege('authenticated','public.discovery_sessions','UPDATE') as ds_update,
+        has_table_privilege('authenticated','public.discovery_sessions','DELETE') as ds_delete,
+        has_table_privilege('authenticated','public.marketplace_events','INSERT') as ev_insert,
+        has_table_privilege('authenticated','public.marketplace_events','UPDATE') as ev_update,
+        has_table_privilege('authenticated','public.marketplace_events','DELETE') as ev_delete,
+        has_table_privilege('anon','public.marketplace_events','INSERT') as anon_ev_insert
+    `;
+    expect(rows[0]).toEqual({
+      ds_insert: false,
+      ds_update: false,
+      ds_delete: false,
+      ev_insert: false,
+      ev_update: false,
+      ev_delete: false,
+      anon_ev_insert: false,
+    });
+  });
+
   test("anonymous clients cannot execute the discovery RPC boundary", async () => {
     let denied = false;
     try {
