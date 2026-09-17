@@ -16,6 +16,7 @@ function startup(partial: Partial<StartupWithData> & { id: string; name: string 
     geography: "United States",
     funding_ask: 2_000_000,
     summary: "An AI company",
+    tags: [],
     metrics: [],
     provenance: [],
     materials: [],
