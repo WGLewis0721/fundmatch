@@ -785,7 +785,10 @@ export async function drainEmbeddingQueue(limit = 5): Promise<number> {
       if (pending.length) {
         const result = await createOpenAIEmbeddings(
           pending.map((chunk) => chunk.content),
-          { apiKey: config.apiKey, model: DEFAULT_EMBEDDING_MODEL },
+          {
+            apiKey: config.apiKey,
+            model: process.env["FUNDMATCH_EMBEDDING_MODEL"] ?? DEFAULT_EMBEDDING_MODEL,
+          },
         );
         const { error: upsertError } = await supabaseAdmin.from("chunk_embeddings").upsert(
           pending.map((chunk, index) => ({

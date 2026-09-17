@@ -429,9 +429,29 @@ Production agentic orchestration remains TypeScript-first. Introduce Python late
 
 **Tech:** pgmq + Postgres/pgvector + server TypeScript worker + model adapter; OpenAI Agents SDK adapter may replace the initial direct model adapter once introduced cleanly.
 
-**Status:** runtime/database foundation implemented; live queue consumer/product loop not yet wired.
+**Status:** the document vertical slice is implemented in repository code; the phase is **not** complete.
 
-**Done when:** an uploaded private deck produces founder-reviewable suggestions and readiness updates with provenance, conflicts survive as conflicts, and failures are auditable/retryable.
+Implemented (steps 1–9 above, for the supported formats):
+
+- uploading a document starts a durable `agent_runs` record and enqueues pgmq work; repeated callbacks and redelivery converge on one active run;
+- a server-only worker re-derives organization/company from canonical Postgres state, fetches the file with service-role Storage access, and enforces the document → organization → company relationship before any analysis;
+- **supported for analysis: PDFs with selectable text and UTF-8 `.txt`.** Scanned PDFs, PPTX, DOCX, spreadsheets and images are stored privately but reported as not analyzed. There is no OCR;
+- text becomes deterministic page-anchored chunks with stable locators and content hashes, so reprocessing cannot duplicate them;
+- missing embeddings are queued in batches on the `embeddings` queue and written with model/dimension metadata;
+- the `document` worker runs over only that document's authorized chunks, output passes the evidence validator, and the `evidence` worker is delegated only for a bounded follow-up;
+- readiness analysis is **deterministic rules** over the anchored claims in this slice, not a model worker; it proposes `In progress`, never `Complete`, and never touches an item the founder already moved;
+- proposals land in `profile_suggestions` with source locator, verbatim excerpt, confidence, rationale and the run that produced them, and the founder accepts, corrects or rejects each one through `resolve_profile_suggestion`;
+- conflicting values for one field survive as competing proposals rather than being silently resolved;
+- runs and steps are recorded in `agent_runs`/`agent_steps`; terminal failures (authorization, unsupported content, unreadable file) are never retried, transient failures are bounded and dead-lettered.
+
+Not yet done in this phase:
+
+- a model-backed `readiness` worker (the slice uses deterministic rules);
+- scheduled execution of the operational drain in production (the server function exists and is cron-secret authenticated; no schedule is configured);
+- migrations `0006`–`0008` applied to the live FundMatch project, and end-to-end verification against it with a real provider key;
+- formats beyond selectable-text PDF and UTF-8 text.
+
+**Done when:** an uploaded private deck produces founder-reviewable suggestions and readiness updates with provenance, conflicts survive as conflicts, and failures are auditable/retryable — verified on the live project, not only in repository tests.
 
 ## Phase 9 — Semantic matching + agentic match intelligence
 

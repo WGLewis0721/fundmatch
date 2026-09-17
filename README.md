@@ -149,6 +149,36 @@ Migration `0006_agentic_rag_foundation.sql` introduces the production foundation
 
 Private chunk text and vectors are server-only. Browser clients do not receive generic vector-search access.
 
+## Queued document processing
+
+Migration `0008_phase8_document_processing.sql` wires that foundation into the document lifecycle.
+
+```text
+private upload -> mark_document_uploaded
+  -> start_document_run  (durable agent_runs row + pgmq message, idempotent)
+  -> server worker       (service role; re-reads canonical state)
+  -> page-anchored chunks + queued embeddings
+  -> document agent over that document's chunks only
+  -> evidence validation, bounded evidence follow-up when needed
+  -> readiness rules
+  -> profile_suggestions with source locator and excerpt
+  -> founder accepts / corrects / rejects
+  -> resolve_profile_suggestion writes the canonical fact
+```
+
+**Supported for analysis today:** PDFs with selectable text and UTF-8 `.txt`. PowerPoint, Word, spreadsheets, images and scanned PDFs are stored privately but reported as not analyzed — there is no OCR behind this.
+
+Operational properties worth knowing:
+
+- `agent_runs` is the durable ledger and pgmq is delivery, so a lost message, a skipped upload callback or a deployment without pgmq still converges through the sweeper;
+- chunk rows are keyed by organization, locator and content hash, so reprocessing the same file is a no-op;
+- the worker trusts no identifier from a queue payload: organization and company are re-read from `public.documents`;
+- when no model key is configured the pipeline still runs, using the deterministic labelled-line reader, and records which method produced each proposal;
+- authorization failures, unsupported content and unreadable files fail terminally rather than burning retries; transient failures are bounded and dead-lettered;
+- a model proposal is never a company fact. `profile_suggestions` is the only promotion path, and it requires a human decision.
+
+The drain is exposed as a cron-secret-authenticated server function (`FUNDMATCH_CRON_SECRET`); scheduling it in production is still outstanding.
+
 ## Matching model
 
 FundMatch matching evolves in layers:
@@ -233,9 +263,10 @@ This foundation does **not** mean every AI workflow is production-wired yet.
 Do not present these as live customer capabilities yet:
 
 - completed Phase 5 authenticated browser acceptance;
-- queue consumer wired end-to-end in production;
-- live chunking/embedding of every private upload;
-- live multi-agent document/readiness pipeline;
+- the document pipeline verified against the live FundMatch project: migrations `0006`–`0008` still need to be applied there, and the loop has not been exercised end to end with a real provider key;
+- a scheduled production drain (the worker entry point exists; nothing schedules it yet);
+- analysis of scanned PDFs, PowerPoint, Word, spreadsheets or images — no OCR exists;
+- a model-backed readiness worker (readiness proposals are deterministic rules today);
 - production semantic candidate matching;
 - live investor-interest/founder-response workflow;
 - transactional email;
@@ -333,6 +364,7 @@ Agent runs should store structured summaries and audit metadata, not hidden chai
 
 - [`ROADMAP.md`](ROADMAP.md) — product and implementation source of truth.
 - [`docs/AGENTIC_RAG_ARCHITECTURE.md`](docs/AGENTIC_RAG_ARCHITECTURE.md) — assembled agentic runtime architecture.
+- [`docs/DOCUMENT_PROCESSING.md`](docs/DOCUMENT_PROCESSING.md) — running and triaging the queued document pipeline.
 - [`docs/research/agentic-rag/README.md`](docs/research/agentic-rag/README.md) — technology research index.
 - [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md) — recommendation architecture and scale strategy.
 - [`docs/IMPLEMENTATION_NEXT_STEPS.md`](docs/IMPLEMENTATION_NEXT_STEPS.md) — build sequence toward pilot.
