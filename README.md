@@ -177,7 +177,7 @@ Operational properties worth knowing:
 - authorization failures, unsupported content and unreadable files fail terminally rather than burning retries; transient failures are bounded and dead-lettered;
 - a model proposal is never a company fact. `profile_suggestions` is the only promotion path, and it requires a human decision.
 
-The drain is exposed as a cron-secret-authenticated server function (`FUNDMATCH_CRON_SECRET`); scheduling it in production is still outstanding.
+The drain now has a stable `/api/agentic-worker` HTTP entry point and a daily 08:00 UTC Vercel Cron definition. Vercel authenticates it with `CRON_SECRET`; `FUNDMATCH_CRON_SECRET` remains a compatibility fallback. Production deployment/acceptance of that schedule is still outstanding.
 
 ## Matching model
 
@@ -263,8 +263,8 @@ This foundation does **not** mean every AI workflow is production-wired yet.
 Do not present these as live customer capabilities yet:
 
 - completed Phase 5 authenticated browser acceptance;
-- the document pipeline verified against the live FundMatch project: migrations `0006`–`0008` still need to be applied there, and the loop has not been exercised end to end with a real provider key;
-- a scheduled production drain (the worker entry point exists; nothing schedules it yet);
+- the document pipeline verified end to end against the deployed FundMatch app with a real provider key; live Supabase migrations `0006`–`0009` are already applied;
+- production acceptance of the scheduled recovery drain (route + daily Vercel Cron are implemented in the production-activation branch, but still need deployment/configuration proof);
 - analysis of scanned PDFs, PowerPoint, Word, spreadsheets or images — no OCR exists;
 - a model-backed readiness worker (readiness proposals are deterministic rules today);
 - production semantic candidate matching;
