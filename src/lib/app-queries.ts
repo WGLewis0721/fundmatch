@@ -513,6 +513,17 @@ export function useUploadDocument(orgId: string | undefined) {
         await supabase.from("documents").delete().eq("id", id);
         throw new Error(markError.message);
       }
+
+      // Ask the server to queue analysis. This is a fast path, not a
+      // requirement: the run is durable once started, and the operational
+      // sweeper queues anything that is still `uploaded` if this call never
+      // lands. The upload itself has already succeeded either way.
+      try {
+        const { requestDocumentAnalysis } = await import("@/lib/agentic/processing.functions");
+        await requestDocumentAnalysis({ data: { documentId: id } });
+      } catch (error) {
+        console.warn("[fundmatch] could not start document analysis now:", error);
+      }
       return id;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["documents", orgId] }),
@@ -567,19 +578,27 @@ export function useProfileSuggestions(startupId: string | undefined) {
   });
 }
 
+/**
+ * The only path from an AI proposal to a company or readiness fact. Accept takes
+ * the proposed value, correct takes the reviewer's value instead, and reject
+ * records the decision without touching canonical data.
+ */
 export function useResolveSuggestion(startupId: string | undefined) {
   const qc = useQueryClient();
   const invalidate = useInvalidateWorkspace();
   return useMutation({
-    mutationFn: async (input: { id: string; accept: boolean }) => {
+    mutationFn: async (input: { id: string; accept: boolean; correctedValue?: string }) => {
+      const corrected = input.correctedValue?.trim();
       const { error } = await supabase.rpc("resolve_profile_suggestion", {
         _suggestion_id: input.id,
         _accept: input.accept,
+        ...(corrected ? { _corrected_value: corrected } : {}),
       });
       if (error) throw new Error(error.message);
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["suggestions", startupId] });
+      void qc.invalidateQueries({ queryKey: ["readiness", startupId] });
       void invalidate();
     },
   });

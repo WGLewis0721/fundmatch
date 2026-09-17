@@ -598,7 +598,7 @@ maybe("organization isolation (RLS + storage policies)", () => {
     );
     expect(arr).toEqual([{ value_display: "2400000" }]);
 
-    // Deletion: outsiders can't; owner can, and the storage object goes with it.
+    // Deletion: outsiders can remove neither the record nor the object.
     const foreignDelete = await as(
       investor,
       (tx) => tx`delete from public.documents where id = ${documentId} returning id`,
@@ -609,9 +609,21 @@ maybe("organization isolation (RLS + storage policies)", () => {
       (tx) => tx`delete from storage.objects where name = ${path} returning id`,
     );
     expect(foreignObjDelete.length).toBe(0);
-    await as(founder, (tx) => tx`delete from public.documents where id = ${documentId}`);
-    const gone = await sql`select id from storage.objects where name = ${path}`;
-    expect(gone.length).toBe(0);
+
+    // The owner can delete both. Migration 0005 removed the database cleanup
+    // trigger because hosted Supabase Storage rejects direct SQL deletion of
+    // object metadata, so the client removes the bytes through the Storage API
+    // first and the record second (see useDeleteDocument).
+    const ownObjDelete = await as(
+      founder,
+      (tx) => tx`delete from storage.objects where name = ${path} returning id`,
+    );
+    expect(ownObjDelete.length).toBe(1);
+    const removed = await as(
+      founder,
+      (tx) => tx`delete from public.documents where id = ${documentId} returning id`,
+    );
+    expect(removed.length).toBe(1);
   });
 
   test("activity and intro requests respect both organizations", async () => {

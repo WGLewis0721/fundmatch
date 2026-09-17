@@ -55,6 +55,7 @@ import {
   useUploadDocument,
   useWorkspace,
   type DocumentRecord,
+  type ProfileSuggestion,
   type ReadinessItem,
   type Workspace,
 } from "@/lib/app-queries";
@@ -1114,6 +1115,126 @@ function Overview({ ws, toast }: ViewProps) {
   );
 }
 
+/**
+ * One reviewable proposal. Provenance is shown next to the value on purpose: a
+ * founder should not have to trust the suggestion, they should be able to check
+ * the page it came from before accepting it.
+ */
+function SuggestionRow({
+  suggestion,
+  resolve,
+  toast,
+}: {
+  suggestion: ProfileSuggestion;
+  resolve: ReturnType<typeof useResolveSuggestion>;
+  toast: (message: string) => void;
+}) {
+  const [correcting, setCorrecting] = useState(false);
+  const [value, setValue] = useState(suggestion.suggested_value);
+  const readiness = suggestion.field_key.startsWith("readiness:");
+  const busy = resolve.isPending;
+
+  function submit(accept: boolean, correctedValue?: string) {
+    resolve.mutate(
+      { id: suggestion.id, accept, ...(correctedValue ? { correctedValue } : {}) },
+      {
+        onSuccess: () => {
+          setCorrecting(false);
+          toast(
+            !accept
+              ? "Suggestion dismissed."
+              : correctedValue
+                ? "Your corrected value was saved."
+                : readiness
+                  ? "Readiness item updated."
+                  : "Suggestion applied.",
+          );
+        },
+        onError: (err) => toast(describeError(err)),
+      },
+    );
+  }
+
+  return (
+    <div className="demo-list-row">
+      <div>
+        <h3>{suggestion.label}</h3>
+        <p>
+          {readiness ? `Mark as “${suggestion.suggested_value}”` : suggestion.suggested_value}
+          {suggestion.current_value ? ` (currently ${suggestion.current_value})` : ""} ·{" "}
+          {Math.round(Number(suggestion.confidence) * 100)}% confidence
+        </p>
+        {suggestion.rationale && <p className="fm-micro">{suggestion.rationale}</p>}
+        {suggestion.source_excerpt && (
+          <blockquote className="fm-micro app-suggestion-quote">
+            “{suggestion.source_excerpt}”
+          </blockquote>
+        )}
+        <p className="fm-micro">
+          Source: {suggestion.source_locator ?? "your uploaded document"}
+          {suggestion.document_id ? " · private document" : ""} ·{" "}
+          {suggestion.source_key === "fundmatch_literal"
+            ? "read from a labelled line"
+            : "proposed by the document agent"}
+        </p>
+        {correcting && (
+          <form
+            className="demo-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const corrected = value.trim();
+              if (!corrected) {
+                toast("Enter the value you want to save.");
+                return;
+              }
+              submit(true, corrected);
+            }}
+          >
+            <label>
+              Correct the value before saving
+              <input
+                name="correctedValue"
+                value={value}
+                maxLength={2000}
+                onChange={(event) => setValue(event.target.value)}
+              />
+            </label>
+            <div className="full app-inline-actions">
+              <button className="fm-button" type="submit" disabled={busy}>
+                Save my value
+              </button>
+              <button
+                className="demo-link"
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setCorrecting(false);
+                  setValue(suggestion.suggested_value);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+      </div>
+      {!correcting && (
+        <div className="app-inline-actions">
+          <button className="demo-link" disabled={busy} onClick={() => submit(true)}>
+            Accept
+          </button>
+          <button className="demo-link" disabled={busy} onClick={() => setCorrecting(true)}>
+            Correct
+          </button>
+          <button className="demo-link" disabled={busy} onClick={() => submit(false)}>
+            Reject
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function CompanyProfile({ ws, toast }: ViewProps) {
   const navigate = useNavigate();
   const startup = ws.startup;
@@ -1132,52 +1253,12 @@ function CompanyProfile({ ws, toast }: ViewProps) {
         <article className="demo-card" style={{ marginBottom: 20 }}>
           <span className="fm-kicker">SUGGESTED FROM YOUR DOCUMENTS</span>
           <h2>Review before it changes your profile.</h2>
+          <p className="fm-micro">
+            These are proposals read out of your private documents. Nothing here changes your
+            company profile or readiness checklist until you accept it.
+          </p>
           {suggestions.data!.map((s) => (
-            <div className="demo-list-row" key={s.id}>
-              <div>
-                <h3>{s.label}</h3>
-                <p>
-                  {s.suggested_value}
-                  {s.current_value ? ` (currently ${s.current_value})` : ""} ·{" "}
-                  {Math.round(Number(s.confidence) * 100)}% confidence
-                </p>
-                {s.rationale && <p className="fm-micro">{s.rationale}</p>}
-                <p className="fm-micro">
-                  Source: {s.source_key} ·{" "}
-                  {s.document_id ? "Linked private document" : "No document reference"} · Awaiting
-                  your review
-                </p>
-              </div>
-              <div className="app-inline-actions">
-                <button
-                  className="demo-link"
-                  disabled={resolve.isPending}
-                  onClick={() =>
-                    resolve.mutate(
-                      { id: s.id, accept: true },
-                      {
-                        onSuccess: () => toast("Suggestion applied."),
-                        onError: (err) => toast(describeError(err)),
-                      },
-                    )
-                  }
-                >
-                  Apply
-                </button>
-                <button
-                  className="demo-link"
-                  disabled={resolve.isPending}
-                  onClick={() =>
-                    resolve.mutate(
-                      { id: s.id, accept: false },
-                      { onError: (err) => toast(describeError(err)) },
-                    )
-                  }
-                >
-                  Dismiss
-                </button>
-              </div>
-            </div>
+            <SuggestionRow key={s.id} suggestion={s} resolve={resolve} toast={toast} />
           ))}
         </article>
       )}
@@ -1481,8 +1562,10 @@ function Materials({ ws, toast }: ViewProps) {
         </Link>
         <p>
           Decks, financials and legal documents are stored privately for {ws.org?.name}. They are
-          never listed publicly; only your team can download them. Uploading stores the document;
-          automatic analysis is not connected yet. Any future suggestions require your review.
+          never listed publicly; only your team can download them. PDFs with selectable text and
+          UTF-8 .txt files are analyzed automatically in the background; scanned documents,
+          PowerPoint, Word, spreadsheets and images are stored but not analyzed. Anything the
+          analysis proposes waits for your review on the Company profile screen.
         </p>
         <form
           className="demo-form"

@@ -24,6 +24,8 @@ FundMatch now uses a standalone backend. Lovable is retired from the active arch
 | `FUNDMATCH_TEST_DATABASE_URL` | tests | local only | Policy-test database |
 | `FUNDMATCH_CRON_SECRET` | scheduled server actions | **yes** | Current cron bearer secret |
 | `FUNDMATCH_CRON_SECRET_PREVIOUS` | scheduled server actions | **yes** | Optional rotation fallback |
+| `OPENAI_API_KEY` | document worker/embeddings | **yes** | Server-only. Without it the pipeline still runs using deterministic labelled-line extraction and skips embeddings |
+| `FUNDMATCH_AGENT_MODEL` | document worker | no | Model id for the agentic workers; defaults to `gpt-4.1-mini` |
 
 ## Migration state
 
@@ -35,6 +37,12 @@ The standalone production database has the Phase 5 chain applied in order:
 - `0003_phase5_function_privileges.sql`
 - `0004_phase5_has_role_privilege_hardening.sql`
 - `0005_phase5_storage_delete_and_search_path_hardening.sql`
+
+Pending application to the live project:
+
+- `0006_agentic_rag_foundation.sql`
+- `0007_agentic_rag_advisor_hardening.sql`
+- `0008_phase8_document_processing.sql`
 
 `0002` removes the original broad authenticated-user policies and installs organization-scoped RLS, invitations, readiness items, private documents, profile suggestions, RPCs, and the private `documents` Storage bucket. `0003` hardens helper-function privileges. `0004` removes anonymous/PUBLIC execution of `has_role()`. `0005` removes the incompatible direct-SQL Storage deletion trigger and fixes remaining mutable helper search paths.
 

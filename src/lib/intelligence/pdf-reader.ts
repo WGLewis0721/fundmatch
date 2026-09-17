@@ -59,3 +59,16 @@ export const browserPdfReader = makePdfTextReader(async () => {
   pdf.GlobalWorkerOptions.workerSrc = worker;
   return pdf;
 });
+
+/**
+ * Backend reader for the queued document worker. The legacy build runs in Node
+ * on its fake worker, so no browser worker asset is involved.
+ */
+export const serverPdfReader = makePdfTextReader(async () => {
+  if (typeof window !== "undefined")
+    throw new IntelligenceError("PDF_UNAVAILABLE", "Use the browser PDF reader in the client.");
+  return (await import("pdfjs-dist/legacy/build/pdf.mjs")) as unknown as Pick<
+    typeof import("pdfjs-dist"),
+    "getDocument"
+  >;
+});
