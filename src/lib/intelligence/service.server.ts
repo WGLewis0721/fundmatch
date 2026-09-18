@@ -50,8 +50,8 @@ export function intelligenceService(
       return result;
     },
     async confirm(context: WorkspaceContext, input: Confirmation) {
-      const request = ConfirmationSchema.parse(input);
       await repo.requireEditor(context);
+      const request = ConfirmationSchema.parse(input);
       const prior = await repo.findConfirmation(context, request);
       if (prior) return prior;
       const extraction = await repo.readExtraction(context, request.extractionId);
