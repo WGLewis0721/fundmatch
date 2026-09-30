@@ -564,3 +564,39 @@ Agent audit records store structured inputs/outputs, source IDs, validation outc
 8. Use pgvector/pgmq before adding separate vector/streaming infrastructure.
 9. Keep Make/n8n/MCP as bounded consumers of FundMatch services, not bypasses around them.
 10. Update README/roadmap and acceptance evidence after meaningful implementation changes.
+
+---
+
+# Production + commercial readiness gate — September 30, 2026
+
+FundMatch is currently a web SaaS/marketplace product. **An App Store client is not required to start charging customers.** The immediate release goal is a trustworthy paid web product; native iOS distribution is a later channel once the production marketplace loop proves value.
+
+## P0 — finish the real product before billing
+- [ ] Close Phase 5 browser acceptance with two real test organizations: signup/login/logout/reset, organization creation, invite/role changes, private upload/download/delete, and cross-org RLS/storage isolation.
+- [ ] Production-accept Phase 6 with real founder/investor records: eligible candidate retrieval, deterministic scoring/explanation, impression/open/Pass/Save/Interested persistence, resume behavior, and append-only event audit.
+- [ ] Implement Phase 7 Interest → founder notification → Accept/Decline/Request info → permissioned introduction thread. Do not expose founder contact data merely because an investor clicks Interested.
+- [ ] Finish the Phase 8 private-document pipeline for the formats promised at launch, including queue consumers, retries, embeddings, evidence validation, review/accept/reject flow, and clear unsupported/scanned-document states.
+- [ ] Add production notification/email delivery with idempotency, bounce/failure visibility, and user notification preferences.
+- [ ] Add observability and support tooling for auth failures, queue backlog/retries, document-processing failures, email failures, RLS denials, model/provider failures, and marketplace workflow state.
+- [ ] Complete privacy/terms/data-retention/account deletion/export/support policies appropriate to confidential founder/investor material.
+- [ ] Run security acceptance for tenant isolation, invitation abuse, private storage URLs, service-role leakage, prompt injection through uploaded materials, rate limiting, and audit-log integrity.
+- [ ] Define what claims FundMatch may make about investor fit/readiness and keep generated analysis evidence-backed and reviewable; do not present AI output as guaranteed fundraising/investment outcomes.
+
+## P0 — take money from customers
+- [ ] Freeze launch packaging and payer: founder plan, investor/team plan, pilot contract, or a deliberately smaller initial combination.
+- [ ] Define free vs paid capabilities, usage limits, trial behavior, cancellation/refund policy, and what happens to private data after downgrade/cancellation.
+- [ ] Integrate Stripe for web checkout and customer billing; use APEX for canonical paid entitlement/access state rather than creating a separate FundMatch billing ledger.
+- [ ] Prove checkout → verified payment → APEX entitlement → FundMatch server-side authorization → customer-visible plan state.
+- [ ] Add billing portal/account UI for plan, invoices/receipts where applicable, manage/cancel, failed-payment state, and support contact.
+- [ ] Prove webhook replay/idempotency, upgrade/downgrade, cancellation, refund/revocation, failed payment, and entitlement reconciliation in test mode before live charging.
+- [ ] Run a bounded paid pilot with real users and manually reconcile the first live transactions and access state before broad self-serve launch.
+
+## P1 — optional iOS/App Store channel after web product acceptance
+- [ ] Validate that founders/investors actually need a native client rather than packaging the web app prematurely.
+- [ ] If justified, create an iOS client around the same Supabase identity, server authorization, private-data rules, and marketplace APIs; do not fork business state into the device.
+- [ ] Add native-safe auth/Sign in with Apple as required, push notification strategy, secure document picker/share flows, deep links, and physical-device privacy/security testing.
+- [ ] For digital FundMatch subscriptions/features sold in the iOS app, implement StoreKit/App Store commerce and reconcile Apple transaction state into APEX alongside web/Stripe entitlements.
+- [ ] Complete TestFlight, privacy/support metadata, age rating, screenshots, review instructions/test account, and App Review acceptance.
+
+**Paid-production exit:** two isolated organizations can use the complete founder/investor workflow with private evidence, an authorized customer can pay and receive exactly the purchased access, cancellation/refund removes only the appropriate entitlement, and support can explain and recover every material workflow/payment state from durable records.
+
