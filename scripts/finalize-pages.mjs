@@ -12,9 +12,6 @@ const html = await readFile("dist/index.html", "utf8");
 if (!html.includes("/fundmatch/assets/") && !process.env.PAGES_BASE)
   throw new Error("Incorrect asset base for GitHub Pages");
 for (const path of [
-  "media/fundmatch-film.mp4",
-  "media/fundmatch-poster.jpg",
-  "media/fundmatch-film.vtt",
   "media/fundmatch-arch.webp",
   "media/dippi-editorial.webp",
   "media/soapbox-editorial.webp",
@@ -25,4 +22,4 @@ for (const path of [
 ])
   await stat("dist/" + path);
 await stat("dist/wireframes/index.html");
-console.log("Static Pages build validated: homepage, demo, wireframes, film, brand artwork and fonts.");
+console.log("Static Pages build validated: homepage, demo, wireframes, brand artwork and fonts.");
