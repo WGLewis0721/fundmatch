@@ -33,12 +33,25 @@ export function WaitlistSection() {
     const values = new FormData(form);
     setState("sending");
     try {
-      const response = await fetch("/api/waitlist", {
+      const response = await fetch(window.location.hostname === "wglewis0721.github.io" ? "https://fundmatch-eight.vercel.app/api/waitlist" : "/api/waitlist", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ product: "fundmatch", email: String(values.get("email") || "").trim(), audience: String(values.get("audience") || ""), consent: values.get("consent") === "on", source: "homepage" }),
+        body: JSON.stringify({ name: String(values.get("name") || "").trim(), email: String(values.get("email") || "").trim(), website: String(values.get("website") || ""), consent: values.get("consent") === "on" }),
       });
       const result = response.headers.get("content-type")?.includes("application/json") ? await response.json() : null;
       if (!response.ok || result?.ok !== true) throw new Error("Waitlist unavailable");
+      // The Sheet is the record. The alert is best-effort and cannot change signup status.
+      void fetch("https://formsubmit.co/ajax/graymattertechllc@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: `[FundMatch] New beta waitlist signup: ${String(values.get("email") || "").trim()}`,
+          _template: "table", _captcha: "false",
+          _replyto: String(values.get("email") || "").trim(),
+          product: "FundMatch",
+          name: String(values.get("name") || "").trim(),
+          email: String(values.get("email") || "").trim(),
+        }),
+      }).catch(() => {});
       form.reset(); setState("success");
     } catch { setState("error"); }
   }
@@ -50,9 +63,11 @@ export function WaitlistSection() {
         <h2 id="fm-waitlist-title">Tell your story once.<br/><em>Find what fits.</em></h2>
         <p>Founders need the right room. Investors need the right reasons. Join the FundMatch beta to help shape a clearer way for both to find the right conversation.</p>
         <form className="fm-waitlist-form" onSubmit={submit}>
+          <label htmlFor="fm-beta-name">Your name</label>
+          <input className="fm-waitlist-name" id="fm-beta-name" type="text" name="name" autoComplete="name" placeholder="Your name" maxLength={100} required disabled={state === "sending"}/>
           <label htmlFor="fm-beta-email">Email for your beta invitation</label>
+          <input className="fm-waitlist-trap" name="website" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true"/>
           <div className="fm-waitlist-fields"><input id="fm-beta-email" type="email" name="email" autoComplete="email" placeholder="you@company.com" required disabled={state === "sending"}/><button className="fm-button" type="submit" disabled={state === "sending"}>{state === "sending" ? "Joining…" : "Join the beta"}</button></div>
-          <fieldset><legend>I'm here as a</legend><label><input type="radio" name="audience" value="founder" required disabled={state === "sending"}/> Founder</label><label><input type="radio" name="audience" value="investor" required disabled={state === "sending"}/> Investor</label></fieldset>
           <label className="fm-waitlist-consent"><input type="checkbox" name="consent" required disabled={state === "sending"}/> Email me about the FundMatch beta and my invitation. I can unsubscribe at any time.</label>
           <p className="fm-waitlist-feedback" role="status" aria-live="polite">{state === "success" ? "You're on the list. We'll email when your beta invitation is ready." : state === "error" ? "We couldn't add you yet. Please try again later." : "Explore the fictional demo now. Beta access is separate."}</p>
         </form>
