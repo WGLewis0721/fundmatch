@@ -1,4 +1,5 @@
 import { ProductPreview } from "@/components/fundmatch/discovery-card";
+import { WaitlistSection } from "@/components/fundmatch/waitlist-section";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
@@ -339,6 +340,7 @@ export function Home() {
             </Link>
           </div>
         </section>
+        <WaitlistSection />
         <section className="fm-final">
           <span className="fm-kicker">THE RIGHT CONVERSATION CAN CHANGE EVERYTHING</span>
           <h2>

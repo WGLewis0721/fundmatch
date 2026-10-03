@@ -1,0 +1,25 @@
+.fm-waitlist { background: var(--fm-paper); padding: clamp(82px, 10vw, 150px) 5%; border-top: 1px solid var(--fm-line); }
+.fm-waitlist-inner { max-width: 1440px; margin: auto; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(36px, 6vw, 100px); align-items: center; }
+.fm-waitlist h2 { margin: 18px 0 22px; color: var(--fm-ink); font: 400 clamp(3.3rem, 5.5vw, 6rem)/1.02 var(--fm-display); letter-spacing: -.035em; }
+.fm-waitlist h2 em { color: #5b698f; font-weight: 400; }
+.fm-waitlist-copy > p { max-width: 56ch; color: var(--fm-muted); font-size: clamp(1rem, 1.25vw, 1.18rem); line-height: 1.65; }
+.fm-waitlist-form { max-width: 610px; margin-top: 35px; }
+.fm-waitlist-form > label:first-child { display: block; margin-bottom: 10px; font-weight: 700; }
+.fm-waitlist-fields { display: flex; gap: 8px; }
+.fm-waitlist-fields input { flex: 1; min-width: 0; border: 1px solid var(--fm-line); border-radius: 9px; padding: 13px 16px; background: #fff; color: var(--fm-ink); font: inherit; }
+.fm-waitlist-fields button { border: 0; white-space: nowrap; cursor: pointer; }
+.fm-waitlist-fields button:disabled { opacity: .65; cursor: wait; }
+.fm-waitlist-consent { display: flex; gap: 9px; align-items: flex-start; margin-top: 15px; color: var(--fm-muted); font-size: .82rem; line-height: 1.5; }
+.fm-waitlist input[type="checkbox"] { flex: none; accent-color: #657663; }
+.fm-waitlist-feedback { min-height: 2.8em; margin: 12px 0 0; color: var(--fm-muted); font-size: .82rem; line-height: 1.45; }
+.fm-waitlist-visual { position: relative; overflow: hidden; border-radius: 22px; background: #f8f7f2; box-shadow: 0 28px 60px #28352e17; }
+.fm-waitlist-visual video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.fm-waitlist-visual button { position: absolute; right: 12px; bottom: 12px; padding: 7px 12px; border: 1px solid #28352e55; border-radius: 999px; background: #f8f7f2ee; color: var(--fm-ink); font: inherit; font-size: .72rem; font-weight: 700; cursor: pointer; }
+.fm-waitlist :is(input, button):focus-visible { outline: 3px solid #657663; outline-offset: 3px; }
+@media (max-width: 900px) { .fm-waitlist-inner { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .fm-waitlist-fields { flex-direction: column; } .fm-waitlist-fields button { min-height: 50px; justify-content: center; } }
+
+.fm-waitlist-form > label:not([class]) { display: block; margin: 0 0 9px; font-weight: 600; }
+.fm-waitlist-form > label:not([class]):not(:first-child) { margin-top: 17px; }
+.fm-waitlist-form .fm-waitlist-name { display: block; width: 100%; box-sizing: border-box; border: 1px solid var(--fm-line); border-radius: 9px; background: #fff; color: var(--fm-ink); padding: 13px 16px; font: inherit; }
+.fm-waitlist-form .fm-waitlist-trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }

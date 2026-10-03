@@ -64,7 +64,8 @@ const STORAGE = "fundmatch-explorer-v1";
 export function Demo() {
   const go = Route.useNavigate();
   const search = Route.useSearch();
-  const { persona, view } = search;
+  const { persona } = search;
+  const view = search.view as View;
   const [state, setState] = useState<DemoState>(initialState);
   const [ready, setReady] = useState(false);
   const [storageOk, setStorageOk] = useState(true);
