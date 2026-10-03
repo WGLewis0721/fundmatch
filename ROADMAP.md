@@ -305,6 +305,7 @@ Production agentic orchestration remains TypeScript-first. Introduce Python late
 - RLS/storage policies and backend security tests.
 - Vercel/Nitro app hosting configuration.
 - Latest production deployment serving the app; full acceptance scenarios still need completion/evidence.
+- Public beta waitlist API (`POST /api/waitlist` → Google Sheets, `docs/WAITLIST_API.md`); live once the Google service-account env vars are set and the form UI ships.
 
 ### Agentic foundation implemented in repository
 

@@ -374,6 +374,7 @@ Agent runs should store structured summaries and audit metadata, not hidden chai
 - [`docs/FOUNDER_READINESS.md`](docs/FOUNDER_READINESS.md) — readiness implementation.
 - [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md) — backend/security evidence.
 - [`docs/brand/BRAND.md`](docs/brand/BRAND.md) — positioning and brand system.
+- [`docs/WAITLIST_API.md`](docs/WAITLIST_API.md) — public beta waitlist API → Google Sheets.
 
 ## Best next product move
 

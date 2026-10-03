@@ -20,6 +20,10 @@ export default defineConfig({
           route: "/api/agentic-worker",
           handler: "./src/server/agentic-worker.handler.ts",
         },
+        {
+          route: "/api/waitlist",
+          handler: "./src/server/waitlist.handler.ts",
+        },
       ],
     }),
     viteReact(),
