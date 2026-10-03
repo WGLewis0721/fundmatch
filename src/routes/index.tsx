@@ -4,17 +4,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   ArrowRight,
-  Play,
   Check,
   Plus,
   Sparkles,
   ShieldCheck,
   Compass,
   Layers,
-  Pause,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { backendConfigured } from "@/lib/backend";
 import "../fundmatch.css";
 import "../fundmatch-personality.css";
@@ -33,16 +29,6 @@ export function Brand() {
 }
 
 export function Home() {
-  const media = import.meta.env.BASE_URL + "media/";
-  const video = useRef<HTMLVideoElement>(null);
-  const [film, setFilm] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const [failed, setFailed] = useState(false);
-  useEffect(() => {
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      video.current?.play().catch(() => setPlaying(false));
-    }
-  }, []);
   return (
     <div className="fm-site">
       <header className="fm-nav">
@@ -94,9 +80,6 @@ export function Home() {
               >
                 Find your fit <ArrowRight size={17} />
               </Link>
-              <button className="fm-text-button" onClick={() => setFilm(true)}>
-                Watch the film <Play size={15} fill="currentColor" />
-              </button>
             </div>
             <div className="fm-hero-footnote">
               <span className="fm-live-dot" /> For founders, angels and investment teams.
@@ -111,70 +94,6 @@ export function Home() {
               <span>Next moves</span>
             </span>
           </div>
-        </section>
-        <section className="fm-cinema" aria-label="Meet FundMatch in motion">
-          <div className="fm-cinema-intro">
-            <span className="fm-kicker">THE 24-SECOND INTRODUCTION</span>
-            <h2>
-              Less searching.
-              <br />
-              <em>More finding.</em>
-            </h2>
-            <p>Take a 24-second look inside FundMatch.</p>
-          </div>
-          <div className="fm-film-frame">
-            <video
-              ref={video}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster={media + "fundmatch-poster.jpg"}
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              onError={() => setFailed(true)}
-              aria-label="FundMatch product film: discover companies, understand fit, and prepare to raise capital"
-            >
-              <source src={media + "fundmatch-film.mp4"} type="video/mp4" />
-              <track
-                kind="captions"
-                src={media + "fundmatch-film.vtt"}
-                srcLang="en"
-                label="English"
-              />
-            </video>
-            <div className="fm-film-bottom">
-              <span>
-                FUNDMatch IN MOTION <i>01 / THE INTRODUCTION</i>
-              </span>
-              <div>
-                <button
-                  onClick={() => setFilm(true)}
-                  aria-label="Watch full product film with sound"
-                >
-                  <Play size={16} />
-                </button>
-                <button
-                  onClick={() =>
-                    playing
-                      ? video.current?.pause()
-                      : video.current?.play().catch(() => setFailed(true))
-                  }
-                  aria-label={playing ? "Pause background video" : "Play background video"}
-                >
-                  {playing ? <Pause size={16} /> : <Play size={16} />}
-                </button>
-              </div>
-            </div>
-            {failed && (
-              <div className="fm-video-error">
-                The film couldn’t load. <a href={media + "fundmatch-film.mp4"}>Open the video</a>
-              </div>
-            )}
-          </div>
-          <p className="fm-micro">
-            An interactive product preview. Fictional companies and illustrative data.
-          </p>
         </section>
         <section id="how-it-works" className="fm-section">
           <div className="fm-section-heading">
@@ -369,34 +288,7 @@ export function Home() {
           executed.
         </small>
       </footer>
-      <Dialog open={film} onOpenChange={setFilm}>
-        <DialogContent className="fm-film-dialog">
-          <DialogTitle>Meet FundMatch.</DialogTitle>
-          <DialogDescription>
-            A 24-second introduction. Original motion design and soundtrack.
-          </DialogDescription>
-          <video
-            controls
-            autoPlay
-            playsInline
-            preload="metadata"
-            poster={media + "fundmatch-poster.jpg"}
-          >
-            <source src={media + "fundmatch-film.mp4"} type="video/mp4" />
-            <track
-              kind="captions"
-              src={media + "fundmatch-film.vtt"}
-              srcLang="en"
-              label="English"
-              default
-            />
-          </video>
-          <p>
-            Bring your story together. Find the fit. Get ready for the conversation. Fictional data;
-            the demo uses rules-based scoring.
-          </p>
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 }
