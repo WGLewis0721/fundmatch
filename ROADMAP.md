@@ -601,3 +601,10 @@ FundMatch is currently a web SaaS/marketplace product. **An App Store client is 
 
 **Paid-production exit:** two isolated organizations can use the complete founder/investor workflow with private evidence, an authorized customer can pay and receive exactly the purchased access, cancellation/refund removes only the appropriate entitlement, and support can explain and recover every material workflow/payment state from durable records.
 
+
+## October 3 — waitlist product film
+
+- [x] Replaced the decorative waitlist loop with a 20-second, silent profile → thesis → fit-rationale walkthrough using clearly illustrative data.
+- [x] Added viewport-aware playback, a held final frame, replay, reduced-motion poster, and fullscreen viewing.
+- [x] Kept the existing name/email form, consent, API, and separate Google Sheet contract intact.
+- Storyboard and reproducible 4K renderer: `STORYBOARD.md` and `scripts/film/`.
