@@ -12,13 +12,13 @@ Use:
 
 - **Web client:** React 19 + TanStack Start/Router + TypeScript.
 - **Public demo:** static GitHub Pages build with fictional browser-only data.
-- **Production app host:** Cloudflare Workers/Nitro for the authenticated web application.
+- **Production app host:** Vercel/Nitro for the authenticated web application.
 - **System of record:** Supabase Postgres.
 - **Identity and authorization:** Supabase Auth + Row-Level Security.
 - **Private files:** Supabase Storage.
 - **Realtime state:** Supabase Realtime Broadcast for notifications and workflow updates.
 - **Background work:** Supabase Queues (`pgmq`) + server-side workers/functions.
-- **Privileged workflows:** Supabase Edge Functions first; Cloudflare Workers may also call the same server-side interfaces where appropriate.
+- **Privileged workflows:** server-side FundMatch routes and Supabase workers/functions, with service-role access kept behind authorization boundaries.
 - **Semantic retrieval:** Postgres + `pgvector`; keep hard eligibility filters in normal relational columns/indexes.
 - **Transactional email:** provider behind a server-only interface; Resend is the preferred first implementation unless requirements change.
 - **Billing:** Stripe when commercialization begins.
@@ -297,7 +297,7 @@ Because FundMatch handles private company and investor information:
 
 ### Stage A — pilot / hundreds to low thousands of organizations
 
-One Supabase project, Postgres/RLS, Storage, Realtime, Queues, Edge Functions and one Cloudflare-hosted web application are sufficient if queries are indexed and jobs are asynchronous.
+One Supabase project, Postgres/RLS, Storage, Realtime, Queues, workers/functions and one Vercel-hosted web application are sufficient if queries are indexed and jobs are asynchronous.
 
 ### Stage B — growing marketplace
 

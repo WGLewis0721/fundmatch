@@ -2,6 +2,12 @@
 
 This document is the product and implementation source of truth for FundMatch. Read it before starting new product work and update it after meaningful changes.
 
+The current `main` application and public demo are the golden shipped
+baseline. Vercel/Nitro hosts the authenticated app; Supabase remains the
+private backend. Implementation and hosted migrations do not by themselves
+close the Phase 5/6 signed-in browser acceptance gates below. Future work
+extends the baseline without recasting planned integrations as live.
+
 ## Product definition
 
 FundMatch is an AI-assisted capital discovery and fundraising-readiness platform for startup founders and investment teams.
@@ -153,7 +159,10 @@ See:
 
 **Target augmentation:** Postgres + `pgvector` semantic thesis/company similarity after the deterministic production loop works.
 
-**Status:** deterministic demo exists; production candidate retrieval/ranking loop remains incomplete.
+**Status:** Phase 6 hard-eligibility retrieval, deterministic ranking, sessions,
+and persistent decisions are implemented on `main`; signed-in production
+acceptance of the full investor flow remains open. Semantic augmentation is
+future work.
 
 ### 5. Marketplace event history
 
@@ -163,7 +172,9 @@ See:
 
 **Initial events:** impression, profile open, pass, save, interested, intro requested/accepted/declined, meeting, diligence, funded/no-deal, readiness changed.
 
-**Status:** partial activity/current-state concepts exist; full production discovery/outcome event model is not complete.
+**Status:** Phase 6 append-only impression, profile-open and decision events
+are implemented. Introduction and downstream outcome events remain future
+work; the implemented discovery flow still needs signed-in acceptance.
 
 ### 6. Realtime
 
@@ -281,7 +292,7 @@ Production agentic orchestration remains TypeScript-first. Introduce Python late
 
 ### Complete / working demo
 
-- Public homepage/product film.
+- Public homepage and no-signup product demo.
 - Founder/investor demo workspace.
 - Discovery/search/filters and Pass / Save / Interested gestures.
 - Deterministic explainable `MatchEngine`.
@@ -396,7 +407,13 @@ Production agentic orchestration remains TypeScript-first. Introduce Python late
 
 **Tech:** Postgres/RLS + server/domain matching layer.
 
-**Status:** implementation complete on the Phase 6 branch; production acceptance pending. Discovery sessions, hard-eligibility retrieval, append-only marketplace events, score/version/rank audit metadata, atomic decision/reset RPCs, authenticated Discover cutover, profile-open/impression wiring, hosted migrations and database tests are implemented. The branch preview builds successfully. Phase 6 remains open until the signed-in investor flow is exercised end to end against production data.
+**Status:** implementation is present on `main`; production acceptance
+pending. Discovery sessions, hard-eligibility retrieval, append-only
+marketplace events, score/version/rank audit metadata, atomic decision/reset
+RPCs, authenticated Discover cutover, profile-open/impression wiring, hosted
+migrations and database tests are implemented. Earlier branch preview builds
+passed, but Phase 6 remains open until the signed-in investor flow is
+exercised end to end against production data.
 
 See `docs/PHASE6_MARKETPLACE_EVENTS.md`.
 
@@ -600,4 +617,3 @@ FundMatch is currently a web SaaS/marketplace product. **An App Store client is 
 - [ ] Complete TestFlight, privacy/support metadata, age rating, screenshots, review instructions/test account, and App Review acceptance.
 
 **Paid-production exit:** two isolated organizations can use the complete founder/investor workflow with private evidence, an authorized customer can pay and receive exactly the purchased access, cancellation/refund removes only the appropriate entitlement, and support can explain and recover every material workflow/payment state from durable records.
-

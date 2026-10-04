@@ -1,5 +1,9 @@
 # Current FundMatch AI task
 
+**Archived task snapshot.** This file describes an earlier Cloudflare-hosting
+phase; it must not be used as the active task. Current status and acceptance
+gates are in [ROADMAP.md](../../ROADMAP.md).
+
 ## Active milestone
 
 **Roadmap Phase 5 — Authenticated deployment acceptance**

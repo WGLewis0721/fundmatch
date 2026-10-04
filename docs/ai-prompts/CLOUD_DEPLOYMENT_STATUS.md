@@ -1,5 +1,9 @@
 # Cloud deployment status
 
+**Historical Cloudflare status snapshot.** Current status:
+[`ROADMAP.md`](../../ROADMAP.md) and
+[`VERCEL_DEPLOYMENT.md`](../VERCEL_DEPLOYMENT.md).
+
 **Status:** deployment configuration added; production deploy pending GitHub Actions execution.
 
 - Worker: `fundmatch`

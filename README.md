@@ -224,7 +224,7 @@ The public demo and authenticated app remain logically separate. The Pages bundl
 
 ### Public demo
 
-- Homepage and product film.
+- Homepage and no-signup product demo.
 - Founder/investor preview and no-signup demo workspaces.
 - Company discovery, search, filters, Pass / Save / Interested, and horizontal gestures.
 - Deterministic rules-based `MatchEngine` with explanations.
@@ -281,18 +281,15 @@ The `/demo` workspace is fictional browser data. Never put confidential fundrais
 
 ## Marketplace event model
 
-FundMatch preserves current state and will add append-only event history for meaningful marketplace behavior:
+FundMatch preserves current state and has implemented append-only Phase 6
+discovery events for impressions, profile opens, and Pass / Save / Interested.
+Signed-in production acceptance remains open. The vocabulary also reserves
+later workflow/outcome events:
 
-- candidate impression;
-- profile opened;
-- passed;
-- saved;
-- interested;
-- intro requested / accepted / declined;
-- meeting scheduled;
-- diligence started;
-- funded / no-deal;
-- readiness changed.
+- implemented: candidate impression, profile opened, passed, saved, interested;
+- planned with the introduction workflow: intro requested / accepted / declined;
+- planned as outcomes: meeting scheduled, diligence started, funded / no-deal,
+  readiness changed.
 
 That history is eventually used to improve recommendation quality against real outcomes instead of optimizing only for clicks/swipes.
 
@@ -362,19 +359,9 @@ Agent runs should store structured summaries and audit metadata, not hidden chai
 
 ## Current documentation
 
-- [`ROADMAP.md`](ROADMAP.md) — product and implementation source of truth.
-- [`docs/AGENTIC_RAG_ARCHITECTURE.md`](docs/AGENTIC_RAG_ARCHITECTURE.md) — assembled agentic runtime architecture.
-- [`docs/DOCUMENT_PROCESSING.md`](docs/DOCUMENT_PROCESSING.md) — running and triaging the queued document pipeline.
-- [`docs/research/agentic-rag/README.md`](docs/research/agentic-rag/README.md) — technology research index.
-- [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md) — recommendation architecture and scale strategy.
-- [`docs/IMPLEMENTATION_NEXT_STEPS.md`](docs/IMPLEMENTATION_NEXT_STEPS.md) — build sequence toward pilot.
-- [`docs/BACKEND.md`](docs/BACKEND.md) — Supabase/RLS/private-document backend.
-- [`docs/VERCEL_DEPLOYMENT.md`](docs/VERCEL_DEPLOYMENT.md) — authenticated deployment.
-- [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md) — prior document-processing interface and worker boundaries.
-- [`docs/FOUNDER_READINESS.md`](docs/FOUNDER_READINESS.md) — readiness implementation.
-- [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md) — backend/security evidence.
-- [`docs/brand/BRAND.md`](docs/brand/BRAND.md) — positioning and brand system.
-- [`docs/WAITLIST_API.md`](docs/WAITLIST_API.md) — public beta waitlist API → Google Sheets.
+- [`ROADMAP.md`](ROADMAP.md) — current status, acceptance gates, and long-term direction.
+- [`MVP_ROADMAP.md`](MVP_ROADMAP.md) — the narrower controlled-pilot scope; acceptance is still governed by the main roadmap.
+- [`docs/README.md`](docs/README.md) — documentation map by purpose, including operations, evidence, and historical handoffs.
 
 ## Best next product move
 
@@ -382,7 +369,8 @@ The new intelligence foundation does not replace the ordered marketplace work.
 
 ```text
 1. Complete authenticated deployment acceptance
-2. Production candidate retrieval + persistent decisions/event history
+2. Accept the implemented production discovery feed, decisions, and event
+   history through a signed-in investor flow against production data
 3. Investor interest → founder response workflow
 4. Wire agent_runs/embeddings queue consumers
 5. Chunk + embed private documents with provenance

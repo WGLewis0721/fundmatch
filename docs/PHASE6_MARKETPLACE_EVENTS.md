@@ -1,6 +1,10 @@
 # Phase 6 — production discovery + marketplace event scaffold
 
-Status: **implementation and hosted schema activation complete; authenticated production acceptance still outstanding.** The branch preview builds successfully and the Phase 6 migrations are live in the FundMatch Supabase project, but Phase 6 is not marked complete until the signed-in investor flow is exercised end to end.
+Status: **implementation on `main` and hosted schema activation complete;
+authenticated production acceptance still outstanding.** The earlier branch
+preview built successfully and the Phase 6 migrations are live in the
+FundMatch Supabase project, but Phase 6 is not marked complete until the
+signed-in investor flow is exercised end to end.
 
 This slice is intentionally net-new roadmap work. It does not restyle an existing screen.
 

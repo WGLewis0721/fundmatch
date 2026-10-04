@@ -25,9 +25,13 @@ The Supabase publishable key is intentionally browser-safe and constrained by RL
 
 `vite.config.ts` uses the Vercel-supported TanStack Start + Nitro integration. Vercel should build the project from the repository root with the normal `bun run build` command.
 
-After the Vercel project is connected to `WGLewis0721/fundmatch`, pushes to `main` should create production deployments and pull requests/branches should create previews according to the Vercel Git integration settings.
+The Vercel project now serves the authenticated application. Pushes to
+`main` create production deployments and pull requests/branches create
+previews according to the Vercel Git integration settings. A successful
+build/HTTP response is deployment evidence, not browser-level Phase 5
+acceptance.
 
-## Supabase Auth configuration after first successful deploy
+## Supabase Auth configuration for production acceptance
 
 Use the final Vercel production origin as the Supabase Auth Site URL and allow redirect URLs for at least:
 

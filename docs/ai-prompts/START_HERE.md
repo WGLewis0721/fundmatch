@@ -1,5 +1,10 @@
 # Start here
 
+**Historical Phase 5 prompt snapshot.** The hosting/deployment statements
+below predate the Vercel move and are not current instructions. Start with
+[ROADMAP.md](../../ROADMAP.md), [VERCEL_DEPLOYMENT.md](../VERCEL_DEPLOYMENT.md),
+and [docs/README.md](../README.md) for the shipped golden baseline and open gates.
+
 The active FundMatch milestone is **Roadmap Phase 5 — Authenticated deployment acceptance**.
 
 ## Current state
