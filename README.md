@@ -281,18 +281,15 @@ The `/demo` workspace is fictional browser data. Never put confidential fundrais
 
 ## Marketplace event model
 
-FundMatch preserves current state and will add append-only event history for meaningful marketplace behavior:
+FundMatch preserves current state and has implemented append-only Phase 6
+discovery events for impressions, profile opens, and Pass / Save / Interested.
+Signed-in production acceptance remains open. The vocabulary also reserves
+later workflow/outcome events:
 
-- candidate impression;
-- profile opened;
-- passed;
-- saved;
-- interested;
-- intro requested / accepted / declined;
-- meeting scheduled;
-- diligence started;
-- funded / no-deal;
-- readiness changed.
+- implemented: candidate impression, profile opened, passed, saved, interested;
+- planned with the introduction workflow: intro requested / accepted / declined;
+- planned as outcomes: meeting scheduled, diligence started, funded / no-deal,
+  readiness changed.
 
 That history is eventually used to improve recommendation quality against real outcomes instead of optimizing only for clicks/swipes.
 
@@ -372,7 +369,8 @@ The new intelligence foundation does not replace the ordered marketplace work.
 
 ```text
 1. Complete authenticated deployment acceptance
-2. Production candidate retrieval + persistent decisions/event history
+2. Accept the implemented production discovery feed, decisions, and event
+   history through a signed-in investor flow against production data
 3. Investor interest → founder response workflow
 4. Wire agent_runs/embeddings queue consumers
 5. Chunk + embed private documents with provenance

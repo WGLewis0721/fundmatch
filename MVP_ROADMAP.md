@@ -65,8 +65,7 @@ System
 - score/version/rank metadata;
 - predictable discovery resume behavior;
 - history-preserving decision reset;
-- Phase 6 hosted migrations and privilege hardening;
-- Phase 6 implementation and hosted schema activation; signed-in production acceptance is still required.
+- Phase 6 implementation, hosted migrations and privilege hardening.
 
 Phase 6 is implemented as an MVP foundation, but is not production-accepted.
 The signed-in investor flow must satisfy the Phase 6 gate in [ROADMAP.md](ROADMAP.md)
