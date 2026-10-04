@@ -10,7 +10,7 @@ FundMatch now uses a standalone backend. Lovable is retired from the active arch
 - Region: `us-east-1`
 - Separate APEX project `fnmxlmjrkgojowpzrcwa` must never be used for FundMatch.
 - Public `/` + `/demo`: GitHub Pages, browser-only, fictional data.
-- Authenticated `/app`: TanStack Start app backed by Supabase. Production hosting is intentionally deferred; Cloudflare remains the preferred target when deployment resumes.
+- Authenticated `/app`: TanStack Start/Nitro on Vercel, backed by Supabase. Deployment exists; browser-level Phase 5 acceptance remains open. See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md).
 
 ## Environment variables
 
@@ -39,11 +39,9 @@ The standalone production database has the Phase 5 chain applied in order:
 - `0004_phase5_has_role_privilege_hardening.sql`
 - `0005_phase5_storage_delete_and_search_path_hardening.sql`
 
-Pending application to the live project:
-
-- `0006_agentic_rag_foundation.sql`
-- `0007_agentic_rag_advisor_hardening.sql`
-- `0008_phase8_document_processing.sql`
+Later migration/activation status is tracked in [ROADMAP.md](../ROADMAP.md)
+and the relevant phase evidence. Migrations `0006`–`0009` are recorded as
+live there; do not treat this older Phase 5 inventory as a current pending list.
 
 `0002` removes the original broad authenticated-user policies and installs organization-scoped RLS, invitations, readiness items, private documents, profile suggestions, RPCs, and the private `documents` Storage bucket. `0003` hardens helper-function privileges. `0004` removes anonymous/PUBLIC execution of `has_role()`. `0005` removes the incompatible direct-SQL Storage deletion trigger and fixes remaining mutable helper search paths.
 
@@ -51,7 +49,10 @@ For local CI against plain PostgreSQL, use the documented Supabase shim only in 
 
 ## Auth
 
-Supabase Auth provides email/password signup, login and recovery. Final production Site URL and redirect allow-list values depend on the eventual `/app` deployment origin and are therefore deferred together with production hosting. Before a public `/app` launch, configure the Site URL plus `/app/login` and `/app/reset` redirects for the chosen origin.
+Supabase Auth provides email/password signup, login and recovery. Use the
+current Vercel origin for the production Site URL and configure the
+`/app/login` and `/app/reset` redirect allow-list. Verify the actual hosted
+browser flow before accepting Phase 5.
 
 ## Security model
 
@@ -84,4 +85,8 @@ The Supabase security advisor now reports only authenticated `SECURITY DEFINER` 
 
 ## Current Phase 5 status
 
-The standalone backend boundary is accepted at the database/RLS level. Production `/app` deployment, real browser Auth flows, and production Auth redirect configuration are intentionally deferred by the maintainer; they remain the final external items before full Phase 5 production acceptance.
+The standalone backend boundary was accepted at the database/RLS level in
+September 2026. The Vercel application is deployed, but real browser Auth
+flows, redirect configuration, and cross-organization browser acceptance still
+need evidence before full Phase 5 production acceptance. Current status:
+[ROADMAP.md](../ROADMAP.md).

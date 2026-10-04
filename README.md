@@ -224,7 +224,7 @@ The public demo and authenticated app remain logically separate. The Pages bundl
 
 ### Public demo
 
-- Homepage and product film.
+- Homepage and no-signup product demo.
 - Founder/investor preview and no-signup demo workspaces.
 - Company discovery, search, filters, Pass / Save / Interested, and horizontal gestures.
 - Deterministic rules-based `MatchEngine` with explanations.
@@ -362,19 +362,9 @@ Agent runs should store structured summaries and audit metadata, not hidden chai
 
 ## Current documentation
 
-- [`ROADMAP.md`](ROADMAP.md) — product and implementation source of truth.
-- [`docs/AGENTIC_RAG_ARCHITECTURE.md`](docs/AGENTIC_RAG_ARCHITECTURE.md) — assembled agentic runtime architecture.
-- [`docs/DOCUMENT_PROCESSING.md`](docs/DOCUMENT_PROCESSING.md) — running and triaging the queued document pipeline.
-- [`docs/research/agentic-rag/README.md`](docs/research/agentic-rag/README.md) — technology research index.
-- [`docs/MATCHING_ARCHITECTURE.md`](docs/MATCHING_ARCHITECTURE.md) — recommendation architecture and scale strategy.
-- [`docs/IMPLEMENTATION_NEXT_STEPS.md`](docs/IMPLEMENTATION_NEXT_STEPS.md) — build sequence toward pilot.
-- [`docs/BACKEND.md`](docs/BACKEND.md) — Supabase/RLS/private-document backend.
-- [`docs/VERCEL_DEPLOYMENT.md`](docs/VERCEL_DEPLOYMENT.md) — authenticated deployment.
-- [`docs/ASTRA_INTERFACE.md`](docs/ASTRA_INTERFACE.md) — prior document-processing interface and worker boundaries.
-- [`docs/FOUNDER_READINESS.md`](docs/FOUNDER_READINESS.md) — readiness implementation.
-- [`docs/TEST_EVIDENCE.md`](docs/TEST_EVIDENCE.md) — backend/security evidence.
-- [`docs/brand/BRAND.md`](docs/brand/BRAND.md) — positioning and brand system.
-- [`docs/WAITLIST_API.md`](docs/WAITLIST_API.md) — public beta waitlist API → Google Sheets.
+- [`ROADMAP.md`](ROADMAP.md) — current status, acceptance gates, and long-term direction.
+- [`MVP_ROADMAP.md`](MVP_ROADMAP.md) — the narrower controlled-pilot scope; acceptance is still governed by the main roadmap.
+- [`docs/README.md`](docs/README.md) — documentation map by purpose, including operations, evidence, and historical handoffs.
 
 ## Best next product move
 

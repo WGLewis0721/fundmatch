@@ -66,9 +66,11 @@ System
 - predictable discovery resume behavior;
 - history-preserving decision reset;
 - Phase 6 hosted migrations and privilege hardening;
-- Phase 6 production acceptance.
+- Phase 6 implementation and hosted schema activation; signed-in production acceptance is still required.
 
-Phase 6 is considered complete for MVP planning.
+Phase 6 is implemented as an MVP foundation, but is not production-accepted.
+The signed-in investor flow must satisfy the Phase 6 gate in [ROADMAP.md](ROADMAP.md)
+before the pilot can rely on it.
 
 ### Substantially implemented but still needs MVP acceptance
 
@@ -123,7 +125,7 @@ Required behavior:
 
 **Exit:** a signed-in investor can discover eligible companies, make decisions, leave, return, and continue predictably.
 
-**MVP status:** COMPLETE — delivered and accepted through Phase 6.
+**MVP status:** implemented; signed-in production acceptance pending.
 
 ## MVP Milestone 3 — Permissioned interest and introduction
 

@@ -1,5 +1,9 @@
 # Phase 5 Cloudflare deployment acceptance
 
+**Historical Phase 5 plan.** Production is hosted on Vercel/Nitro. Use
+[`ROADMAP.md`](../../ROADMAP.md) for current acceptance and
+[`VERCEL_DEPLOYMENT.md`](../VERCEL_DEPLOYMENT.md) for hosting.
+
 The standalone Supabase backend sub-gate is already accepted. This file covers only the remaining production hosting/auth/browser acceptance work.
 
 ## Required sequence

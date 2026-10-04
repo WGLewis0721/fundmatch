@@ -1,6 +1,10 @@
 # FundMatch Implementation Next Steps
 
-This document turns the roadmap into the next executable build sequence. Do not start with large-scale infrastructure. Prove the private marketplace loop first.
+This document explains the dependency order for building the private
+marketplace loop. It is not a live phase-status tracker: use
+[ROADMAP.md](../ROADMAP.md) for acceptance and [MVP_ROADMAP.md](../MVP_ROADMAP.md)
+for the narrower controlled-pilot scope. Do not start with large-scale
+infrastructure.
 
 ## Priority 0 — Protect the implementation
 

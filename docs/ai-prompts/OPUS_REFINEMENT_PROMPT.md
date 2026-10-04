@@ -29,7 +29,7 @@ Read `AGENTS.md`, `ROADMAP.md`, `docs/MATCHING_ARCHITECTURE.md`, `docs/ai-prompt
 - Do not change the approved data/authorization model without a documented defect.
 - Do not weaken RLS or move authorization into the client.
 - Do not add Redis, Kafka, OpenSearch/Elasticsearch, Kubernetes or microservices.
-- Do not replace Supabase/Postgres/Cloudflare architecture merely because another stack is fashionable.
+- Do not replace the current Supabase/Postgres plus Vercel/Nitro architecture without an explicit product and operational reason.
 - Do not change deterministic ranking behavior or proprietary weights unless fixing a demonstrated bug.
 - Do not expose private documents, prompts, credentials, datasets or ranking internals.
 - Do not turn AI suggestions into silent canonical edits.

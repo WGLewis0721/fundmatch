@@ -1,5 +1,9 @@
 # Cloudflare deployment ready
 
-FundMatch is configured for Cloudflare Worker deployment using `wrangler.jsonc` and `.github/workflows/deploy-cloudflare.yml`.
+**Historical deployment proposal, superseded by Vercel/Nitro.**
+For current deployment and acceptance, use [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md)
+and [ROADMAP.md](../ROADMAP.md).
 
-The first successful deploy should produce the production workers.dev URL for Worker `fundmatch`. After that, configure the Supabase Auth Site URL and redirect allow-list for `/app/login` and `/app/reset`, then complete the remaining browser-level Phase 5 acceptance checks.
+The earlier Cloudflare Worker plan used `wrangler.jsonc` and
+`.github/workflows/deploy-cloudflare.yml`. It is retained as decision history
+only; do not use it to configure the current production application.

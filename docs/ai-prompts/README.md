@@ -1,6 +1,11 @@
 # FundMatch AI Build Playbook
 
 This folder is the operational prompt set for finishing FundMatch without having multiple AI agents duplicate the same work.
+The reusable role templates below are distinct from dated execution prompts.
+The `CLOUD_*`, `CLOUDFLARE_*`, and older Phase 5 task/status files preserve
+historical attempts; they are not current host or acceptance instructions.
+Start with [the documentation map](../README.md) and
+[`ROADMAP.md`](../../ROADMAP.md) before reusing a prompt.
 
 ## Read first
 
