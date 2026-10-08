@@ -6,6 +6,9 @@ import { confirmExtraction, readinessSuggestions } from "../src/lib/intelligence
 import { matchProfile } from "../src/lib/intelligence/matching";
 import { openAIExtractor } from "../src/lib/intelligence/openai.server";
 import { intelligenceService } from "../src/lib/intelligence/service.server";
+import {
+  LIMITS,
+} from "../src/lib/intelligence/contracts";
 import type {
   Confirmation,
   Extraction,
@@ -106,6 +109,9 @@ describe("document processing and provenance", () => {
     await expect(readDocument(new File(["bad"], "deck.pdf"), pdf)).rejects.toThrow("valid PDF");
     await expect(readDocument(new File(["%PDF-1.7"], "scan.pdf"), pdf)).rejects.toThrow("OCR");
     await expect(readDocument(new File(["a\0"], "deck.txt"), pdf)).rejects.toThrow("Binary");
+    await expect(
+      readDocument(new File(["x".repeat(LIMITS.characters + 1)], "huge.txt"), pdf),
+    ).rejects.toThrow("Too much text");
     await expect(
       readDocument(
         {
@@ -278,6 +284,24 @@ describe("server AI boundary", () => {
       service.process({ userId: "u", companyId: "c", organizationId: "o" }, "doc"),
     ).rejects.toThrow("Denied");
     expect(touched).toBe(false);
+  });
+  test("authorization runs before confirmation validation", async () => {
+    const repo = {
+      requireEditor: async () => {
+        throw Error("Denied");
+      },
+      findConfirmation: async () => null,
+      readExtraction: async () => {
+        throw Error("must not read");
+      },
+    };
+    const service = intelligenceService(repo as any, pdf, { extract: async () => [] });
+    await expect(
+      service.confirm(
+        { userId: "u", organizationId: "o", companyId: "c" },
+        { extractionId: "", expectedVersion: -1, idempotencyKey: "", decisions: [] } as any,
+      ),
+    ).rejects.toThrow("Denied");
   });
   test("canonical stored claims and server reviewer are used; commit receives expected version", async () => {
     const ex = extractLiteral(await fixture("missing"));
